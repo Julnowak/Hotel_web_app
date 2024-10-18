@@ -14,6 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Nav from "react-bootstrap/Nav";
 import CustomerPanel from "./components/CustomerPanel";
 import OwnerPanel from "./components/OwnerPanel";
+import ReservationSite from "./components/ReservationSite";
 
 
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -35,6 +36,12 @@ function Root() {
     const [errflag, setErrflag] = useState(false);
     const [user_type, setUserType] = useState(localStorage.getItem('user_type'));
     const navigate = useNavigate()
+    const loc = window.location.pathname;
+    const [clicked, setClicked] = useState(false);
+
+    const handleClick = () => {
+        setClicked(true); // Set clicked state to true on click
+    };
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -155,6 +162,7 @@ function Root() {
             setCurrentUser(false);
             localStorage.clear();
             navigate('/')
+            window.location.reload()
         });
     }
 
@@ -178,11 +186,14 @@ function Root() {
                     <LoadingSpinner/>
                 ) : (
                     <div className="fade-in">
-                        <Navbar bg="dark" variant="dark">
+                        <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
                             <Container>
-                                <Navbar.Brand href="http://127.0.0.1:3000/">HOME</Navbar.Brand>
+                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                    HOME
+                                </Navbar.Brand>
+
                                 <Navbar.Brand
-                                    href={'klient' === user_type ? "http://127.0.0.1:3000/client/panel/" : "http://127.0.0.1:3000/owner/panel/"}>
+                                    href={'klient' === user_type ? "http://127.0.0.1:3000/customer/panel/" : "http://127.0.0.1:3000/owner/panel/"}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                          className="bi bi-person"
                                          viewBox="0 0 16 16">
@@ -190,18 +201,35 @@ function Root() {
                                             d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>
                                 </Navbar.Brand>
-                                <Navbar.Toggle/>
-
-                                <Navbar.Collapse className="justify-content-end">
+                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                     <Nav className="me-auto">
-                                        <Nav.Link href="#">Market</Nav.Link>
-                                        <Nav.Link href="#">Negocjacje</Nav.Link>
-                                        <Nav.Link href="#">Historia</Nav.Link>
+                                        <Nav.Link href="/reservation" className="mx-2 text-uppercase fw-light">
+                                            Rezerwuj
+                                        </Nav.Link>
                                     </Nav>
-
                                     <Navbar.Text>
                                         <form onSubmit={e => submitLogout({e: e})}>
-                                            <Button type="submit" variant="light">Wyloguj się</Button>
+                                        <Button
+                                            id="form_btn"
+                                            type="submit"
+                                            variant="outline-light"
+                                            onClick={handleClick}
+                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                            style={{
+                                                transition: "background-color 0.3s ease, color 0.3s ease",
+                                                marginTop: 10, marginBottom: 10
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                e.target.style.color = "#000000"; // Change text color to black on hover
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                            }}>
+                                            Wyloguj się
+                                        </Button>
                                         </form>
                                     </Navbar.Text>
                                 </Navbar.Collapse>
@@ -213,6 +241,7 @@ function Root() {
                             <Route path='/' element={<Homepage/>}/>
                             <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                             <Route path='/owner/panel/' element={<OwnerPanel/>}/>
+                            <Route path='/reservation/' element={<ReservationSite/>}/>
                             {/*<Route path='/products_view' element={<Main/>}/>*/}
                         </Routes>
                     </div>
@@ -222,6 +251,66 @@ function Root() {
             </div>
         );
     } else {
+        if (loc == "/") {
+            return (
+            <div>
+                {isLoading ? (
+                    <LoadingSpinner/>
+                ) : (
+                    <div>
+                        <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
+                            <Container>
+                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                    HOME
+                                </Navbar.Brand>
+                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                                    <Nav className="me-auto">
+                                        <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
+                                            O Nas
+                                        </Nav.Link>
+                                        <Nav.Link href="#gallery" className="mx-2 text-uppercase fw-light">
+                                            Galeria
+                                        </Nav.Link>
+                                        <Nav.Link href="#contact" className="mx-2 text-uppercase fw-light">
+                                            Kontakt
+                                        </Nav.Link>
+                                    </Nav>
+                                    <Navbar.Text>
+                                        <Button href="/login"
+                                            id="form_btn"
+                                            variant="outline-light"
+                                            onClick={handleClick}
+                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                            style={{
+                                                transition: "background-color 0.3s ease, color 0.3s ease",
+                                                backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
+                                                color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
+                                                marginTop: 10, marginBottom: 10
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                e.target.style.color = "#000000"; // Change text color to black on hover
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                            }}>
+                                            Zaloguj się
+                                        </Button>
+                                    </Navbar.Text>
+                                </Navbar.Collapse>
+                            </Container>
+                        </Navbar>
+                    </div>
+                )}
+            <Routes>
+                <Route path='/' element={<Homepage/>}/>
+            </Routes>
+            </div>
+        );
+        }
+        else{
         return (
             <div>
                 {isLoading ? (
@@ -230,12 +319,33 @@ function Root() {
                     <div>
                         <Navbar bg="dark" variant="dark">
                             <Container>
-                                <Navbar.Brand href="http://127.0.0.1:3000/">HOME</Navbar.Brand>
-                                <Navbar.Toggle/>
-                                <Navbar.Collapse className="justify-content-end">
+                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                    HOME
+                                </Navbar.Brand>
+                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                     <Navbar.Text>
-                                        <Button id="form_btn" onClick={update_form_btn} variant="light">Zarejestruj
-                                            się</Button>
+                                        <Button
+                                            id="form_btn"
+                                            onClick={update_form_btn}
+                                            variant="outline-light"
+                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                            style={{
+                                                transition: "background-color 0.3s ease, color 0.3s ease",
+                                                backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
+                                                color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
+                                                marginTop: 10, marginBottom: 10
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                e.target.style.color = "#000000"; // Change text color to black on hover
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                            }}>
+                                            Zarejestruj się
+                                        </Button>
                                     </Navbar.Text>
                                 </Navbar.Collapse>
                             </Container>
@@ -308,9 +418,12 @@ function Root() {
                         }
                     </div>
                 )}
-
+            <Routes>
+                <Route path='/' element={<Homepage/>}/>
+            </Routes>
             </div>
         );
+        }
     }
 }
 
