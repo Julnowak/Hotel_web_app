@@ -1,0 +1,35 @@
+
+.scrollable-content {
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: white;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border-color: black
+}
+
+input[type="radio"]:checked {
+  background-color: black;
+  border-color: black;
+}
