@@ -75,13 +75,12 @@ function Root() {
             }
         ).then(async function () {
             try {
-
-                const response = await client.post(
+                const [response] = await Promise.all([client.post(
                     "http://127.0.0.1:8000/api/login/",
                     {
                         email: email,
                         password: password
-                    })
+                    })])
 
                 setErrflag(false);
                 const em = response.data.email;
@@ -114,6 +113,7 @@ function Root() {
     async function submitLogin({e}: { e: any }) {
         e.preventDefault();
 
+        try {
         const response = await client.post(
         "http://127.0.0.1:8000/api/login/",
         {
@@ -138,6 +138,10 @@ function Root() {
             navigate('/owner/panel')
         } else if (response.data.user_type === 'klient') {
             navigate('/customer/panel')
+        }}
+        catch (error) {
+            setErrflag(true);
+            console.error('Login failed:', error);// Login failed
         }
     }
 
@@ -226,7 +230,7 @@ function Root() {
                     <div>
                         <Navbar bg="dark" variant="dark">
                             <Container>
-                                <Navbar.Brand>HOME</Navbar.Brand>
+                                <Navbar.Brand href="http://127.0.0.1:3000/">HOME</Navbar.Brand>
                                 <Navbar.Toggle/>
                                 <Navbar.Collapse className="justify-content-end">
                                     <Navbar.Text>
