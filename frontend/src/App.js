@@ -10,15 +10,15 @@ import "./Scrollbar.css"
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import Nav from "react-bootstrap/Nav";
 import CustomerPanel from "./components/CustomerPanel";
 import OwnerPanel from "./components/OwnerPanel";
 import ReservationSite from "./components/ReservationSite";
-import RoomReservation from "./components/RoomResservation";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 import hor_logo from './components/assets/weles_hori_white.png';
+import  "./components/LoginForm.css";
+import "./components/RegistrationForm.css";
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -37,7 +37,8 @@ function Root() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errflag, setErrflag] = useState(false);
-    const [user_type, setUserType] = useState(localStorage.getItem('user_type'));
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [user_type] = useState(localStorage.getItem('user_type'));
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
@@ -52,7 +53,7 @@ function Root() {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 500);
-            client.get("http://127.0.0.1:8000/api/user/")
+        client.get("http://127.0.0.1:8000/api/user/")
             .then(function () {
                 setCurrentUser(true);
             })
@@ -75,13 +76,14 @@ function Root() {
 
     function submitRegistration(e: any) {
         e.preventDefault();
+        console.log("dddddd")
         client.post(
             "http://127.0.0.1:8000/api/register/",
             {
                 email: email,
                 username: username,
                 password: password,
-                user_type: user_type
+                user_type: "klient"
             }
         ).then(async function () {
             try {
@@ -124,32 +126,32 @@ function Root() {
         e.preventDefault();
 
         try {
-        const response = await client.post(
-        "http://127.0.0.1:8000/api/login/",
-        {
-            email: email,
-            password: password
-        })
+            const response = await client.post(
+                "http://127.0.0.1:8000/api/login/",
+                {
+                    email: email,
+                    password: password
+                })
 
-        setErrflag(false);
-        const em = response.data.email;
-        const name = response.data.username;
-        const ut = response.data.user_type;
-        const user_id = response.data.id;
+            setErrflag(false);
+            const em = response.data.email;
+            const name = response.data.username;
+            const ut = response.data.user_type;
+            const user_id = response.data.id;
 
-        localStorage.setItem('email', em);
-        localStorage.setItem('username', name);
-        localStorage.setItem('user_type', ut);
-        localStorage.setItem('user_id', user_id);
+            localStorage.setItem('email', em);
+            localStorage.setItem('username', name);
+            localStorage.setItem('user_type', ut);
+            localStorage.setItem('user_id', user_id);
 
-        setCurrentUser(true);
-        console.log(response.data.user_type)
-        if (response.data.user_type === 'producent') {
-            navigate('/owner/panel')
-        } else if (response.data.user_type === 'klient') {
-            navigate('/customer/panel')
-        }}
-        catch (error) {
+            setCurrentUser(true);
+            console.log(response.data.user_type)
+            if (response.data.user_type === 'producent') {
+                navigate('/owner/panel')
+            } else if (response.data.user_type === 'klient') {
+                navigate('/customer/panel')
+            }
+        } catch (error) {
             setErrflag(true);
             console.error('Login failed:', error);// Login failed
         }
@@ -182,7 +184,7 @@ function Root() {
                         <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
                             <Container>
                                 <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
+                                    <img src={hor_logo} style={{height: 30, margin: 10}} alt=""/>
                                 </Navbar.Brand>
 
                                 <Navbar.Brand
@@ -194,7 +196,7 @@ function Root() {
                                             d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>
                                 </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                     <Nav className="me-auto">
                                         <Nav.Link href="/reservation" className="mx-2 text-uppercase fw-light">
@@ -203,26 +205,26 @@ function Root() {
                                     </Nav>
                                     <Navbar.Text>
                                         <form onSubmit={e => submitLogout({e: e})}>
-                                        <Button
-                                            id="form_btn"
-                                            type="submit"
-                                            variant="outline-light"
-                                            onClick={handleClick}
-                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
-                                            style={{
-                                                transition: "background-color 0.3s ease, color 0.3s ease",
-                                                marginTop: 10, marginBottom: 10
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
-                                                e.target.style.color = "#000000"; // Change text color to black on hover
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
-                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                            }}>
-                                            Wyloguj się
-                                        </Button>
+                                            <Button
+                                                id="form_btn"
+                                                type="submit"
+                                                variant="outline-light"
+                                                onClick={handleClick}
+                                                className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                                style={{
+                                                    transition: "background-color 0.3s ease, color 0.3s ease",
+                                                    marginTop: 10, marginBottom: 10
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                    e.target.style.color = "#000000"; // Change text color to black on hover
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                    e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                                }}>
+                                                Wyloguj się
+                                            </Button>
                                         </form>
                                     </Navbar.Text>
                                 </Navbar.Collapse>
@@ -235,7 +237,6 @@ function Root() {
                             <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                             <Route path='/owner/panel/' element={<OwnerPanel/>}/>
                             <Route path='/reservation/' element={<ReservationSite/>}/>
-                            <Route path='/room/' element={<RoomReservation/>}/>
                             {/*<Route path='/products_view' element={<Main/>}/>*/}
                         </Routes>
                     </div>
@@ -245,186 +246,232 @@ function Root() {
             </div>
         );
     } else {
-        if (loc == "/") {
+        if (loc === "/") {
             return (
-            <div>
-                {isLoading ? (
-                    <LoadingSpinner/>
-                ) : (
-                    <div>
-                        <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
-                            <Container>
-                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
-                                </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                                    <Nav className="me-auto">
-                                        <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
-                                            O Nas
-                                        </Nav.Link>
-                                        <Nav.Link href="#gallery" className="mx-2 text-uppercase fw-light">
-                                            Galeria
-                                        </Nav.Link>
-                                        <Nav.Link href="#contact" className="mx-2 text-uppercase fw-light">
-                                            Kontakt
-                                        </Nav.Link>
-                                    </Nav>
-                                    <Navbar.Text>
-                                        <Button href="/login"
-                                            id="form_btn"
-                                            variant="outline-light"
-                                            onClick={handleClick}
-                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
-                                            style={{
-                                                transition: "background-color 0.3s ease, color 0.3s ease",
-                                                backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
-                                                color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
-                                                marginTop: 10, marginBottom: 10, width:200
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
-                                                e.target.style.color = "#000000"; // Change text color to black on hover
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
-                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                            }}>
-                                            Zaloguj się
-                                        </Button>
-                                    </Navbar.Text>
-                                </Navbar.Collapse>
-                            </Container>
-                        </Navbar>
-                        <Routes>
-                            <Route path='/' element={<Homepage/>}/>
-                        </Routes>
-                    </div>
+                <div>
+                    {isLoading ? (
+                        <LoadingSpinner/>
+                    ) : (
+                        <div>
+                            <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
+                                <Container>
+                                    <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                        <img src={hor_logo} style={{height: 30, margin: 10}}/>
+                                    </Navbar.Brand>
+                                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                                    <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                                        <Nav className="me-auto">
+                                            <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
+                                                O Nas
+                                            </Nav.Link>
+                                            <Nav.Link href="#gallery" className="mx-2 text-uppercase fw-light">
+                                                Galeria
+                                            </Nav.Link>
+                                            <Nav.Link href="#contact" className="mx-2 text-uppercase fw-light">
+                                                Kontakt
+                                            </Nav.Link>
+                                        </Nav>
+                                        <Navbar.Text>
+                                            <Button href="/login"
+                                                    id="form_btn"
+                                                    variant="outline-light"
+                                                    onClick={handleClick}
+                                                    className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                                    style={{
+                                                        transition: "background-color 0.3s ease, color 0.3s ease",
+                                                        backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
+                                                        color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
+                                                        marginTop: 10, marginBottom: 10, width: 200
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                        e.target.style.color = "#000000"; // Change text color to black on hover
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                        e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                                    }}>
+                                                Zaloguj się
+                                            </Button>
+                                        </Navbar.Text>
+                                    </Navbar.Collapse>
+                                </Container>
+                            </Navbar>
+                            <Routes>
+                                <Route path='/' element={<Homepage/>}/>
+                            </Routes>
+                        </div>
 
-                )}
+                    )}
 
-            </div>
-        );
+                </div>
+            );
         }
-        else{
-        return (
-            <div>
-                {isLoading ? (
-                    <LoadingSpinner/>
-                ) : (
-                    <div>
-                        <Navbar bg="dark" variant="dark">
-                            <Container>
-                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
-                                </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                                    <Navbar.Text>
-                                        <Button
-                                            id="form_btn"
-                                            onClick={update_form_btn}
-                                            variant="outline-light"
-                                            className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
-                                            style={{
-                                                transition: "background-color 0.3s ease, color 0.3s ease",
-                                                backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
-                                                color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
-                                                marginTop: 10, marginBottom: 10, width:200
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.backgroundColor = "#ffffff"; // Change background to white
-                                                e.target.style.color = "#000000"; // Change text color to black on hover
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.backgroundColor = "transparent"; // Revert background to transparent
-                                                e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                            }}>
-                                            Zarejestruj się
-                                        </Button>
-                                    </Navbar.Text>
-                                </Navbar.Collapse>
-                            </Container>
-                        </Navbar>
-                        {
-                            registrationToggle ? (
-                                <div className="center" style={{width: 300, margin: '50px auto '}}>
-                                    <h1 style={{textAlign: 'center'}}>Rejestracja</h1>
-                                    <Form onSubmit={e => submitRegistration({e: e})}>
-                                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                                            <Form.Label>Adres email:</Form.Label>
-                                            <Form.Control style={{borderColor: "black"}} type="email"
-                                                          placeholder="Enter email" value={email}
-                                                          onChange={e => setEmail(e.target.value)}/>
-                                        </Form.Group>
-                                        <Form.Group className="mb-3" controlId="formBasicUsername">
-                                            <Form.Label>Login</Form.Label>
-                                            <Form.Control style={{borderColor: "black"}} type="text"
-                                                          placeholder="Enter username" value={username}
-                                                          onChange={e => setUsername(e.target.value)}/>
-                                        </Form.Group>
-                                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                                            <Form.Label>Hasło</Form.Label>
-                                            <Form.Control style={{borderColor: "black"}} type="password"
-                                                          placeholder="Password" value={password}
-                                                          onChange={e => setPassword(e.target.value)}/>
-                                        </Form.Group>
-                                        <Button variant="dark" type="submit">
-                                            Zarejestruj
-                                        </Button>
-                                    </Form>
-                                </div>
-                            ) : (
-                                <div className="login-background">
-            <div className="login-overlay center">
-                <h1 className="login-title">Logowanie</h1>
-                <Form onSubmit={e => submitLogin({ e: e })}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Adres email</Form.Label>
-                        <Form.Control
+        else {
+            return (
+                <div>
+                    {isLoading ? (
+                        <LoadingSpinner/>
+                    ) : (
+                        <div>
+                            <Navbar bg="dark" variant="dark">
+                                <Container>
+                                    <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                        <img src={hor_logo} style={{height: 30, margin: 10}}/>
+                                    </Navbar.Brand>
+                                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                                    <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                                        <Navbar.Text>
+                                            <Button
+                                                id="form_btn"
+                                                onClick={update_form_btn}
+                                                variant="outline-light"
+                                                className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                                style={{
+                                                    transition: "background-color 0.3s ease, color 0.3s ease",
+                                                    backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
+                                                    color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
+                                                    marginTop: 10, marginBottom: 10, width: 200
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                                    e.target.style.color = "#000000"; // Change text color to black on hover
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                                    e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                                }}>
+                                                Zarejestruj się
+                                            </Button>
+                                        </Navbar.Text>
+                                    </Navbar.Collapse>
+                                </Container>
+                            </Navbar>
+                            {
+                                registrationToggle ? (
+                                    <div className="registration-container">
+            <div className="registration-card">
+                <h2>Rejestracja</h2>
+                <form onSubmit={e => submitRegistration({e: e})} className="registration-form">
+                    <div className="form-group">
+                        <label>Email:</label>
+                        <input
                             type="email"
-                            placeholder="Wpisz email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            required
                         />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Hasło</Form.Label>
-                        <Form.Control
+                    </div>
+                    <div className="form-group">
+                        <label>Login:</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Hasło:</label>
+                        <input
                             type="password"
-                            placeholder="Wpisz hasło"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            required
                         />
-                    </Form.Group>
-                    {errflag && (
-                        <div style={{ marginBottom: 20 }}>
-                            <b style={{ color: 'red' }}>
-                                Wprowadzono błędny email lub hasło. Spróbuj ponownie.
-                            </b>
-                        </div>
-                    )}
-                    <Button variant="dark" type="submit" className="submit-btn">
-                        Zaloguj
-                    </Button>
-                </Form>
+                    </div>
+                    <div className="form-group">
+                        <label>Powtórz Hasło:</label>
+                        <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="registration-button">
+                        Zarejestruj się
+                    </button>
+                    <div className="social-registration">
+                        <button className="social-button google">
+                            <i className="fab fa-google"/> Zarejestruj przez Google
+                        </button>
+                        <button className="social-button facebook">
+                            <i className="fab fa-facebook-f"/> Zarejestruj przez Facebook
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-                            )
-                        }
-                    </div>
-                )}
-            <Routes>
-                <Route path='/' element={<Homepage/>}/>
-            </Routes>
-            </div>
-        );
+                                ) : (
+                                    <div className="login-container">
+                                        <div className="login-card">
+                                            <h2>Logowanie</h2>
+                                            <form onSubmit={e => submitLogin({e: e})} className="login-form">
+                                                <div className="form-group">
+                                                    <label>Email:</label>
+                                                    <input
+                                                        type="email"
+                                                        placeholder="Wpisz email"
+                                                        value={email}
+                                                        onChange={e => setEmail(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Hasło:</label>
+                                                    <input
+                                                        type="password"
+                                                        placeholder="Wpisz hasło"
+                                                        value={password}
+                                                        onChange={e => setPassword(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="options">
+                                                    <label>
+                                                        <input type="checkbox"/>
+                                                        Zapamiętaj mnie
+                                                    </label>
+                                                    <a href="#forgot-password" className="forgot-password-link">Nie
+                                                        pamiętam hasła</a>
+                                                </div>
+                                                <button type="submit" className="login-button">
+                                                    Zaloguj się
+                                                </button>
+                                                <div className="social-login">
+                                                    <button className="social-button google">
+                                                        <i className="fab fa-google"/> Zaloguj przez Google
+                                                    </button>
+                                                    <button className="social-button facebook">
+                                                        <i className="fab fa-facebook-f"/> Zaloguj przez Facebook
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        {errflag && (
+                                            <div style={{marginBottom: 20}}>
+                                                <b style={{color: 'red'}}>
+                                                    Wprowadzono błędny email lub hasło. Spróbuj ponownie.
+                                                </b>
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )}
+                    <Routes>
+                        <Route path='/' element={<Homepage/>}/>
+                    </Routes>
+                </div>
+            );
         }
     }
 }
 
 function App() {
-  return (
+    return (
         <BrowserRouter>
             <Root/>
         </BrowserRouter>

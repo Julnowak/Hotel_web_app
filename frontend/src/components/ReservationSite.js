@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Container, Form, Button, Table, Alert } from 'react-bootstrap';
+import RoomReservation from "./RoomReservation";
 
 const ReservationSite = () => {
+
   const [roomStandard, setRoomStandard] = useState('standard');
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
+  const [checkInDate, setCheckInDate] = useState(new Date().toISOString().slice(0, 10));
+  const [checkOutDate, setCheckOutDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 10));
   const [availableRooms, setAvailableRooms] = useState([]);
   const [message, setMessage] = useState('');
+
 
   const roomData = {
     standard: [
@@ -22,7 +25,7 @@ const ReservationSite = () => {
     const endDate = new Date(checkOutDate);
     const today = new Date();
 
-    if (!checkInDate || !checkOutDate || startDate < today || endDate <= startDate) {
+    if (!checkInDate || !checkOutDate || startDate.getDay() < today.getDay() || endDate <= startDate) {
       setMessage('Proszę wprowadzić prawidłowe daty.');
       setAvailableRooms([]);
       return;
@@ -76,24 +79,9 @@ const ReservationSite = () => {
       </Form>
 
       {availableRooms.length > 0 && (
-        <div className="mt-4">
-          <h4>Dostępne pokoje:</h4>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Nazwa</th>
-                <th>Cena (PLN)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {availableRooms.map((room) => (
-                <tr key={room.id}>
-                  <td>{room.name}</td>
-                  <td>{room.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+
+        <div>
+          <RoomReservation/>
         </div>
       )}
     </Container>

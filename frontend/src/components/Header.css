@@ -84,7 +84,7 @@
     display: block;
 }
 
-.container {
+.container_main {
     display: flex; /* Use Flexbox to create a two-column layout */
     justify-content: space-between; /* Space between columns */
     padding: 20px; /* Optional padding */
@@ -116,7 +116,7 @@
 
 .contact-image {
     flex: 1;
-    background: url('https://johndog.pl/wp-content/uploads/2023/05/artykul-john-dog-rasy-kotow-kot-bengalski-803x503px.jpg') center/cover no-repeat;
+    background: url('assets/bear.jpg') center/cover no-repeat;
     min-height: 300px; /* Adjust the height as needed */
 }
 
@@ -172,4 +172,78 @@
 
 .submit-button:hover {
     background-color: #2980b9;
+}
+
+
+.footer-container {
+    background-color: #222;
+    color: #fff;
+    padding: 40px 20px;
+    margin: -20px;
+    text-align: left;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+
+.footer-section h3 {
+    color: #f4a261;
+    margin-bottom: 15px;
+}
+
+.footer-section p,
+.footer-section ul,
+.footer-section a {
+    color: #ddd;
+    font-size: 14px;
+    line-height: 1.6;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #f4a261;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section .social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-section .social-icons a {
+    color: #ddd;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.footer-section .social-icons a:hover {
+    color: #f4a261;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    font-size: 14px;
+    color: #bbb;
 }

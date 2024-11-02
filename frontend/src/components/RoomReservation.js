@@ -15,6 +15,7 @@ const RoomReservation = () => {
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
+    console.log(selectedRoom)
   };
 
   const handleFloorChange = (newFloor) => {
@@ -57,7 +58,7 @@ const RoomReservation = () => {
             <div
               key={room.roomNumber}
               className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
-              onClick={() => handleRoomClick(room)}
+              onClick={(e) => handleRoomClick(room)}
             >
               Room {room.roomNumber}
             </div>
@@ -65,14 +66,14 @@ const RoomReservation = () => {
         </div>
       </div>
 
-      {selectedRoom && (
-        <div className="room-details">
+      {selectedRoom?
+        <div className="room-details" style={{color: "black"}}>
           <h2>Room {selectedRoom.roomNumber} Details</h2>
           <p>Status: {selectedRoom.status}</p>
           <p>Price: ${selectedRoom.price}</p>
           {selectedRoom.guestName && <p>Guest: {selectedRoom.guestName}</p>}
         </div>
-      )}
+      : ""}
     </div>
   );
 };

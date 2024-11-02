@@ -14,6 +14,7 @@ class UserRegister(APIView):
 
     def post(self, request):
         validated_data = custom_validation(request.data)
+        print(validated_data)
         serializer = UserRegisterSerializer(data=validated_data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.create(validated_data)
@@ -26,7 +27,7 @@ class UserRegister(APIView):
 
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+    # authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
         data = request.data
