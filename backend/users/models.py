@@ -46,14 +46,26 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Product(models.Model):
-    name = models.CharField(max_length=200)
+class Hotel(models.Model):
+    hotel_id = models.AutoField(primary_key=True)
+    localization = models.CharField(default="Kraków", null=True, blank=True, max_length=200)
+    phone = models.IntegerField(null=True, blank=True)
+    address = models.CharField(null=True, blank=True, max_length=2000)
+
+
+class Room(models.Model):
+    room_id = models.AutoField(primary_key=True)
+    type = models.CharField(default="Standard", max_length=200)
+    room_number = models.IntegerField()
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+
+
+class Reservation(models.Model):
+    reservation_id = models.AutoField(primary_key=True)
     price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
-    image = models.ImageField(null=True)
-    is_bought = models.BooleanField(default=False)
-    likes = models.PositiveIntegerField(default=0)
-    owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, blank=True, null=True)
-    description = models.TextField()
+    status = models.CharField(default="Oczekująca", max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self):
-        return self.name + "_" + str(self.id)
+        return self.reservation_id + "_" + str(self.id)

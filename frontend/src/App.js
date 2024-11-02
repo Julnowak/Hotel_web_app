@@ -15,6 +15,7 @@ import Nav from "react-bootstrap/Nav";
 import CustomerPanel from "./components/CustomerPanel";
 import OwnerPanel from "./components/OwnerPanel";
 import ReservationSite from "./components/ReservationSite";
+import RoomReservation from "./components/RoomResservation";
 
 
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -242,6 +243,7 @@ function Root() {
                             <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                             <Route path='/owner/panel/' element={<OwnerPanel/>}/>
                             <Route path='/reservation/' element={<ReservationSite/>}/>
+                            <Route path='/room/' element={<RoomReservation/>}/>
                             {/*<Route path='/products_view' element={<Main/>}/>*/}
                         </Routes>
                     </div>
@@ -386,34 +388,41 @@ function Root() {
                                     </Form>
                                 </div>
                             ) : (
-                                <div className="center" style={{width: 300, margin: '50px auto '}}>
-                                    <h1 style={{textAlign: 'center'}}>Logowanie</h1>
-                                    <Form onSubmit={e => submitLogin({e: e})}>
-                                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                                            <Form.Label>Adres email</Form.Label>
-                                            <Form.Control style={{borderColor: "black"}} type="email"
-                                                          placeholder="Enter email" value={email}
-                                                          onChange={e => setEmail(e.target.value)}/>
-                                        </Form.Group>
-                                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                                            <Form.Label>Hasło</Form.Label>
-                                            <Form.Control style={{borderColor: "black"}} type="password"
-                                                          placeholder="Password" value={password}
-                                                          onChange={e => setPassword(e.target.value)}/>
-                                        </Form.Group>
-
-                                        <div style={(errflag ? {marginBottom: 20, display: "block"} : {
-                                            marginBottom: 20,
-                                            display: "none"
-                                        })}>
-                                            <b style={{color: "red"}}>Wprowadzono błędny email lub hasło. Spróbuj
-                                                ponownie.</b>
-                                        </div>
-                                        <Button variant="dark" type="submit">
-                                            Zaloguj
-                                        </Button>
-                                    </Form>
-                                </div>
+                                <div className="login-background">
+            <div className="login-overlay center">
+                <h1 className="login-title">Logowanie</h1>
+                <Form onSubmit={e => submitLogin({ e: e })}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Adres email</Form.Label>
+                        <Form.Control
+                            type="email"
+                            placeholder="Wpisz email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Hasło</Form.Label>
+                        <Form.Control
+                            type="password"
+                            placeholder="Wpisz hasło"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                    </Form.Group>
+                    {errflag && (
+                        <div style={{ marginBottom: 20 }}>
+                            <b style={{ color: 'red' }}>
+                                Wprowadzono błędny email lub hasło. Spróbuj ponownie.
+                            </b>
+                        </div>
+                    )}
+                    <Button variant="dark" type="submit" className="submit-btn">
+                        Zaloguj
+                    </Button>
+                </Form>
+            </div>
+        </div>
                             )
                         }
                     </div>

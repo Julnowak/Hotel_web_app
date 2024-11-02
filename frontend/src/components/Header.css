@@ -35,3 +35,47 @@
     height: 200px; /* Set a fixed height for all images */
     object-fit: cover; /* Maintain aspect ratio, filling the container */
 }
+
+/* Full-screen background */
+.login-background {
+    background-image: url('https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Centered overlay form */
+.login-overlay {
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow for a floating effect */
+    width: 300px; /* Fixed width for form */
+    text-align: center;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.login-overlay .form-control {
+    border-color: black;
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: black;
+    color: white;
+}
+
+/* Adjust the error message appearance */
+.error-message {
+    color: red;
+    margin-bottom: 20px;
+    display: block;
+}
