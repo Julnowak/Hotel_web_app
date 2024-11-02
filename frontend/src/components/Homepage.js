@@ -1,21 +1,42 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Container, Navbar, Nav, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import './Header.css';
+import logo from './assets/weles_white.png';
+
 
 const Homepage = () => {
     document.body.style.backgroundColor = '#ffffff';
 
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Handle form submission logic (e.g., send data to a server)
+        console.log('Form submitted', { name, email, message });
+    };
     return (
         <Container fluid>
 
         {/* Header Section */}
         <header className="header-cardboard text-center mb-5">
             <div className="overlay">
-                <h1 className="header-title">Witamy w Hotelu</h1>
-                <p className="header-subtitle">Najlepsze miejsce na wypoczynek!</p>
+                <img src={logo} alt="My Icon" />
             </div>
         </header>
+
+
+        <div className="container">
+            <div className="left-column">
+                <h2>Left Column</h2>
+                <p>This is the left side where you can place content.</p>
+            </div>
+            <div className="right-column">
+                <h2>Right Column</h2>
+                <p>This is the right side where you can place content.</p>
+            </div>
+        </div>
 
         {/* About Section */}
         <section id="about" className="mb-5">
@@ -61,32 +82,48 @@ const Homepage = () => {
 
         {/* Contact Section */}
         <section id="contact" className="mb-5">
-          <h2>Kontakt</h2>
-          <Form>
-            <Form.Group controlId="formName">
-              <Form.Label>Imię i Nazwisko</Form.Label>
-              <Form.Control type="text" placeholder="Wpisz swoje imię i nazwisko" required />
-            </Form.Group>
-
-            <Form.Group controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Wpisz swój email" required />
-            </Form.Group>
-
-            <Form.Group controlId="formMessage">
-              <Form.Label>Wiadomość</Form.Label>
-              <Form.Control as="textarea" rows={4} placeholder="Napisz swoją wiadomość" required />
-            </Form.Group>
-
-            <Button variant="primary" type="submit">
-              Wyślij
-            </Button>
-          </Form>
+          <div className="contact-card">
+            <div className="contact-image" />
+            <div className="contact-form-container">
+                <h2>Skontaktuj się z nami</h2>
+                <form onSubmit={handleSubmit} className="contact-form">
+                    <div className="form-group">
+                        <label>Imię:</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Wiadomość:</label>
+                        <textarea
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            required
+                        ></textarea>
+                    </div>
+                    <button type="submit" className="submit-button">
+                        Wyślij
+                    </button>
+                </form>
+            </div>
+        </div>
         </section>
 
         {/* Footer */}
         <footer className="text-center mt-5">
-          <p>&copy; 2024 Hotel. Wszystkie prawa zastrzeżone.</p>
+          <p>&copy; 2024 Weles Hotel. Wszystkie prawa zastrzeżone.</p>
         </footer>
       </Container>
     );

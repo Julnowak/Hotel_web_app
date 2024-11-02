@@ -14,10 +14,31 @@ h1 {
   color: #333;
 }
 
-.rooms-grid {
+.floor-selector {
+  margin-bottom: 20px;
+}
+
+.rooms-floor-layout {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.rooms-section {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+}
+
+.corridor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  background-color: #ccc;
+  font-weight: bold;
+  color: #444;
+  border-radius: 5px;
 }
 
 .room-box {

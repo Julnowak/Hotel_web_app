@@ -1,21 +1,25 @@
 .header-cardboard {
-    background-image: url('https://cdn.pixabay.com/photo/2015/03/30/12/31/trees-698456_1280.jpg'); /* Replace with your background image URL */
+    background-image: url('https://r.profitroom.pl/hotelbaniathermalski/images/202305151416460.PROFITROOM_V1.jpg'); /* Replace with your background image URL */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 300px; /* Adjust height as needed */
+    height: 500px; /* Adjust height as needed */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     padding: 50px;
+    margin: -25px;
+
+
     border: 1px solid #e0e0e0; /* Light border to simulate cardboard edges */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
 }
 
 .overlay {
-    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white overlay for the "cardboard" effect */
+    background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent white overlay for the "cardboard" effect */
     padding: 30px;
+    margin: 30px;
     border-radius: 15px; /* Rounded edges for a softer look */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add some depth to the overlay */
 }
@@ -78,4 +82,94 @@
     color: red;
     margin-bottom: 20px;
     display: block;
+}
+
+.container {
+    display: flex; /* Use Flexbox to create a two-column layout */
+    justify-content: space-between; /* Space between columns */
+    padding: 20px; /* Optional padding */
+}
+
+.left-column, .right-column {
+    flex: 1; /* Allow both columns to grow */
+    margin: 10px; /* Space between columns */
+    padding: 20px; /* Padding inside the columns */
+    background-color: #f0f0f0; /* Optional background color */
+    border-radius: 5px; /* Optional rounded corners */
+}
+
+.contact-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 1000px;
+    margin: 50px auto;
+}
+
+
+
+
+
+.contact-image {
+    flex: 1;
+    background: url('https://johndog.pl/wp-content/uploads/2023/05/artykul-john-dog-rasy-kotow-kot-bengalski-803x503px.jpg') center/cover no-repeat;
+    min-height: 300px; /* Adjust the height as needed */
+}
+
+.contact-form-container {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-form h2 {
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+.contact-form .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #6c757d;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    font-size: 14px;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #2980b9;
 }

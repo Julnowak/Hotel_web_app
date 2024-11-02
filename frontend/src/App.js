@@ -16,7 +16,9 @@ import CustomerPanel from "./components/CustomerPanel";
 import OwnerPanel from "./components/OwnerPanel";
 import ReservationSite from "./components/ReservationSite";
 import RoomReservation from "./components/RoomResservation";
+import LoadingSpinner from "./components/LoadingSpinner";
 
+import hor_logo from './components/assets/weles_hori_white.png';
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -167,16 +169,6 @@ function Root() {
         });
     }
 
-    function LoadingSpinner() {
-        document.body.style.backgroundColor = "#323232";
-        return <div className="fade-in">
-            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
-                <div className="spinner-border text-primary" style={{width: '5rem', height: '5rem'}} role="status">
-                    <span className="visually-hidden"/>
-                </div>
-            </div>
-        </div>;
-    }
 
     // Użytkownik zalogowany
     document.body.style.backgroundColor = "#ffffff";
@@ -190,7 +182,7 @@ function Root() {
                         <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
                             <Container>
                                 <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    HOME
+                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
                                 </Navbar.Brand>
 
                                 <Navbar.Brand
@@ -263,7 +255,7 @@ function Root() {
                         <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
                             <Container>
                                 <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    HOME
+                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
                                 </Navbar.Brand>
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
@@ -288,7 +280,7 @@ function Root() {
                                                 transition: "background-color 0.3s ease, color 0.3s ease",
                                                 backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
                                                 color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
-                                                marginTop: 10, marginBottom: 10
+                                                marginTop: 10, marginBottom: 10, width:200
                                             }}
                                             onMouseEnter={(e) => {
                                                 e.target.style.backgroundColor = "#ffffff"; // Change background to white
@@ -304,11 +296,13 @@ function Root() {
                                 </Navbar.Collapse>
                             </Container>
                         </Navbar>
+                        <Routes>
+                            <Route path='/' element={<Homepage/>}/>
+                        </Routes>
                     </div>
+
                 )}
-            <Routes>
-                <Route path='/' element={<Homepage/>}/>
-            </Routes>
+
             </div>
         );
         }
@@ -322,7 +316,7 @@ function Root() {
                         <Navbar bg="dark" variant="dark">
                             <Container>
                                 <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    HOME
+                                    <img src={hor_logo} style={{height: 30, margin:10}}/>
                                 </Navbar.Brand>
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
@@ -336,7 +330,7 @@ function Root() {
                                                 transition: "background-color 0.3s ease, color 0.3s ease",
                                                 backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
                                                 color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
-                                                marginTop: 10, marginBottom: 10
+                                                marginTop: 10, marginBottom: 10, width:200
                                             }}
                                             onMouseEnter={(e) => {
                                                 e.target.style.backgroundColor = "#ffffff"; // Change background to white
@@ -357,13 +351,6 @@ function Root() {
                                 <div className="center" style={{width: 300, margin: '50px auto '}}>
                                     <h1 style={{textAlign: 'center'}}>Rejestracja</h1>
                                     <Form onSubmit={e => submitRegistration({e: e})}>
-                                        <Form.Group className="mb-3" controlId="formBasicUsername">
-                                            <Form.Label style={{marginTop: 20}}>Wybierz typ użytkownika:</Form.Label>
-                                            <Form.Check label='Producent' type="radio" name='user_type'
-                                                        onChange={() => setUserType('producent')} defaultChecked/>
-                                            <Form.Check label='Klient' type="radio" name='user_type'
-                                                        onChange={() => setUserType('klient')}/>
-                                        </Form.Group>
                                         <Form.Group className="mb-3" controlId="formBasicEmail">
                                             <Form.Label>Adres email:</Form.Label>
                                             <Form.Control style={{borderColor: "black"}} type="email"

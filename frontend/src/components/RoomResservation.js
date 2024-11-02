@@ -2,35 +2,67 @@ import React, { useState } from 'react';
 import './RoomReservation.css'; // Import pliku CSS zdefiniowanego poniżej
 
 const RoomReservation = () => {
-  // Stan dla wybranego pokoju
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [floor, setFloor] = useState(1);
 
-  // Przykładowe informacje o pokojach
-  const rooms = Array.from({ length: 50 }, (_, index) => ({
-    roomNumber: index + 1,
+  // Generowanie pokoi dla pięter (każde piętro ma 50 pokoi)
+  const roomsPerFloor = Array.from({ length: 50 }, (_, index) => ({
+    roomNumber: index + 1 + (floor - 1) * 50,
     status: index % 3 === 0 ? 'Occupied' : 'Available',
     price: 100 + (index % 5) * 20,
-    guestName: index % 3 === 0 ? `Guest ${index + 1}` : null,
+    guestName: index % 3 === 0 ? `Guest ${index + 1 + (floor - 1) * 50}` : null,
   }));
 
-  // Funkcja do obsługi kliknięcia na pokój
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
+  };
+
+  const handleFloorChange = (newFloor) => {
+    setFloor(newFloor);
+    setSelectedRoom(null); // Resetuj wybrany pokój przy zmianie piętra
   };
 
   return (
     <div className="room-reservation-container">
       <h1>Room Reservation System</h1>
-      <div className="rooms-grid">
-        {rooms.map((room) => (
-          <div
-            key={room.roomNumber}
-            className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
-            onClick={() => handleRoomClick(room)}
-          >
-            Room {room.roomNumber}
-          </div>
-        ))}
+
+      {/* Wybór piętra */}
+      <div className="floor-selector">
+        <label>Select Floor: </label>
+        <select value={floor} onChange={(e) => handleFloorChange(parseInt(e.target.value))}>
+          {[1, 2, 3, 4, 5].map((floorNumber) => (
+            <option key={floorNumber} value={floorNumber}>
+              Floor {floorNumber}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Siatka pokoi z symulacją korytarza */}
+      <div className="rooms-floor-layout">
+        <div className="rooms-section">
+          {roomsPerFloor.slice(0, 25).map((room) => (
+            <div
+              key={room.roomNumber}
+              className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
+              onClick={() => handleRoomClick(room)}
+            >
+              Room {room.roomNumber}
+            </div>
+          ))}
+        </div>
+        <div className="corridor">Corridor</div>
+        <div className="rooms-section">
+          {roomsPerFloor.slice(25, 50).map((room) => (
+            <div
+              key={room.roomNumber}
+              className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
+              onClick={() => handleRoomClick(room)}
+            >
+              Room {room.roomNumber}
+            </div>
+          ))}
+        </div>
       </div>
 
       {selectedRoom && (
