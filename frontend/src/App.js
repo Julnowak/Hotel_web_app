@@ -252,7 +252,7 @@ function Root() {
                     {isLoading ? (
                         <LoadingSpinner/>
                     ) : (
-                        <div>
+                        <React.Fragment>
                             <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
@@ -300,7 +300,7 @@ function Root() {
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                             </Routes>
-                        </div>
+                        </React.Fragment>
 
                     )}
 
@@ -313,7 +313,7 @@ function Root() {
                     {isLoading ? (
                         <LoadingSpinner/>
                     ) : (
-                        <div>
+                        <React.Fragment>
                             <Navbar bg="dark" variant="dark">
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
@@ -459,7 +459,7 @@ function Root() {
                                     </div>
                                 )
                             }
-                        </div>
+                         </React.Fragment>
                     )}
                     <Routes>
                         <Route path='/' element={<Homepage/>}/>
