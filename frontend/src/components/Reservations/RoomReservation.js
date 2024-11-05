@@ -11,8 +11,8 @@ const RoomReservation = ({rooms}) => {
   // Generowanie pokoi dla pięter (każde piętro ma 50 pokoi)
 
   const handleRoomClick = (room) => {
-    setSelectedRoom(room);
-    console.log(room)
+        setSelectedRoom(room);
+        console.log(room)
   };
 
   const handleFloorChange = (newFloor) => {
@@ -59,15 +59,22 @@ const RoomReservation = ({rooms}) => {
           {rooms === null? <div></div>: rooms.map((room:Room) => (
             <div
               key={room.room_id}
-              className={`room-box ${
-              selectedRoom && selectedRoom.room_number === room.room_number
-                ? selectedRoom.status === "Available"
-                  ? 'selected'
-                  : selectedRoom.status === "Unavailable"
-                  ? 'unavailable'
+              className={`
+              ${
+              room? room.status === "Available"
+                  ? 'room-box'
+                  : room.status === "Unavailable"
+                  ? 'room-box-box'
                   : ''
                 : ''
-            }`}
+                }
+                
+                ${
+              selectedRoom && selectedRoom.room_number === room.room_number
+                ? selectedRoom.status === "Available"
+                  ? 'selected': '': ''
+                }`}
+
               onClick={(e) => handleRoomClick(room)}
             >
               Room {room.room_number}
