@@ -73,6 +73,14 @@ class RoomApi(APIView):
     def post(self, request):
         data = request.data
         print(data)
-        r = Room.objects.get(room_id=1)
+        r = Room.objects.all()
+        serializer = RoomSerializer(r, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request):
+        print("fafwaa")
+        print(request.data)
+        r = Room.objects.all()
+        print(r)
         serializer = RoomSerializer(r)
-        return Response({'room': serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)

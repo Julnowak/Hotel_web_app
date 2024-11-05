@@ -108,10 +108,15 @@ function Root() {
 
                 setCurrentUser(true);
                 console.log(user_type)
-                if (response.data.user_type === 'producent') {
+                if (response.data.user_type === 'właściciel') {
                     navigate('/owner/panel/')
                 } else if (response.data.user_type === 'klient') {
                     navigate('/customer/panel/')
+                }else if (response.data.user_type === 'recepcjonista') {
+                    navigate('/receptionist/panel/')
+                }
+                else if (response.data.user_type === 'personel') {
+                    navigate('/personel/panel/')
                 }
 
             } catch (error) {

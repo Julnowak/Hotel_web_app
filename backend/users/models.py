@@ -61,9 +61,11 @@ class Room(models.Model):
     type = models.CharField(default="Standard", max_length=200)
     room_number = models.IntegerField()
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    price = models.FloatField(default=0.00)
+    status = models.CharField(default="Available", max_length=200)
 
     def __str__(self):
-        return "Pokój " + self.type + " " + str(self.room_id) + ", w hotelu " + str(Hotel.hotel_id)
+        return "Pokój " + self.type + " " + str(self.room_id) + ", w hotelu " + str(self.hotel.hotel_id)
 
 
 class Reservation(models.Model):

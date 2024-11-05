@@ -1,28 +1,40 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './RoomReservation.css'; // Import pliku CSS zdefiniowanego poniżej
+import {Room} from "../../interfaces/Room.ts"
 
 
-const RoomReservation = () => {
+const RoomReservation = ({rooms}) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [floor, setFloor] = useState(1);
 
+
   // Generowanie pokoi dla pięter (każde piętro ma 50 pokoi)
-  const roomsPerFloor = Array.from({ length: 50 }, (_, index) => ({
-    roomNumber: index + 1 + (floor - 1) * 50,
-    status: index % 3 === 0 ? 'Occupied' : 'Available',
-    price: 100 + (index % 5) * 20,
-    guestName: index % 3 === 0 ? `Guest ${index + 1 + (floor - 1) * 50}` : null,
-  }));
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
-    console.log(selectedRoom)
+    console.log(room)
   };
 
   const handleFloorChange = (newFloor) => {
     setFloor(newFloor);
     setSelectedRoom(null); // Resetuj wybrany pokój przy zmianie piętra
   };
+
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     // You can await here
+  //     const response = await fetch('http://localhost:8000/api/rooms/', {
+  //       method: 'GET',
+  //       headers: {'Content-Type': 'application/json'},
+  //     });
+  //     const data = await response.json();
+  //     console.log(data);
+  //     console.log()
+  //   }
+  //   fetchData();
+  // }, []); // Or [] if effect doesn't need props or state
+
 
   return (
     <div className="room-reservation-container">
@@ -42,26 +54,23 @@ const RoomReservation = () => {
 
       {/* Siatka pokoi z symulacją korytarza */}
       <div className="rooms-floor-layout">
-        <div className="rooms-section">
-          {roomsPerFloor.slice(0, 25).map((room) => (
-            <div
-              key={room.roomNumber}
-              className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
-              onClick={() => handleRoomClick(room)}
-            >
-              Room {room.roomNumber}
-            </div>
-          ))}
-        </div>
         <div className="corridor">Corridor</div>
         <div className="rooms-section">
-          {roomsPerFloor.slice(25, 50).map((room) => (
+          {rooms === null? <div></div>: rooms.map((room:Room) => (
             <div
-              key={room.roomNumber}
-              className={`room-box ${selectedRoom && selectedRoom.roomNumber === room.roomNumber ? 'selected' : ''}`}
+              key={room.room_id}
+              className={`room-box ${
+              selectedRoom && selectedRoom.room_number === room.room_number
+                ? selectedRoom.status === "Available"
+                  ? 'selected'
+                  : selectedRoom.status === "Unavailable"
+                  ? 'unavailable'
+                  : ''
+                : ''
+            }`}
               onClick={(e) => handleRoomClick(room)}
             >
-              Room {room.roomNumber}
+              Room {room.room_number}
             </div>
           ))}
         </div>
@@ -69,10 +78,11 @@ const RoomReservation = () => {
 
       {selectedRoom?
         <div className="room-details" style={{color: "black"}}>
-          <h2>Room {selectedRoom.roomNumber} Details</h2>
+          <h2>Room {selectedRoom.room_number} Details</h2>
           <p>Status: {selectedRoom.status}</p>
+          <p>Type: {selectedRoom.type}</p>
           <p>Price: ${selectedRoom.price}</p>
-          {selectedRoom.guestName && <p>Guest: {selectedRoom.guestName}</p>}
+            {selectedRoom.status === "Available"? <button>Zarezerwuj</button>: null}
         </div>
       : ""}
     </div>
