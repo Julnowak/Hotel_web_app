@@ -74,9 +74,8 @@ function Root() {
         }
     }
 
-    function submitRegistration(e: any) {
+    async function submitRegistration({e}: { e: any }) {
         e.preventDefault();
-        console.log("dddddd")
         client.post(
             "http://127.0.0.1:8000/api/register/",
             {
@@ -110,7 +109,7 @@ function Root() {
                 if (response.data.user_type === 'producent') {
                     navigate('/owner/panel/')
                 } else if (response.data.user_type === 'klient') {
-                    navigate('/client/panel/')
+                    navigate('/customer/panel/')
                 }
 
             } catch (error) {

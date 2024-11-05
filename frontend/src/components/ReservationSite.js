@@ -1,6 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import { Container, Form, Button, Table, Alert } from 'react-bootstrap';
 import RoomReservation from "./RoomReservation";
+import axios from "axios";
+
+interface Room {
+  room_id: number,
+  type: string,
+  room_number: number;
+  hotel: any;
+}
+
+
+const client = axios.create({
+  baseURL: 'http://127.0.0.1:8000',
+  withCredentials: true, // Include cookies with requests
+});
 
 const ReservationSite = () => {
 
@@ -9,6 +23,54 @@ const ReservationSite = () => {
   const [checkOutDate, setCheckOutDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 10));
   const [availableRooms, setAvailableRooms] = useState([]);
   const [message, setMessage] = useState('');
+  const [rooms, setRooms] = useState(null);
+
+
+  // useEffect(() => {
+  //       const timer = setTimeout(() => {
+  //       }, 500);
+  //       const response = await client.po("http://127.0.0.1:8000/api/rooms/")
+  //           .then(function () {
+  //               setRooms()
+  //           })
+  //           .catch(function () {
+  //               setCurrentUser(false);
+  //           });
+  //
+  //       return () => clearTimeout(timer);
+  //       }, []);
+
+
+
+async function submitForm({e}: { e: any }) {
+  e.preventDefault();
+
+  try {
+    // Ensure roomStandard has a valid value
+    if (!roomStandard) {
+      console.error('Room type is not defined');
+      return;
+    }
+
+    const response = await client.post(
+      '/api/rooms/', // Ensure this is the correct API path
+      {
+        room_type: roomStandard, // Payload
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Response:', response.data); // Log the response data
+  } catch (error) {
+    console.error('Failed to submit:', error); // Log detailed error
+  }
+}
+
+
 
 
   const roomData = {
@@ -45,7 +107,7 @@ const ReservationSite = () => {
     <Container>
       <h2>Rezerwacja Pokoju</h2>
       {message && <Alert variant="danger">{message}</Alert>}
-      <Form>
+      <Form onSubmit={e => submitForm({e: e})}>
         <Form.Group controlId="roomStandard">
           <Form.Label>Wybierz standard pokoju</Form.Label>
           <Form.Control as="select" value={roomStandard} onChange={handleRoomStandardChange}>
@@ -73,7 +135,7 @@ const ReservationSite = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" onClick={checkAvailability}>
+        <Button variant="primary" onClick={checkAvailability} type={"submit"}>
           Sprawdź dostępność
         </Button>
       </Form>

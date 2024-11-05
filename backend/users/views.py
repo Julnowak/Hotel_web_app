@@ -14,7 +14,6 @@ class UserRegister(APIView):
 
     def post(self, request):
         validated_data = custom_validation(request.data)
-        print(validated_data)
         serializer = UserRegisterSerializer(data=validated_data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.create(validated_data)
@@ -45,7 +44,6 @@ class UserLogin(APIView):
                 'user_type': user.user_type,
             }
 
-            # publish('user_logged_in', d)
             return Response(user_data, status=status.HTTP_200_OK)
 
 
@@ -64,5 +62,16 @@ class UserView(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
+
+class RoomApi(APIView):
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        data = request.data
+        print(data)
         serializer = UserSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
