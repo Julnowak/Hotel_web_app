@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
 
-import Homepage from "./components/Homepage";
+import Homepage from "./components/Homepage/Homepage";
 import axios from 'axios'
 import {useState, useEffect} from 'react'
 import "./Scrollbar.css"
@@ -11,15 +11,17 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Nav from "react-bootstrap/Nav";
-import CustomerPanel from "./components/CustomerPanel";
-import OwnerPanel from "./components/OwnerPanel";
-import ReservationSite from "./components/ReservationSite";
-import LoadingSpinner from "./components/LoadingSpinner";
+import CustomerPanel from "./components/CustomerPanel/CustomerPanel";
+import OwnerPanel from "./components/OwnerPanel/OwnerPanel";
+import ReservationSite from "./components/Reservations/ReservationSite";
+import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 
-import hor_logo from './components/assets/weles_hori_white.png';
-import  "./components/LoginForm.css";
-import "./components/RegistrationForm.css";
+import hor_logo from './assets/weles_hori_white.png';
+import  "./components/Registration_Login/LoginForm.css";
+import "./components/Registration_Login/RegistrationForm.css";
 
+
+// AXIOS CONNECTION FOR LOGIN //
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.withCredentials = true;
@@ -27,7 +29,7 @@ axios.defaults.withCredentials = true;
 const client = axios.create({
     baseURL: "http://localhost:3000"
 })
-
+// AXIOS CONNECTION FOR LOGIN //
 
 function Root() {
 

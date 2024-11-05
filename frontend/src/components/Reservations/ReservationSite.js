@@ -11,6 +11,10 @@ interface Room {
 }
 
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.withCredentials = true;
+
 const client = axios.create({
   baseURL: 'http://127.0.0.1:8000',
   withCredentials: true, // Include cookies with requests
@@ -44,30 +48,49 @@ const ReservationSite = () => {
 
 async function submitForm({e}: { e: any }) {
   e.preventDefault();
-
   try {
-    // Ensure roomStandard has a valid value
-    if (!roomStandard) {
-      console.error('Room type is not defined');
-      return;
-    }
+                    const response = await fetch('http://localhost:8000/api/rooms/', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ roomStandard }),
+                    });
+                    const data = await response.json();
+                    console.log(data);
 
-    const response = await client.post(
-      '/api/rooms/', // Ensure this is the correct API path
-      {
-        room_type: roomStandard, // Payload
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
 
-    console.log('Response:', response.data); // Log the response data
-  } catch (error) {
-    console.error('Failed to submit:', error); // Log detailed error
-  }
+                } catch (error) {
+                    console.log('Error fetching likes:', error);
+                }
+  // try {
+  //   // Ensure roomStandard has a valid value
+  //   if (!roomStandard) {
+  //     console.error('Room type is not defined');
+  //     return;
+  //   }
+  //
+  //   const response = await client.post(
+  //     '/api/rooms/', // Ensure this is the correct API path
+  //     {
+  //       room_type: roomStandard, // Payload
+  //     },
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     }
+  //   ).then(
+  //       response => {
+  //       if (response.status === 200) {
+  //         console.log("dadadad")
+  //       }
+  //       return response;
+  //     }
+  //   );
+  //
+  //   console.log('Response:', response.data); // Log the response data
+  // } catch (error) {
+  //   console.error('Failed to submit:', error); // Log detailed error
+  // }
 }
 
 

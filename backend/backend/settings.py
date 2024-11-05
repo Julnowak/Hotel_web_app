@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'users',
-    'main_app'
+    'main_app',
+
 ]
 
 AUTH_USER_MODEL = 'users.AppUser'
@@ -147,15 +148,8 @@ ASGI_APPLICATION = "users_service.asgi.application"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-]
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Your React frontend URL
+CORS_ORIGIN_WHITELIST = [
+'http://localhost:3000',
+'http://127.0.0.1:3000'
 ]

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Container, Navbar, Nav, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import './Header.css';
-import logo from './assets/weles_white.png';
+import logo from '../../assets/weles_white.png';
 
 
 const Homepage = () => {

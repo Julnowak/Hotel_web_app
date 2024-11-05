@@ -105,13 +105,9 @@
     margin: 50px auto;
 }
 
-
-
-
-
 .contact-image {
     flex: 1;
-    background: url('assets/bear.jpg') center/cover no-repeat;
+    background: url('../../assets/bear.jpg') center/cover no-repeat;
     min-height: 300px; /* Adjust the height as needed */
 }
 

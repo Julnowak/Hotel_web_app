@@ -52,12 +52,18 @@ class Hotel(models.Model):
     phone = models.IntegerField(null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=2000)
 
+    def __str__(self):
+        return "Hotel Weles " + self.localization + " "+ str(self.hotel_id)
+
 
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     type = models.CharField(default="Standard", max_length=200)
     room_number = models.IntegerField()
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Pokój " + self.type + " " + str(self.room_id) + ", w hotelu " + str(Hotel.hotel_id)
 
 
 class Reservation(models.Model):
@@ -68,4 +74,4 @@ class Reservation(models.Model):
     end_date = models.DateField()
 
     def __str__(self):
-        return self.reservation_id + "_" + str(self.id)
+        return "Rezerwacja" + self.reservation_id + " " + str(self.id)

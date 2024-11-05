@@ -4,8 +4,8 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer
-from .models import AppUser
+from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer
+from .models import AppUser, Room
 from .vaildations import validate_email, validate_password, custom_validation
 
 
@@ -67,11 +67,12 @@ class UserView(APIView):
 
 
 class RoomApi(APIView):
-    # permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
 
     def post(self, request):
         data = request.data
         print(data)
-        serializer = UserSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        r = Room.objects.get(room_id=1)
+        serializer = RoomSerializer(r)
+        return Response({'room': serializer.data}, status=status.HTTP_200_OK)
