@@ -7,5 +7,7 @@ urlpatterns = [
     path('logout/', views.UserLogout.as_view(), name='logout'),
     path('user/', views.UserView.as_view(), name='user'),
     path('rooms/', views.RoomApi.as_view(), name='rooms'),
-    path('room/<int:pk>/', views.RoomApi.as_view(), name='room_view'),
+    path('hotels/', views.HotelApi.as_view(), name='hotels'),
+    path('floors/<int:hotel_id>', views.FloorApi.as_view(), name='floors'),
+    path('newReservation/<int:pk>/', views.NewReservationApi.as_view(), name='new_reservation'),
 ]

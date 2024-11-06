@@ -1,0 +1,114 @@
+/* Container for the profile page */
+.user-profile {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f9;
+}
+
+/* Background half side */
+.profile-background {
+    background-color: #007bff;
+    flex: 1;
+    position: relative;
+    padding: 30px;
+    color: white;
+}
+
+/* Profile content container */
+.profile-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+
+}
+
+/* Profile picture section */
+.profile-picture-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+/* Edit profile picture overlay */
+.edit-picture-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    border-radius: 50%;
+    transition: opacity 0.3s ease;
+}
+
+.profile-picture-container:hover .edit-picture-overlay {
+    opacity: 1;
+}
+
+.edit-picture-btn {
+    background-color: #fff;
+    color: #007bff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Profile username */
+.username {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* Buttons (Edit and Delete) */
+.profile-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.edit-btn, .delete-btn {
+    background-color: #fff;
+    color: #007bff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Profile stats section */
+.profile-stats {
+    margin-top: 30px;
+    font-size: 16px;
+    color: #000;
+}
+
+.profile-stats p {
+    margin: 8px 0;
+}
+
+.profile-stats strong {
+    color: black;
+}

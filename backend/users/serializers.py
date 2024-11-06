@@ -4,7 +4,7 @@ from rest_framework import serializers
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, get_user_model
 
-from users.models import Hotel, Reservation, Room
+from users.models import Hotel, Reservation, Room, Floor
 
 UserModel = get_user_model()
 
@@ -56,4 +56,10 @@ class HotelSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
+        fields = '__all__'
+
+
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Floor
         fields = '__all__'

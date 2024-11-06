@@ -17,8 +17,11 @@ import ReservationSite from "./components/Reservations/ReservationSite";
 import LoadingSpinner from "./components/LoadingSpinner/LoadingSpinner";
 
 import hor_logo from './assets/weles_hori_white.png';
-import  "./components/Registration_Login/LoginForm.css";
+import "./components/Registration_Login/LoginForm.css";
 import "./components/Registration_Login/RegistrationForm.css";
+import ReservationDetails from "./components/ReservationDetails/ReservationDetails";
+import UserProfile from "./components/UserProfile/UserProfile";
+import ReservationManagement from "./components/ReservationManagement/ReservationManagement";
 
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -29,6 +32,7 @@ axios.defaults.withCredentials = true;
 const client = axios.create({
     baseURL: "http://localhost:3000"
 })
+
 // AXIOS CONNECTION FOR LOGIN //
 
 function Root() {
@@ -112,10 +116,9 @@ function Root() {
                     navigate('/owner/panel/')
                 } else if (response.data.user_type === 'klient') {
                     navigate('/customer/panel/')
-                }else if (response.data.user_type === 'recepcjonista') {
+                } else if (response.data.user_type === 'recepcjonista') {
                     navigate('/receptionist/panel/')
-                }
-                else if (response.data.user_type === 'personel') {
+                } else if (response.data.user_type === 'personel') {
                     navigate('/personel/panel/')
                 }
 
@@ -152,7 +155,7 @@ function Root() {
 
             setCurrentUser(true);
             console.log(response.data.user_type)
-            if (response.data.user_type === 'producent') {
+            if (response.data.user_type === 'właściciel') {
                 navigate('/owner/panel')
             } else if (response.data.user_type === 'klient') {
                 navigate('/customer/panel')
@@ -188,54 +191,74 @@ function Root() {
                 ) : (
                     <div className="fade-in">
                         <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
-                            <Container>
-                                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                    <img src={hor_logo} style={{height: 30, margin: 10}} alt=""/>
-                                </Navbar.Brand>
+            <Container>
+                {/* Logo */}
+                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                    <img src={hor_logo} style={{height: 30, margin: 10}} alt="Logo"/>
+                </Navbar.Brand>
 
-                                <Navbar.Brand
-                                    href={'klient' === user_type ? "http://127.0.0.1:3000/customer/panel/" : "http://127.0.0.1:3000/owner/panel/"}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-                                         className="bi bi-person"
-                                         viewBox="0 0 16 16">
-                                        <path
-                                            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                                    </svg>
-                                </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                                    <Nav className="me-auto">
-                                        <Nav.Link href="/reservation" className="mx-2 text-uppercase fw-light">
-                                            Rezerwuj
-                                        </Nav.Link>
-                                    </Nav>
-                                    <Navbar.Text>
-                                        <form onSubmit={e => submitLogout({e: e})}>
-                                            <Button
-                                                id="form_btn"
-                                                type="submit"
-                                                variant="outline-light"
-                                                onClick={handleClick}
-                                                className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
-                                                style={{
-                                                    transition: "background-color 0.3s ease, color 0.3s ease",
-                                                    marginTop: 10, marginBottom: 10
-                                                }}
-                                                onMouseEnter={(e) => {
-                                                    e.target.style.backgroundColor = "#ffffff"; // Change background to white
-                                                    e.target.style.color = "#000000"; // Change text color to black on hover
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    e.target.style.backgroundColor = "transparent"; // Revert background to transparent
-                                                    e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                                }}>
-                                                Wyloguj się
-                                            </Button>
-                                        </form>
-                                    </Navbar.Text>
-                                </Navbar.Collapse>
-                            </Container>
-                        </Navbar>
+                {/* Navbar Toggle */}
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+
+                    {/* Navbar Links */}
+                    <Nav className="me-auto">
+                        {user_type === "klient"?
+                        <Nav.Link href="http://127.0.0.1:3000/customer/panel/" className="mx-2 text-uppercase fw-light">
+                            Panel
+                        </Nav.Link>
+                        :
+                        <Nav.Link href="http://127.0.0.1:3000/owner/panel/" className="mx-2 text-uppercase fw-light">
+                            Panel
+                        </Nav.Link>}
+
+                        {user_type === "klient"?
+                        <Nav.Link href="http://127.0.0.1:3000/reservation/" className="mx-2 text-uppercase fw-light">
+                            Rezerwuj
+                        </Nav.Link>
+                        : null}
+
+
+                        {/* Profile Link with Circular Image */}
+                        <Nav.Link href="http://127.0.0.1:3000/profile/" className="mx-2 text-uppercase fw-light d-flex align-items-center">
+                            <img
+                                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                alt="Profile"
+                                className="profile-image"
+                                style={{ width: 32, height: 32, borderRadius: '50%', marginRight: 10 }}
+                            />
+                        </Nav.Link>
+                    </Nav>
+
+                    {/* Logout Button */}
+                    <Navbar.Text>
+                        <form onSubmit={e => submitLogout({e: e})}>
+                            <Button
+                                id="form_btn"
+                                type="submit"
+                                variant="outline-light"
+                                onClick={handleClick}
+                                className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
+                                style={{
+                                    transition: "background-color 0.3s ease, color 0.3s ease",
+                                    marginTop: 10, marginBottom: 10
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = "#ffffff"; // Change background to white
+                                    e.target.style.color = "#000000"; // Change text color to black on hover
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = "transparent"; // Revert background to transparent
+                                    e.target.style.color = "#ffffff"; // Revert text color to white on leave
+                                }}
+                            >
+                                Wyloguj się
+                            </Button>
+                        </form>
+                    </Navbar.Text>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
 
 
                         <Routes>
@@ -243,7 +266,9 @@ function Root() {
                             <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                             <Route path='/owner/panel/' element={<OwnerPanel/>}/>
                             <Route path='/reservation/' element={<ReservationSite/>}/>
-                            {/*<Route path='/products_view' element={<Main/>}/>*/}
+                            <Route path='/profile/' element={<UserProfile/>}/>
+                            <Route path='/your_reservation/' element={<ReservationManagement/>}/>
+                            <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                         </Routes>
                     </div>
                 )}
@@ -312,8 +337,7 @@ function Root() {
 
                 </div>
             );
-        }
-        else {
+        } else {
             return (
                 <div>
                     {isLoading ? (
@@ -356,59 +380,60 @@ function Root() {
                             {
                                 registrationToggle ? (
                                     <div className="registration-container">
-            <div className="registration-card">
-                <h2>Rejestracja</h2>
-                <form onSubmit={e => submitRegistration({e: e})} className="registration-form">
-                    <div className="form-group">
-                        <label>Email:</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Login:</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Hasło:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Powtórz Hasło:</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="registration-button">
-                        Zarejestruj się
-                    </button>
-                    <div className="social-registration">
-                        <button className="social-button google">
-                            <i className="fab fa-google"/> Zarejestruj przez Google
-                        </button>
-                        <button className="social-button facebook">
-                            <i className="fab fa-facebook-f"/> Zarejestruj przez Facebook
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                                        <div className="registration-card">
+                                            <h2>Rejestracja</h2>
+                                            <form onSubmit={e => submitRegistration({e: e})}
+                                                  className="registration-form">
+                                                <div className="form-group">
+                                                    <label>Email:</label>
+                                                    <input
+                                                        type="email"
+                                                        value={email}
+                                                        onChange={e => setEmail(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Login:</label>
+                                                    <input
+                                                        type="text"
+                                                        value={username}
+                                                        onChange={e => setUsername(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Hasło:</label>
+                                                    <input
+                                                        type="password"
+                                                        value={password}
+                                                        onChange={e => setPassword(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Powtórz Hasło:</label>
+                                                    <input
+                                                        type="password"
+                                                        value={confirmPassword}
+                                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                                <button type="submit" className="registration-button">
+                                                    Zarejestruj się
+                                                </button>
+                                                <div className="social-registration">
+                                                    <button className="social-button google">
+                                                        <i className="fab fa-google"/> Zarejestruj przez Google
+                                                    </button>
+                                                    <button className="social-button facebook">
+                                                        <i className="fab fa-facebook-f"/> Zarejestruj przez Facebook
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <div className="login-container">
                                         <div className="login-card">
@@ -465,7 +490,7 @@ function Root() {
                                     </div>
                                 )
                             }
-                         </React.Fragment>
+                        </React.Fragment>
                     )}
                     <Routes>
                         <Route path='/' element={<Homepage/>}/>

@@ -4,8 +4,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer
-from .models import AppUser, Room
+from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
+    HotelSerializer, FloorSerializer
+from .models import AppUser, Room, Hotel, Floor
 from .vaildations import validate_email, validate_password, custom_validation
 
 
@@ -73,7 +74,8 @@ class RoomApi(APIView):
     def post(self, request):
         data = request.data
         print(data)
-        r = Room.objects.all()
+        r = Room.objects.filter(type=data['type'], hotel__hotel_id=int(data['hotel_id']), floor__floor_id=1)
+        print(r)
         serializer = RoomSerializer(r, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -83,4 +85,45 @@ class RoomApi(APIView):
         r = Room.objects.all()
         print(r)
         serializer = RoomSerializer(r)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class NewReservationApi(APIView):
+
+    def get(self, request, pk):
+        r = Room.objects.get(room_id=pk)
+        serializer = RoomSerializer(r)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class HotelApi(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        data = request.data
+        r = Room.objects.all()
+        serializer = RoomSerializer(r, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request):
+        h = Hotel.objects.all()
+        print(h)
+        serializer = HotelSerializer(h, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FloorApi(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        data = request.data
+        r = Room.objects.all()
+        serializer = RoomSerializer(r, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request, hotel_id):
+        f = Floor.objects.filter(hotel__hotel_id=hotel_id)
+        serializer = FloorSerializer(f, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
