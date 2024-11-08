@@ -118,3 +118,17 @@
 .social-button:hover {
     opacity: 0.8;
 }
+
+.cancel-button {
+    background-color: #f0f0f0;
+    color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.cancel-button:hover {
+    background-color: #dcdcdc;
+}

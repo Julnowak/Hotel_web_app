@@ -1,66 +1,152 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './UserProfile.css';  // Import the CSS file for styling
+import React, { useState } from 'react';
+import './UserProfile.css';
 
-const UserProfile = ({ userId }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const UserProfile = ({email, username, password}) => {
 
-    useEffect(() => {
 
-        const response =  axios.get("http://127.0.0.1:8000/api/user/")
-            .then(function () {
-                setUser(response);
-                setLoading(false)
-            })
-            .catch(function () {
-                setUser(response);
-            });
+  const [user, setUser] = useState({
+    name: 'Abhishek Bachchan',
+    creditCard: '*******',
+    reservations: 3,
+    rating: 2.1,
+    daysSpent: 20,
+    avatar: 'https://biofeedzoo.pl/data/include/img/news/1685189763.webp' // Placeholder image, replace with user's actual image URL
+  });
 
-    }, []);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableUser, setEditableUser] = useState(user);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
 
-    const handleEditProfile = () => {
-        // Add functionality to edit profile
-        alert('Edit Profile clicked!');
-    };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditableUser({
+      ...editableUser,
+      [name]: value
+    });
+  };
 
-    const handleDeleteProfile = () => {
-        // Add functionality to delete profile
-        alert('Delete Profile clicked!');
-    };
+  const handleSave = () => {
+    setUser(editableUser);
+    setIsEditing(false);
+  };
 
-    return (
-        <div className="user-profile">
-            <div >
-                <div className="profile-content">
-                    <div className="profile-picture-container">
-                        <img
-                            src={user.profile_picture || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
-                            alt={`${user.username}'s profile`}
-                            className="profile-picture"
-                        />
-                        <div className="edit-picture-overlay">
-                            <button className="edit-picture-btn">Edit</button>
-                        </div>
-                    </div>
-                    <h2 className="username">{user.username}</h2>
-                    <div className="profile-actions">
-                        <button onClick={handleEditProfile} className="edit-btn">Edit Profile</button>
-                        <button onClick={handleDeleteProfile} className="delete-btn">Delete Profile</button>
-                    </div>
-                    <div className="profile-stats">
-                        <p><strong>Number of Reservations:</strong> {user.reservations_count}</p>
-                        <p><strong>Average Rating:</strong> {user.avg_rating}</p>
-                        <p><strong>Completed Reservations:</strong> {user.completed_reservations}</p>
-                    </div>
-                </div>
-            </div>
+  const handleCancel = () => {
+    setEditableUser(user);
+    setIsEditing(false);
+  };
+
+  const handleDeleteAccount = () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      // Logic for deleting the account
+      alert("Account deleted!");
+    }
+  };
+
+  const handleEditAvatar = () => {
+    // Logic for editing the avatar (could open a file upload dialog)
+    alert("Edit avatar functionality coming soon!");
+  };
+
+
+    const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUser((prevUser) => ({
+          ...prevUser,
+          avatar: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+  return (
+    <div className="profile-container">
+      <h2>My Profile</h2>
+      <div className="profile-content">
+        <div className="avatar">
+          <img src={user.avatar} alt="User avatar" />
+          <div className="avatar-edit-icon" onClick={() => document.getElementById('fileInput').click()}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                 className="bi bi-pencil-square" viewBox="0 0 16 16">
+              <path
+                  d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+              <path fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+            </svg>
+          </div>
+          <input
+            type="file"
+            id="fileInput"
+            style={{ display: 'none' }}
+            accept="image/*"
+            onChange={handleFileChange}
+          />
         </div>
-    );
+        <div className="profile-info">
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                name="email"
+                value={editableUser.email}
+                onChange={handleInputChange}
+                className="profile-input"
+              />
+              <input
+                type="text"
+                name="name"
+                value={editableUser.name}
+                onChange={handleInputChange}
+                className="profile-input"
+              />
+              <input
+                type="text"
+                name="password"
+                value={editableUser.password}
+                onChange={handleInputChange}
+                className="profile-input"
+              />
+              <input
+                type="text"
+                name="creditCard"
+                value={editableUser.creditCard}
+                onChange={handleInputChange}
+                className="profile-input"
+              />
+              <div className="profile-buttons">
+                <button className="save-btn" onClick={handleSave}>Save</button>
+                <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>Email: {email? email :null}</p>
+              <p>Name: {user.name}</p>
+              <p>Username: {username}</p>
+              <p>Password: {password}</p>
+              <p>Credit Card: {user.creditCard}</p>
+              <div className="profile-buttons">
+                <button className="edit-btn" onClick={handleEditToggle}>Edit</button>
+                <button className="delete-btn" onClick={handleDeleteAccount}>Delete</button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="profile-stats">
+        <p>Number of reservations: {user.reservations}</p>
+        <p>Average rating: {user.rating}</p>
+        <p>Days spent in our hotels: {user.daysSpent}</p>
+      </div>
+    </div>
+  );
 };
 
 export default UserProfile;

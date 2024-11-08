@@ -1,0 +1,49 @@
+.carousel-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  width: 90%;
+
+  margin: auto;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: calc(100% * 3); /* Shows 3 images at a time */
+}
+
+.carousel-photo {
+  width: calc(100% / 3);
+  max-height: 400px;
+  margin: 5px;
+  object-fit: cover;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 10;
+}
+
+.carousel-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-button:first-child {
+  left: 10px;
+}
+
+.carousel-button:last-child {
+  right: 10px;
+}

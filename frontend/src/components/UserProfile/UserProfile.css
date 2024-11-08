@@ -1,114 +1,105 @@
-/* Container for the profile page */
-.user-profile {
-    display: flex;
-    height: 100vh;
-    background-color: #f4f4f9;
+/* Full-width layout and centered content */
+.profile-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: black;
 }
 
-/* Background half side */
-.profile-background {
-    background-color: #007bff;
-    flex: 1;
-    position: relative;
-    padding: 30px;
-    color: white;
-}
-
-/* Profile content container */
 .profile-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    width: 100%;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
 }
 
-/* Profile picture section */
-.profile-picture-container {
-    position: relative;
-    display: inline-block;
+.avatar {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
 }
 
-.profile-picture {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid white;
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
 }
 
-/* Edit profile picture overlay */
-.edit-picture-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    border-radius: 50%;
-    transition: opacity 0.3s ease;
+.avatar:hover img {
+  opacity: 0.5;
 }
 
-.profile-picture-container:hover .edit-picture-overlay {
-    opacity: 1;
+.avatar-edit-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: black;
+  display: none;
 }
 
-.edit-picture-btn {
-    background-color: #fff;
-    color: #007bff;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.avatar:hover .avatar-edit-icon {
+  display: block;
 }
 
-/* Profile username */
-.username {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 20px;
+.profile-info {
+  text-align: left;
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 10px;
+  width: 300px;
 }
 
-/* Buttons (Edit and Delete) */
-.profile-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+.profile-info p, .profile-input {
+  margin: 8px 0;
+  font-size: 16px;
 }
 
-.edit-btn, .delete-btn {
-    background-color: #fff;
-    color: #007bff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.profile-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.edit-btn:hover, .delete-btn:hover {
-    background-color: #0056b3;
-    color: white;
+.profile-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-/* Profile stats section */
+.edit-btn, .delete-btn, .save-btn, .cancel-btn {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-btn, .save-btn {
+  background-color: #5bc0de;
+  color: white;
+}
+
+.delete-btn, .cancel-btn {
+  background-color: #d9534f;
+  color: white;
+}
+
 .profile-stats {
-    margin-top: 30px;
-    font-size: 16px;
-    color: #000;
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+  text-align: left;
 }
 
 .profile-stats p {
-    margin: 8px 0;
-}
-
-.profile-stats strong {
-    color: black;
+  font-size: 14px;
+  color: #666;
 }

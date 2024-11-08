@@ -22,6 +22,10 @@ import "./components/Registration_Login/RegistrationForm.css";
 import ReservationDetails from "./components/ReservationDetails/ReservationDetails";
 import UserProfile from "./components/UserProfile/UserProfile";
 import ReservationManagement from "./components/ReservationManagement/ReservationManagement";
+import LoginForm from "./components/Registration_Login/LoginForm";
+import RegistrationForm from "./components/Registration_Login/RegistrationForm";
+import NavbarComponent from "./components/Navbars/NavbarComponent";
+import Footer from "./components/Footer/Footer";
 
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -44,7 +48,7 @@ function Root() {
     const [password, setPassword] = useState('');
     const [errflag, setErrflag] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [user_type] = useState(localStorage.getItem('user_type'));
+    const [user_type,setUserType] = useState("klient");
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
@@ -111,6 +115,7 @@ function Root() {
                 localStorage.setItem('user_id', user_id);
 
                 setCurrentUser(true);
+                setUserType(ut);
                 console.log(user_type)
                 if (response.data.user_type === 'właściciel') {
                     navigate('/owner/panel/')
@@ -154,6 +159,7 @@ function Root() {
             localStorage.setItem('user_id', user_id);
 
             setCurrentUser(true);
+            setUserType(ut);
             console.log(response.data.user_type)
             if (response.data.user_type === 'właściciel') {
                 navigate('/owner/panel')
@@ -190,75 +196,7 @@ function Root() {
                     <LoadingSpinner/>
                 ) : (
                     <div className="fade-in">
-                        <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
-            <Container>
-                {/* Logo */}
-                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                    <img src={hor_logo} style={{height: 30, margin: 10}} alt="Logo"/>
-                </Navbar.Brand>
-
-                {/* Navbar Toggle */}
-                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-
-                    {/* Navbar Links */}
-                    <Nav className="me-auto">
-                        {user_type === "klient"?
-                        <Nav.Link href="http://127.0.0.1:3000/customer/panel/" className="mx-2 text-uppercase fw-light">
-                            Panel
-                        </Nav.Link>
-                        :
-                        <Nav.Link href="http://127.0.0.1:3000/owner/panel/" className="mx-2 text-uppercase fw-light">
-                            Panel
-                        </Nav.Link>}
-
-                        {user_type === "klient"?
-                        <Nav.Link href="http://127.0.0.1:3000/reservation/" className="mx-2 text-uppercase fw-light">
-                            Rezerwuj
-                        </Nav.Link>
-                        : null}
-
-
-                        {/* Profile Link with Circular Image */}
-                        <Nav.Link href="http://127.0.0.1:3000/profile/" className="mx-2 text-uppercase fw-light d-flex align-items-center">
-                            <img
-                                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                                alt="Profile"
-                                className="profile-image"
-                                style={{ width: 32, height: 32, borderRadius: '50%', marginRight: 10 }}
-                            />
-                        </Nav.Link>
-                    </Nav>
-
-                    {/* Logout Button */}
-                    <Navbar.Text>
-                        <form onSubmit={e => submitLogout({e: e})}>
-                            <Button
-                                id="form_btn"
-                                type="submit"
-                                variant="outline-light"
-                                onClick={handleClick}
-                                className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
-                                style={{
-                                    transition: "background-color 0.3s ease, color 0.3s ease",
-                                    marginTop: 10, marginBottom: 10
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.target.style.backgroundColor = "#ffffff"; // Change background to white
-                                    e.target.style.color = "#000000"; // Change text color to black on hover
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.backgroundColor = "transparent"; // Revert background to transparent
-                                    e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                }}
-                            >
-                                Wyloguj się
-                            </Button>
-                        </form>
-                    </Navbar.Text>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+                        <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
 
 
                         <Routes>
@@ -266,10 +204,12 @@ function Root() {
                             <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                             <Route path='/owner/panel/' element={<OwnerPanel/>}/>
                             <Route path='/reservation/' element={<ReservationSite/>}/>
-                            <Route path='/profile/' element={<UserProfile/>}/>
+                            <Route path='/profile/' element={<UserProfile email={email} username={username} password={password}/>}/>
+                            <Route path='/gallery/' element={<UserProfile/>}/>
                             <Route path='/your_reservation/' element={<ReservationManagement/>}/>
                             <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                         </Routes>
+                        <Footer/>
                     </div>
                 )}
 
@@ -334,7 +274,7 @@ function Root() {
                         </React.Fragment>
 
                     )}
-
+                    <Footer/>
                 </div>
             );
         } else {
@@ -379,115 +319,15 @@ function Root() {
                             </Navbar>
                             {
                                 registrationToggle ? (
-                                    <div className="registration-container">
-                                        <div className="registration-card">
-                                            <h2>Rejestracja</h2>
-                                            <form onSubmit={e => submitRegistration({e: e})}
-                                                  className="registration-form">
-                                                <div className="form-group">
-                                                    <label>Email:</label>
-                                                    <input
-                                                        type="email"
-                                                        value={email}
-                                                        onChange={e => setEmail(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Login:</label>
-                                                    <input
-                                                        type="text"
-                                                        value={username}
-                                                        onChange={e => setUsername(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Hasło:</label>
-                                                    <input
-                                                        type="password"
-                                                        value={password}
-                                                        onChange={e => setPassword(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Powtórz Hasło:</label>
-                                                    <input
-                                                        type="password"
-                                                        value={confirmPassword}
-                                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <button type="submit" className="registration-button">
-                                                    Zarejestruj się
-                                                </button>
-                                                <div className="social-registration">
-                                                    <button className="social-button google">
-                                                        <i className="fab fa-google"/> Zarejestruj przez Google
-                                                    </button>
-                                                    <button className="social-button facebook">
-                                                        <i className="fab fa-facebook-f"/> Zarejestruj przez Facebook
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+                                    <RegistrationForm email={email} setEmail={setEmail} username={username}
+                                                      setUsername={setUsername} password={password}
+                                                      setPassword={setPassword}
+                                                      confirmPassword={confirmPassword}
+                                                      setConfirmPassword={setConfirmPassword}
+                                                      submitRegistration={submitRegistration}/>
                                 ) : (
-                                    <div className="login-container">
-                                        <div className="login-card">
-                                            <h2>Logowanie</h2>
-                                            <form onSubmit={e => submitLogin({e: e})} className="login-form">
-                                                <div className="form-group">
-                                                    <label>Email:</label>
-                                                    <input
-                                                        type="email"
-                                                        placeholder="Wpisz email"
-                                                        value={email}
-                                                        onChange={e => setEmail(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Hasło:</label>
-                                                    <input
-                                                        type="password"
-                                                        placeholder="Wpisz hasło"
-                                                        value={password}
-                                                        onChange={e => setPassword(e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div className="options">
-                                                    <label>
-                                                        <input type="checkbox"/>
-                                                        Zapamiętaj mnie
-                                                    </label>
-                                                    <a href="#forgot-password" className="forgot-password-link">Nie
-                                                        pamiętam hasła</a>
-                                                </div>
-                                                <button type="submit" className="login-button">
-                                                    Zaloguj się
-                                                </button>
-                                                <div className="social-login">
-                                                    <button className="social-button google">
-                                                        <i className="fab fa-google"/> Zaloguj przez Google
-                                                    </button>
-                                                    <button className="social-button facebook">
-                                                        <i className="fab fa-facebook-f"/> Zaloguj przez Facebook
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        {errflag && (
-                                            <div style={{marginBottom: 20}}>
-                                                <b style={{color: 'red'}}>
-                                                    Wprowadzono błędny email lub hasło. Spróbuj ponownie.
-                                                </b>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <LoginForm email={email} setEmail={setEmail} password={password}
+                                               setPassword={setPassword} submitLogin={submitLogin} errflag={errflag}/>
                                 )
                             }
                         </React.Fragment>
@@ -495,9 +335,11 @@ function Root() {
                     <Routes>
                         <Route path='/' element={<Homepage/>}/>
                     </Routes>
+                    <Footer/>
                 </div>
             );
         }
+
     }
 }
 
