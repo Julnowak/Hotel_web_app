@@ -1,0 +1,21 @@
+.receptionist-panel {
+  padding: 20px;
+  color: #1c1c1c;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+.reservation-card, .room-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+select {
+  margin-top: 5px;
+  padding: 5px;
+  font-size: 16px;
+}

@@ -1,0 +1,43 @@
+.hotel-page {
+  padding: 20px;
+  text-align: center;
+  color: #1c1c1c;
+}
+
+.hotel-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.reserve-button, .gallery-button {
+  padding: 10px 20px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.reserve-button:hover, .gallery-button:hover {
+  background-color: #0056b3;
+}
+
+.reviews {
+  margin-top: 20px;
+  text-align: left;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}

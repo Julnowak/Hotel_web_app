@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+.full-height-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Container takes at least full viewport height */
+}
+
+.content {
+  flex: 1; /* This allows the content to grow and take available space */
+  padding: 20px; /* Optional: for some spacing */
+}
+
+footer {
+  flex-shrink: 0; /* Footer stays at the bottom */
+}

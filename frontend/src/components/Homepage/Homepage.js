@@ -119,7 +119,7 @@ const Homepage = () => {
                             </Card>
                         </Col>
                         <div style={{color: "black", textAlign: "right", paddingRight: 20}}>
-                            <a href={"/gallery"}>
+                            <a href={"/hotels"}>
                                 Zobacz więcej...
                             </a>
 
@@ -130,6 +130,12 @@ const Homepage = () => {
                 <section id="gallery" className="mb-5">
                     <h2>Galeria</h2>
                     <PhotoCarousel photos={photos}/>
+                    <div style={{color: "black", textAlign: "right", paddingRight: 20}}>
+                        <a href={"/gallery"} >
+                            Zobacz więcej...
+                        </a>
+                    </div>
+
                 </section>
 
                 {/* Contact Section */}

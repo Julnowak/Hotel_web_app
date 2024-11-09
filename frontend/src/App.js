@@ -26,6 +26,10 @@ import LoginForm from "./components/Registration_Login/LoginForm";
 import RegistrationForm from "./components/Registration_Login/RegistrationForm";
 import NavbarComponent from "./components/Navbars/NavbarComponent";
 import Footer from "./components/Footer/Footer";
+import Hotels from "./components/Hotels/Hotels";
+import HotelPage from "./components/HotelPage/HotelPage";
+import GalleryPage from "./components/GalleryPage/GalleryPage";
+import ReceptionistPanel from "./components/ReceptionistPanel/ReceptionistPanel";
 
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -195,20 +199,26 @@ function Root() {
                 {isLoading ? (
                     <LoadingSpinner/>
                 ) : (
-                    <div className="fade-in">
+                    <div className="fade-in full-height-container">
                         <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
 
+                        <div className="content">
+                            <Routes>
+                                <Route path='/' element={<Homepage/>}/>
+                                <Route path='/hotels/' element={<Hotels/>}/>
+                                <Route path='/hotel/:id' element={<HotelPage/>}/>
+                                <Route path='/customer/panel/' element={<CustomerPanel/>}/>
+                                <Route path='/owner/panel/' element={<OwnerPanel/>}/>
+                                <Route path='/receptionist/panel/' element={<ReceptionistPanel/>}/>
+                                <Route path='/reservation/' element={<ReservationSite/>}/>
+                                <Route path='/profile/' element={<UserProfile email={email} username={username} password={password}/>}/>
+                                <Route path='/gallery/' element={<GalleryPage/>}/>
+                                <Route path='/your_reservation/' element={<ReservationManagement/>}/>
+                                <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
+                            </Routes>
+                        </div>
 
-                        <Routes>
-                            <Route path='/' element={<Homepage/>}/>
-                            <Route path='/customer/panel/' element={<CustomerPanel/>}/>
-                            <Route path='/owner/panel/' element={<OwnerPanel/>}/>
-                            <Route path='/reservation/' element={<ReservationSite/>}/>
-                            <Route path='/profile/' element={<UserProfile email={email} username={username} password={password}/>}/>
-                            <Route path='/gallery/' element={<UserProfile/>}/>
-                            <Route path='/your_reservation/' element={<ReservationManagement/>}/>
-                            <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
-                        </Routes>
+
                         <Footer/>
                     </div>
                 )}
