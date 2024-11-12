@@ -4,4 +4,6 @@ interface Hotel {
     localization: string,
     phone: string,
     address: string;
+    rating: number;
+    description: string;
 }

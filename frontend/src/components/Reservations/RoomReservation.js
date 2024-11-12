@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './RoomReservation.css';
 import {Room} from "../../interfaces/Room.ts"
 import {Floor} from "../../interfaces/Floor.ts"
-
+import RoomRoom from "../Reservations/Room"
 import axios from "axios";
 
 
@@ -42,6 +42,26 @@ const RoomReservation = ({rooms, hotel}) => {
     return (
         <div className="room-reservation-container">
             <h1>Room Reservation System</h1>
+
+            {/*<div*/}
+            {/*  style={{*/}
+            {/*    display: 'grid', // Adjust to flex if needed*/}
+            {/*    gridTemplateColumns: 'repeat(5, 1fr)', // Adjust columns based on room layout*/}
+            {/*    gap: '10px',*/}
+            {/*    maxWidth: '600px', // Limit layout width for better visuals*/}
+            {/*    margin: 'auto',*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  {[...Array(20).keys()].map((i) => (*/}
+
+            {/*    <RoomRoom*/}
+            {/*      key={i + 1}*/}
+            {/*      roomNumber={i + 1}*/}
+            {/*      onClick={handleRoomClick}*/}
+            {/*      isSelected={selectedRoom === i + 1}*/}
+            {/*    />*/}
+            {/*  ))}*/}
+            {/*</div>*/}
 
             {/* Wybór piętra */}
             <div className="floor-selector">

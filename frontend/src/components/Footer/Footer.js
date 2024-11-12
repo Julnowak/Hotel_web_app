@@ -4,7 +4,7 @@ function Footer(props) {
     return (
         <div>
             {/* Footer */}
-            <footer className="footer-container">
+            <footer className="footer-container" style={{marginTop: 50}}>
                 <div className="footer-content">
                     <div className="footer-section about">
                         <h3>O nas</h3>

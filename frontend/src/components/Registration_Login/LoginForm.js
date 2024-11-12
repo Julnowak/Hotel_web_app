@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 const LoginForm = ({email, setEmail, password, setPassword, submitLogin, errflag}) => {
+
+    const [errorMessage, setErrorMessage] = useState('');
+
     return (
         <div className="login-container">
             <div className="login-card">

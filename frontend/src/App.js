@@ -47,9 +47,9 @@ function Root() {
 
     const [currentUser, setCurrentUser] = useState();
     const [registrationToggle, setRegistrationToggle] = useState(false);
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('nan');
+    const [username, setUsername] = useState('nan');
+    const [password, setPassword] = useState('nan');
     const [errflag, setErrflag] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [user_type,setUserType] = useState("klient");
@@ -211,7 +211,7 @@ function Root() {
                                 <Route path='/owner/panel/' element={<OwnerPanel/>}/>
                                 <Route path='/receptionist/panel/' element={<ReceptionistPanel/>}/>
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
-                                <Route path='/profile/' element={<UserProfile email={email} username={username} password={password}/>}/>
+                                <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
                                 <Route path='/your_reservation/' element={<ReservationManagement/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
@@ -227,7 +227,7 @@ function Root() {
             </div>
         );
     } else {
-        if (loc === "/") {
+        if (loc === "/" || loc === "/gallery" || loc === "/hotels") {
             return (
                 <div>
                     {isLoading ? (
@@ -280,6 +280,7 @@ function Root() {
                             </Navbar>
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
+                                <Route path='/gallery/' element={<GalleryPage/>}/>
                             </Routes>
                         </React.Fragment>
 
@@ -344,6 +345,7 @@ function Root() {
                     )}
                     <Routes>
                         <Route path='/' element={<Homepage/>}/>
+                        <Route path='/gallery/' element={<GalleryPage/>}/>
                     </Routes>
                     <Footer/>
                 </div>

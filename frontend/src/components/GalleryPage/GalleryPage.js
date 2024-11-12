@@ -23,7 +23,7 @@ const GalleryPage = () => {
 
   return (
     <div className="gallery-page">
-      <h2>Galeria Hoteli</h2>
+      <h2>Galeria Pokojów</h2>
 
       <div className="filters">
         <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>

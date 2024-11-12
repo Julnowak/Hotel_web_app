@@ -113,6 +113,23 @@ class HotelApi(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class OneHotelApi(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    # def post(self, request):
+    #     data = request.data
+    #     r = Room.objects.all()
+    #     serializer = RoomSerializer(r, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request, hotel_id):
+        h = Hotel.objects.get(hotel_id=hotel_id)
+        print(h)
+        serializer = HotelSerializer(h)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class FloorApi(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()

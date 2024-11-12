@@ -8,6 +8,7 @@ urlpatterns = [
     path('user/', views.UserView.as_view(), name='user'),
     path('rooms/', views.RoomApi.as_view(), name='rooms'),
     path('hotels/', views.HotelApi.as_view(), name='hotels'),
+    path('hotel/<int:hotel_id>/', views.OneHotelApi.as_view(), name='hotel'),
     path('floors/<int:hotel_id>', views.FloorApi.as_view(), name='floors'),
     path('newReservation/<int:pk>/', views.NewReservationApi.as_view(), name='new_reservation'),
 ]

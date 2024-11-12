@@ -34,6 +34,10 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
+    telephone = models.CharField(max_length=12,blank=True, null=True)
+    address = models.CharField(max_length=200,blank=True, null=True)
+    name = models.CharField(max_length=200,blank=True, null=True)
+    surname = models.CharField(max_length=200,blank=True, null=True)
     user_type = models.CharField(max_length=50, default="klient")
     profile_picture = models.ImageField(blank=True, null=True)
     USERNAME_FIELD = 'email'
@@ -51,7 +55,9 @@ class Hotel(models.Model):
     hotel_id = models.AutoField(primary_key=True)
     localization = models.CharField(default="Kraków", null=True, blank=True, max_length=200)
     phone = models.IntegerField(null=True, blank=True)
+    rating = models.DecimalField(default=0.00, decimal_places=2, max_digits=3)
     address = models.CharField(null=True, blank=True, max_length=2000)
+    description = models.TextField(default="Opis nie został jeszcze wprowadzony.")
 
     def __str__(self):
         return "Hotel Weles " + self.localization + " " + str(self.hotel_id)
