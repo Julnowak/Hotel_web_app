@@ -7,7 +7,7 @@ const NavbarComponent = ({ clicked, handleClick, submitLogout }) => {
 
   const [user_type,setUserType] = useState(localStorage.getItem("user_type"));
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
+    <Navbar  variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
       <Container>
         {/* Logo */}
         <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">

@@ -89,7 +89,7 @@
     flex: 1; /* Allow both columns to grow */
     margin: 10px; /* Space between columns */
     padding: 20px; /* Padding inside the columns */
-    background-color: #f0f0f0; /* Optional background color */
+    background-color: #9f5a2c; /* Optional background color */
     border-radius: 5px; /* Optional rounded corners */
 }
 
@@ -242,7 +242,7 @@
 
 
 .about-us {
-  background-color: #f9f9f9;
+  background-color: #1c1c1c;
   padding: 50px 20px;
   text-align: center;
 }
@@ -254,13 +254,13 @@
 
 .about-us-title {
   font-size: 36px;
-  color: #333;
+  color: white;
   margin-bottom: 20px;
 }
 
 .about-us-description {
   font-size: 18px;
-  color: #666;
+  color: white;
   margin-bottom: 30px;
   line-height: 1.6;
 }

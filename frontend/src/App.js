@@ -202,7 +202,7 @@ function Root() {
                     <div className="fade-in full-height-container">
                         <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
 
-                        <div className="content">
+                        <div>
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                                 <Route path='/hotels/' element={<Hotels/>}/>

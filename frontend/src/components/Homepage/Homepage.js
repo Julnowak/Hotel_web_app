@@ -3,13 +3,10 @@ import {Container, Navbar, Nav, Row, Col, Card, Form, Button, Carousel} from 're
 import './Header.css';
 import logo from '../../assets/weles_white.png';
 import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
-import Footer from "../Footer/Footer";
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
-import {Icon} from "leaflet/dist/leaflet-src.esm";
 
 
 const Homepage = () => {
-    document.body.style.backgroundColor = '#ffffff';
+    document.body.style.backgroundColor = '#17120EFF';
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -17,7 +14,6 @@ const Homepage = () => {
     const photos = [];
 
     for (let i = 1; i <= 5; i++) {
-
         photos.push(`images/hotel_rooms_images/room${i}.jpg`);
     }
 
@@ -28,9 +24,8 @@ const Homepage = () => {
     };
     return (
         <React.Fragment>
-
             {/* Header Section */}
-            <header className="header-cardboard text-center mb-5">
+            <header className="header-cardboard text-center">
                 <div className="overlay">
                     <img src={logo} alt="My Icon"/>
                 </div>
@@ -87,7 +82,8 @@ const Homepage = () => {
                             <div className="d-block w-100" style={{position: 'relative'}}>
                                 <img
                                     className="d-block w-100"
-                                    src="https://lh3.googleusercontent.com/DTbCvkAUEJUs4tNNRqW0N6w68ENyw9y6GjCr9dsxRFDU1Gv4SBjpY5dm8WlF8G8Acnt5oj5cZRXWDLriA9IwCbDqoo8bJbNcVI3BdAzH720wxj1sQbuAHtTebTgZMY5GHs-uXDWa"
+                                    src="/images/hotel_loc_images/krakow.jpg"
+                                    height={500}
                                     alt="Pokój 1"
                                 />
                                 <div
@@ -112,8 +108,9 @@ const Homepage = () => {
                             <div className="d-block w-100" style={{position: 'relative'}}>
                                 <img
                                     className="d-block w-100"
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6egZUirq7hHJ_gNZaLG124bxxgu0rirsFVw&s"
+                                    src="/images/hotel_loc_images/warszawa.jpg"
                                     alt="Pokój 2"
+                                    height={500}
                                 />
                                 <div
                                     style={{
@@ -134,29 +131,34 @@ const Homepage = () => {
                         </Carousel.Item>
 
                         <Carousel.Item>
-                            <div className="d-block w-100" style={{position: 'relative'}}>
-                                <img
-                                    className="d-block w-100"
-                                    src="https://lubiepodroze.eu/wp-content/uploads/2019/12/Courtyard-by-Marriott-Warsaw-Airport-Sypialnia-w-apartamencie.jpg"
-                                    alt="Pokój 3"
-                                />
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                        padding: '10px 20px',
-                                        color: 'white',
-                                        borderRadius: '5px',
-                                    }}
-                                >
-                                    <h3>Pokój 3</h3>
-                                    <p>Stylowy pokój dla par.</p>
-                                </div>
-                            </div>
-                        </Carousel.Item>
+    <div className="d-block w-100" style={{ position: 'relative' }}>
+        <img
+            className="d-block w-100"
+            src="images/hotel_loc_images/zakopane.jpg"
+            alt="Pokój 3"
+            height={500}
+        />
+        <div
+            style={{
+                position: 'absolute',
+                bottom: '0',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: '30px 20px',
+                color: 'white',
+                borderRadius: '5px',
+                width: '100%', // Dodatkowe rozciągnięcie kontenera tekstu na całą szerokość obrazu
+                textAlign: 'center', // Wyśrodkowanie tekstu
+                boxSizing: 'border-box', // Uwzględnienie paddingu w szerokości
+            }}
+        >
+            <h3>Hotel Weles Zakopane</h3>
+            <p>Świetny na wspólne zimowe wyjazdy z rodziną i z bliskimi.</p>
+        </div>
+    </div>
+</Carousel.Item>
+
                     </Carousel>
 
                     <div style={{color: 'black', textAlign: 'right', paddingRight: 20}}>
