@@ -32,12 +32,15 @@ function NavbarGuest({
                         {loc === "/" ?
                             <Nav className="me-auto">
                                 <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
-                                    O Nas
+                                    Nasze hotele
                                 </Nav.Link>
                                 <Nav.Link href="#gallery" className="mx-2 text-uppercase fw-light">
                                     Galeria
                                 </Nav.Link>
                                 <Nav.Link href="#contact" className="mx-2 text-uppercase fw-light">
+                                    Rezerwuj
+                                </Nav.Link>
+                                <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
                                     Kontakt
                                 </Nav.Link>
                             </Nav> : null

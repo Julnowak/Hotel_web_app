@@ -88,7 +88,7 @@
 .left-column, .right-column {
     flex: 1; /* Allow both columns to grow */
     margin: 10px; /* Space between columns */
-    padding: 20px; /* Padding inside the columns */
+
     background-color: #9f5a2c; /* Optional background color */
     border-radius: 5px; /* Optional rounded corners */
 }
@@ -170,7 +170,6 @@
     background-color: #222;
     color: #fff;
     padding: 40px 20px;
-    margin: -20px;
     text-align: left;
 }
 
@@ -244,7 +243,7 @@
 .about-us {
   background-color: #1c1c1c;
   padding: 50px 20px;
-  text-align: center;
+
 }
 
 .about-us-container {
@@ -277,4 +276,19 @@
   .about-us-description {
     font-size: 16px;
   }
+}
+
+
+/* Link style for "Zobacz więcej..." */
+#gallery a {
+    color: #9e5a2c; /* Bright orange color */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+#gallery a:hover {
+    color: #9e5a2c; /* Slightly lighter orange on hover */
+    text-shadow: 0px 0px 5px rgb(145, 82, 40); /* Glowing effect */
+    text-decoration: underline; /* Adds underline on hover */
 }

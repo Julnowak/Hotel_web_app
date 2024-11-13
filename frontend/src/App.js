@@ -52,7 +52,7 @@ function Root() {
     const [password, setPassword] = useState('nan');
     const [errflag, setErrflag] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [user_type,setUserType] = useState("klient");
+    const [user_type, setUserType] = useState("klient");
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
@@ -200,9 +200,10 @@ function Root() {
                     <LoadingSpinner/>
                 ) : (
                     <div className="fade-in full-height-container">
-                        <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
 
-                        <div>
+                        <div className="fade-in full-height-container">
+                            <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
+
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                                 <Route path='/hotels/' element={<Hotels/>}/>
@@ -217,8 +218,6 @@ function Root() {
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                             </Routes>
                         </div>
-
-
                         <Footer/>
                     </div>
                 )}
@@ -227,14 +226,14 @@ function Root() {
             </div>
         );
     } else {
-        if (loc === "/" || loc === "/gallery" || loc === "/hotels") {
+        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation") {
             return (
                 <div>
                     {isLoading ? (
                         <LoadingSpinner/>
                     ) : (
-                        <React.Fragment>
-                            <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
+                        <div className="fade-in full-height-container">
+                            <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
                                         <img src={hor_logo} style={{height: 30, margin: 10}}/>
@@ -242,15 +241,17 @@ function Root() {
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                         <Nav className="me-auto">
-                                            <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
-                                                O Nas
-                                            </Nav.Link>
-                                            <Nav.Link href="#gallery" className="mx-2 text-uppercase fw-light">
-                                                Galeria
-                                            </Nav.Link>
-                                            <Nav.Link href="#contact" className="mx-2 text-uppercase fw-light">
-                                                Kontakt
-                                            </Nav.Link>
+                                            <Nav className="me-auto">
+                                                <Nav.Link href="/hotels" className="mx-2 text-uppercase fw-light">
+                                                    Hotele
+                                                </Nav.Link>
+                                                <Nav.Link href="/gallery" className="mx-2 text-uppercase fw-light">
+                                                    Galeria
+                                                </Nav.Link>
+                                                <Nav.Link href="/reservation" className="mx-2 text-uppercase fw-light">
+                                                    Rezerwuj
+                                                </Nav.Link>
+                                            </Nav>
                                         </Nav>
                                         <Navbar.Text>
                                             <Button href="/login"
@@ -281,8 +282,11 @@ function Root() {
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
+                                <Route path='/hotels/' element={<Hotels/>}/>
+                                <Route path='/hotel/:id' element={<HotelPage/>}/>
+                                <Route path='/reservation/' element={<ReservationSite/>}/>
                             </Routes>
-                        </React.Fragment>
+                        </div>
 
                     )}
                     <Footer/>
@@ -294,7 +298,7 @@ function Root() {
                     {isLoading ? (
                         <LoadingSpinner/>
                     ) : (
-                        <React.Fragment>
+                        <div className="fade-in full-height-container">
                             <Navbar bg="dark" variant="dark">
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
@@ -302,6 +306,7 @@ function Root() {
                                     </Navbar.Brand>
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+
                                         <Navbar.Text>
                                             <Button
                                                 id="form_btn"
@@ -341,11 +346,14 @@ function Root() {
                                                setPassword={setPassword} submitLogin={submitLogin} errflag={errflag}/>
                                 )
                             }
-                        </React.Fragment>
+                        </div>
                     )}
                     <Routes>
                         <Route path='/' element={<Homepage/>}/>
                         <Route path='/gallery/' element={<GalleryPage/>}/>
+                        <Route path='/hotels/' element={<Hotels/>}/>
+                        <Route path='/hotel/:id' element={<HotelPage/>}/>
+                        <Route path='/reservation/' element={<ReservationSite/>}/>
                     </Routes>
                     <Footer/>
                 </div>

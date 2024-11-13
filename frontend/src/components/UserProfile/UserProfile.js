@@ -16,15 +16,15 @@ const client = axios.create({
 
 
 const UserProfile = () => {
-    const [email, setEmail] = useState('nan');
-    const [username, setUsername] = useState('nan');
-    const [name, setName] = useState('nan');
-    const [surname, setSurname] = useState('nan');
-    const [image, setImage] = useState('nan');
-    const [lastLogin, setLastLogin] = useState('nan');
-    const [address, setAddress] = useState('nan');
-    const [phone, setPhone] = useState('nan');
-    const [userType, setUserType] = useState('nan');
+    const [email, setEmail] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [name, setName] = useState(null);
+    const [surname, setSurname] = useState(null);
+    const [image, setImage] = useState(null);
+    const [lastLogin, setLastLogin] = useState(null);
+    const [address, setAddress] = useState(null);
+    const [phone, setPhone] = useState(null);
+    const [userType, setUserType] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
@@ -53,7 +53,9 @@ const UserProfile = () => {
                 setUserType(response.data['user'].user_type)
                 setPhone(response.data['user'].telephone)
                 setAddress(response.data['user'].address)
-                setImage(response.data['user'].profile_picture.slice(15))
+                if (response.data['user'].profile_picture){
+                    setImage(response.data['user'].profile_picture.slice(15))
+                }
                 console.log(image)
             })
             .catch(function () {
@@ -113,7 +115,11 @@ const UserProfile = () => {
             <h2>Mój profil</h2>
             <div className="profile-content">
                 <div className="avatar">
-                    <img src={image} alt="User avatar" />
+                    {image?
+                        <img src={image} alt="User avatar" />
+                        :<img src={"https://static.thenounproject.com/png/3918329-200.png"} alt="User avatar" />
+}
+
                     <div className="avatar-edit-icon" onClick={() => document.getElementById('fileInput').click()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                              className="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -177,7 +183,7 @@ const UserProfile = () => {
 
                             <p>Telefon: {phone}</p>
                             <p>Adres: {address}</p>
-                            <p>Ostatnie logowanie: {lastLogin.slice(0,10)}, {lastLogin.slice(11,19)}</p>
+                            <p>Ostatnie logowanie: {lastLogin?.slice(0,10)}, {lastLogin?.slice(11,19)}</p>
 
                             <div className="profile-buttons">
                                 <button className="edit-btn" onClick={handleEditToggle}>Edytuj</button>
@@ -186,15 +192,24 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
+            {userType==="klient"?
             <div className="profile-stats">
                 <p>Number of reservations: {user.reservations}</p>
                 <p>Average rating: {user.rating}</p>
                 <p>Days spent in our hotels: {user.daysSpent}</p>
-            </div>
+            </div>:
+            <div className="profile-stats">
+                <p>Liczba hoteli: {user.reservations}</p>
+                <p>Liczba pokoi: {user.rating}</p>
+                <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
+            </div> }
 
             <div className="profile-buttons">
                 <button className="edit-btn" onClick={handleEditToggle}>Zmień hasło</button>
-                <button className="delete-btn" onClick={handleDeleteAccount}>Usuń konto</button>
+                {userType==="klient"?
+                    <button className="delete-btn" onClick={handleDeleteAccount}>Usuń konto</button>
+                    :null}
+
             </div>
         </div>
     );

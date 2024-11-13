@@ -54,6 +54,8 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 class Hotel(models.Model):
     hotel_id = models.AutoField(primary_key=True)
     localization = models.CharField(default="Kraków", null=True, blank=True, max_length=200)
+    latitude = models.DecimalField(decimal_places=4, null=True, blank=True, max_digits=10)
+    longitude = models.DecimalField(decimal_places=4, null=True, blank=True, max_digits=10)
     phone = models.IntegerField(null=True, blank=True)
     rating = models.DecimalField(default=0.00, decimal_places=2, max_digits=3)
     address = models.CharField(null=True, blank=True, max_length=2000)
