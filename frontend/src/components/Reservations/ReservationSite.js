@@ -53,14 +53,11 @@ const ReservationSite = () => {
                 check_out_date: checkOutDate,
                 hotel_id: hotelId
             });
-
             setRooms(response.data);
             setAvailableRooms(response.data);
-            console.log(response.data)
-            setMessage('Rooms are available for the selected dates!');
+            setMessage('W wybranym terminie są dostępne pokoje!');
         } catch (error) {
-            console.error('Error checking room availability:', error);
-            setMessage('An error occurred while checking room availability.');
+            setMessage('W trakcie pobierania pokoi pojawił się problem!');
         }
     };
 
@@ -134,7 +131,7 @@ const ReservationSite = () => {
             {availableRooms.length > 0 && (
 
                 <div>
-                    <RoomReservation rooms={rooms} hotel={hotel}/>
+                    <RoomReservation rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}/>
                 </div>
             )}
         </Container>

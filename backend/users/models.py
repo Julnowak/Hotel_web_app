@@ -81,6 +81,7 @@ class Room(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     price = models.FloatField(default=0.00)
     status = models.CharField(default="Available", max_length=200)
+    people_capacity = models.IntegerField(default=2)
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -94,8 +95,33 @@ class Reservation(models.Model):
     check_in = models.DateField()
     check_out = models.DateField()
     is_paid = models.BooleanField(default=False)
+    room_floor = models.ForeignKey(Floor, on_delete=models.CASCADE, blank=True, null=True, related_name="room_floor")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE, blank=True, null=True)
+    people_number = models.IntegerField(default=1)
 
     def __str__(self):
         return "Rezerwacja" + self.reservation_id + " " + str(self.id)
+
+
+class Review(models.Model):
+    review_id = models.AutoField(primary_key=True)
+    rating = models.DecimalField(default=0.00, decimal_places=2, max_digits=3)
+    description = models.TextField(default="Opis nie został jeszcze wprowadzony.")
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return "Recenzja " + str(self.review_id)
+
+
+class Payment(models.Model):
+    payment_id = models.AutoField(primary_key=True)
+    payment_creation = models.DateField(auto_now=True)
+    payment_realization = models.DateField(blank=True, null=True)
+    status = models.CharField(default="Nieopłacone", max_length=200)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Transakcja nr " + str(self.payment_id) + ", " + str(self.payment_date)

@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import login, logout
 from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
@@ -5,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
-    HotelSerializer, FloorSerializer
-from .models import AppUser, Room, Hotel, Floor
+    HotelSerializer, FloorSerializer, ReservationSerializer
+from .models import AppUser, Room, Hotel, Floor, Reservation, Payment
 from .vaildations import validate_email, validate_password, custom_validation
 
 
@@ -27,7 +29,7 @@ class UserRegister(APIView):
 
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    # authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
         data = request.data
@@ -66,6 +68,23 @@ class UserView(APIView):
         serializer = UserSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
+    def post(self, request):
+        print("ffffffffwfw")
+        serializer = UserSerializer(request.user)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
 
 class RoomApi(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -89,10 +108,33 @@ class RoomApi(APIView):
 
 
 class NewReservationApi(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
         r = Room.objects.get(room_id=pk)
-        serializer = RoomSerializer(r)
+        check_in = datetime.datetime.strptime(request.GET.get('checkIn'), '%Y-%m-%d').date()
+        check_out = datetime.datetime.strptime(request.GET.get('checkOut'), '%Y-%m-%d').date()
+        return Response({"price": r.price, "check_out": check_out, "check_in":check_in,
+                         "user": request.user.username, "user_name": request.user.name,
+                         "surname": request.user.surname,
+                         "room_floor": r.floor.floor_number,
+                         "room_type": r.type, "people_number": 1}, status=status.HTTP_200_OK)
+
+    def post(self, request, pk):
+        r = Room.objects.get(room_id=pk)
+        print(request.data)
+        check_in = datetime.datetime.strptime(request.data.get('checkIn'), '%Y-%m-%d').date()
+        check_out = datetime.datetime.strptime(request.data.get('checkOut'), '%Y-%m-%d').date()
+        people_number = request.data.get('peopleNumber')
+
+        new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
+                                             user=request.user, room=r, room_floor=r.floor, people_number=people_number,
+                                             )
+
+        new_trans = Payment.objects.create(reservation=new_res)
+        r.status = "Unavailable"
+        serializer = ReservationSerializer(new_res)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -143,4 +185,14 @@ class FloorApi(APIView):
     def get(self, request, hotel_id):
         f = Floor.objects.filter(hotel__hotel_id=hotel_id)
         serializer = FloorSerializer(f, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ReservationsAPI(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request):
+        reservations = Reservation.objects.filter(user=request.user)
+        serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

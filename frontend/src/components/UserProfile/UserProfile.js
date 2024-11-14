@@ -4,12 +4,12 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
 // AXIOS CONNECTION FOR LOGIN //
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 
 const client = axios.create({
-    baseURL: "http://localhost:3000"
+    baseURL: "http://127.0.0.1:3000"
 })
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -53,7 +53,7 @@ const UserProfile = () => {
                 setUserType(response.data['user'].user_type)
                 setPhone(response.data['user'].telephone)
                 setAddress(response.data['user'].address)
-                if (response.data['user'].profile_picture){
+                if (response.data['user'].profile_picture) {
                     setImage(response.data['user'].profile_picture.slice(15))
                 }
                 console.log(image)
@@ -62,7 +62,6 @@ const UserProfile = () => {
                 console.log("error")
             });
     }, [image]);
-
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
@@ -87,12 +86,30 @@ const UserProfile = () => {
     };
 
     const handleDeleteAccount = () => {
-        if (window.confirm("Are you sure you want to delete your account?")) {
-            // Logic for deleting the account
-            alert("Account deleted!");
-        }
-    };
-    
+    if (window.confirm("Are you sure you want to delete your account?")) {
+        client.delete('http://127.0.0.1:8000/api/user/', {
+            headers: {
+                'X-CSRFToken': document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('csrftoken'))
+                    ?.split('=')[1],  // Ensure CSRF token is correctly extracted
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.status === 204) {
+                console.log("User deleted successfully");
+                alert("Account deleted!");
+                localStorage.clear();
+                navigate('/')
+                window.location.reload()
+            } else {
+                console.log("Failed to delete user");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+};
 
 
     const handleFileChange = (event) => {
@@ -115,10 +132,10 @@ const UserProfile = () => {
             <h2>Mój profil</h2>
             <div className="profile-content">
                 <div className="avatar">
-                    {image?
-                        <img src={image} alt="User avatar" />
-                        :<img src={"https://static.thenounproject.com/png/3918329-200.png"} alt="User avatar" />
-}
+                    {image ?
+                        <img src={image} alt="User avatar"/>
+                        : <img src={"https://static.thenounproject.com/png/3918329-200.png"} alt="User avatar"/>
+                    }
 
                     <div className="avatar-edit-icon" onClick={() => document.getElementById('fileInput').click()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
@@ -183,7 +200,7 @@ const UserProfile = () => {
 
                             <p>Telefon: {phone}</p>
                             <p>Adres: {address}</p>
-                            <p>Ostatnie logowanie: {lastLogin?.slice(0,10)}, {lastLogin?.slice(11,19)}</p>
+                            <p>Ostatnie logowanie: {lastLogin?.slice(0, 10)}, {lastLogin?.slice(11, 19)}</p>
 
                             <div className="profile-buttons">
                                 <button className="edit-btn" onClick={handleEditToggle}>Edytuj</button>
@@ -192,23 +209,23 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
-            {userType==="klient"?
-            <div className="profile-stats">
-                <p>Number of reservations: {user.reservations}</p>
-                <p>Average rating: {user.rating}</p>
-                <p>Days spent in our hotels: {user.daysSpent}</p>
-            </div>:
-            <div className="profile-stats">
-                <p>Liczba hoteli: {user.reservations}</p>
-                <p>Liczba pokoi: {user.rating}</p>
-                <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
-            </div> }
+            {userType === "klient" ?
+                <div className="profile-stats">
+                    <p>Number of reservations: {user.reservations}</p>
+                    <p>Average rating: {user.rating}</p>
+                    <p>Days spent in our hotels: {user.daysSpent}</p>
+                </div> :
+                <div className="profile-stats">
+                    <p>Liczba hoteli: {user.reservations}</p>
+                    <p>Liczba pokoi: {user.rating}</p>
+                    <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
+                </div>}
 
             <div className="profile-buttons">
                 <button className="edit-btn" onClick={handleEditToggle}>Zmień hasło</button>
-                {userType==="klient"?
+                {userType === "klient" ?
                     <button className="delete-btn" onClick={handleDeleteAccount}>Usuń konto</button>
-                    :null}
+                    : null}
 
             </div>
         </div>

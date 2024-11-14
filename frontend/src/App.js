@@ -47,9 +47,9 @@ function Root() {
 
     const [currentUser, setCurrentUser] = useState();
     const [registrationToggle, setRegistrationToggle] = useState(false);
-    const [email, setEmail] = useState('nan');
-    const [username, setUsername] = useState('nan');
-    const [password, setPassword] = useState('nan');
+    const [email, setEmail] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
     const [errflag, setErrflag] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [user_type, setUserType] = useState("klient");

@@ -11,4 +11,5 @@ urlpatterns = [
     path('hotel/<int:hotel_id>/', views.OneHotelApi.as_view(), name='hotel'),
     path('floors/<int:hotel_id>', views.FloorApi.as_view(), name='floors'),
     path('newReservation/<int:pk>/', views.NewReservationApi.as_view(), name='new_reservation'),
+    path('reservations/', views.ReservationsAPI.as_view(), name='reservations'),
 ]

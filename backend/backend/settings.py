@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # This should be enabled
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -152,6 +152,14 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
 'http://localhost:3000',
 'http://127.0.0.1:3000'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",  # Replace with the frontend URL or domain
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:3000",  # Frontend domain
 ]
 
 import os

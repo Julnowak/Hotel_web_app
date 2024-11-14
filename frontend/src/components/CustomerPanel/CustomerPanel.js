@@ -1,42 +1,41 @@
 import React, {useEffect, useState} from 'react';
 import { Container, Row, Col, Card, Button, Table, Spinner } from 'react-bootstrap';
+import axios from "axios";
+
+// AXIOS CONNECTION FOR LOGIN //
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+    baseURL: "http://127.0.0.1:3000"
+})
+
+// AXIOS CONNECTION FOR LOGIN //
 
 const CustomerPanel = () => {
     document.body.style.backgroundColor = '#767676';
- // const userData = {
- //    name: localStorage.getItem("username"),
- //  };
- //
- //  const favoriteHotels = [
- //    { id: 1, name: 'Hotel A', location: 'Warszawa' },
- //    { id: 2, name: 'Hotel B', location: 'Kraków' },
- //  ];
- //
- //  const reservations = [
- //    {
- //      id: 1,
- //      hotel: 'Hotel A',
- //      checkIn: '2024-10-01',
- //      checkOut: '2024-10-05',
- //      status: 'Potwierdzona',
- //    },
- //    {
- //      id: 2,
- //      hotel: 'Hotel B',
- //      checkIn: '2024-11-10',
- //      checkOut: '2024-11-15',
- //      status: 'Oczekująca',
- //    },
- //  ]
+
 const [currentReservation, setCurrentReservation] = useState(null);
     const [allReservations, setAllReservations] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [reservations, setReservations] = useState([]);
+
 
     // Fetch current reservation and all reservations (simulated fetch)
     useEffect(() => {
         setLoading(true);
         // Simulating API calls
-        setTimeout(() => {
+            const fetchReservations = async () => {
+                try {
+                    const response = await client.get("http://127.0.0.1:8000/api/reservations/",
+                        );
+                    setReservations(response.data);
+                } catch (error) {
+                    console.error("Error fetching hotels:", error);
+                }
+            };
+
             setCurrentReservation({
                 id: 1,
                 hotel: 'Hotel Warszawa',
@@ -49,9 +48,10 @@ const [currentReservation, setCurrentReservation] = useState(null);
                 { id: 2, hotel: 'Hotel Kraków', date: '2024-09-10', roomType: 'Suite', status: 'Cancelled' },
                 { id: 3, hotel: 'Hotel Gdańsk', date: '2024-08-05', roomType: 'Luxury Room', status: 'Completed' }
             ]);
+
+            if (!reservations.length) fetchReservations();
             setLoading(false);
-        }, 1000); // Simulate API delay
-    }, []);
+    }, [reservations.length]);
 
     if (loading) {
         return (
@@ -106,11 +106,11 @@ const [currentReservation, setCurrentReservation] = useState(null);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {allReservations.map((reservation) => (
-                                        <tr key={reservation.id}>
-                                            <td>{reservation.id}</td>
-                                            <td>{reservation.hotel}</td>
-                                            <td>{reservation.date}</td>
+                                    {reservations.map((reservation: Reservation) => (
+                                        <tr key={reservation.reservation_id}>
+                                            <td>{reservation.reservation_id}</td>
+                                            <td>"{reservation.h}"</td>
+                                            <td>{reservation.check_in}</td>
                                             <td>{reservation.roomType}</td>
                                             <td>{reservation.status}</td>
                                         </tr>

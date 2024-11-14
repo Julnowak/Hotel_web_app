@@ -6,7 +6,7 @@ import RoomRoom from "../Reservations/Room"
 import axios from "axios";
 
 
-const RoomReservation = ({rooms, hotel}) => {
+const RoomReservation = ({rooms, hotel, checkIn, checkOut}) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [floor, setFloor] = useState(1);
     const [floors, setFloors] = useState(null);
@@ -113,7 +113,7 @@ const RoomReservation = ({rooms, hotel}) => {
                     <p>Type: {selectedRoom.type}</p>
                     <p>Price: ${selectedRoom.price}</p>
                     {selectedRoom.status === "Available" ?
-                        <a href={`/reservation/room/${selectedRoom.room_id}/`}>
+                        <a href={`/reservation/room/${selectedRoom.room_id}/?checkIn=${checkIn}&checkOut=${checkOut}`}>
                             <button>Zarezerwuj</button>
                         </a> : null}
                 </div>
