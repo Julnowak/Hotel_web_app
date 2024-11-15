@@ -9,7 +9,6 @@ Niniejsza aplikacja webowa zbudowana została w uproszczonej architekturze rozpr
 - **Backend**:
   - Django
   - Django REST Framework
-  - Redis
   - SQLite
 
 - **Frontend**:
@@ -18,18 +17,12 @@ Niniejsza aplikacja webowa zbudowana została w uproszczonej architekturze rozpr
   - HTML
   - CSS
 
-- **Inne**:
-  - Docker
-  - Docker Compose
-
 ## Instrukcje obsługi
 
 ### Wymagania systemowe
 
 - Python 3.x
 - Node.js (v14 lub wyższa)
-- Docker
-- Docker Compose
 
 ### Instalacja
 
@@ -74,10 +67,6 @@ Niniejsza aplikacja webowa zbudowana została w uproszczonej architekturze rozpr
 Backend:
 ```bash
 python manage.py runserver     # na porcie 8000!!!
-```
-W terminalu backendu, z odpalonym Docker Desktop w tle uruchamiamy Redisa:
-```bash
-docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
 ```
 Frontend:
 ```
