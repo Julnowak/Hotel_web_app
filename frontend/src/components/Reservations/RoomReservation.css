@@ -53,16 +53,6 @@ h1 {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.room-box:hover {
-  background-color: #d5d5d5;
-  transform: scale(1.05);
-}
-
-.room-box.selected {
-  background-color: darkolivegreen;
-  color: black;
-}
-
 .room-box-box{
   padding: 15px;
   border-radius: 5px;
@@ -83,4 +73,27 @@ h1 {
   border-radius: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
+}
+
+.room-box {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.available {
+    background-color: #a1dea1;
+    color: black;
+    border: 2px solid transparent;
+}
+
+.unavailable {
+    background-color: #c4c1c1;
+    color: black;
+    border: 2px solid transparent;
+}
+
+.selected {
+    border: 2px solid black;
 }

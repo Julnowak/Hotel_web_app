@@ -16,16 +16,18 @@ const client = axios.create({
 
 
 const UserProfile = () => {
-    const [email, setEmail] = useState(null);
-    const [username, setUsername] = useState(null);
-    const [name, setName] = useState(null);
-    const [surname, setSurname] = useState(null);
-    const [image, setImage] = useState(null);
-    const [lastLogin, setLastLogin] = useState(null);
-    const [address, setAddress] = useState(null);
-    const [phone, setPhone] = useState(null);
-    const [userType, setUserType] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
+    const [resNum, setResNum] = useState('');
+    const [meanRating, setMeanRating] = useState('');
+    const [totalDays, setTotalDays] = useState('');
+    const [surname, setSurname] = useState('');
+    const [image, setImage] = useState('');
+    const [lastLogin, setLastLogin] = useState('');
+    const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
+    const [userType, setUserType] = useState('');
     const navigate = useNavigate();
 
     const [user, setUser] = useState({
@@ -53,6 +55,10 @@ const UserProfile = () => {
                 setUserType(response.data['user'].user_type)
                 setPhone(response.data['user'].telephone)
                 setAddress(response.data['user'].address)
+                setTotalDays(response.data['total_days'])
+                setMeanRating(response.data['mean_rating'])
+                setResNum(response.data['reservations_number'])
+                console.log(resNum)
                 if (response.data['user'].profile_picture) {
                     setImage(response.data['user'].profile_picture.slice(15))
                 }
@@ -61,24 +67,70 @@ const UserProfile = () => {
             .catch(function () {
                 console.log("error")
             });
-    }, [image]);
+    }, [image, resNum]);
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
     };
 
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setEditableUser({
-            ...editableUser,
-            [name]: value
-        });
+    const handleInputChange = (event) => {
+        const {name, value} = event.target; // Get name and value from input element
+        switch (name) {
+            case 'username':
+                setUsername(value);
+                break;
+            case 'email':
+                setEmail(value);
+                break;
+            case 'name':
+                setName(value);
+                break;
+            case 'surname':
+                setSurname(value);
+                break;
+            case 'telephone':
+                setPhone(value);
+                break;
+            case 'address':
+                setAddress(value);
+                break;
+            default:
+                break;
+        }
     };
 
     const handleSave = () => {
         setUser(editableUser);
         setIsEditing(false);
+        const csrfToken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken'))
+            ?.split('=')[1];
+
+        client.put('http://127.0.0.1:8000/api/user/', {
+            email: email,
+            username: username,
+            surname: surname,
+            name: name,
+            userType: userType,
+            phone: phone,
+            address: address,
+        }, {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log("Udało się");
+                } else {
+                    console.log("Failed to update user");
+                }
+            })
+            .catch(error => console.error('Error:', error));
     };
+
 
     const handleCancel = () => {
         setEditableUser(user);
@@ -86,30 +138,30 @@ const UserProfile = () => {
     };
 
     const handleDeleteAccount = () => {
-    if (window.confirm("Are you sure you want to delete your account?")) {
-        client.delete('http://127.0.0.1:8000/api/user/', {
-            headers: {
-                'X-CSRFToken': document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith('csrftoken'))
-                    ?.split('=')[1],  // Ensure CSRF token is correctly extracted
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.status === 204) {
-                console.log("User deleted successfully");
-                alert("Account deleted!");
-                localStorage.clear();
-                navigate('/')
-                window.location.reload()
-            } else {
-                console.log("Failed to delete user");
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-};
+        if (window.confirm("Are you sure you want to delete your account?")) {
+            client.delete('http://127.0.0.1:8000/api/user/', {
+                headers: {
+                    'X-CSRFToken': document.cookie
+                        .split('; ')
+                        .find(row => row.startsWith('csrftoken'))
+                        ?.split('=')[1],  // Ensure CSRF token is correctly extracted
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.status === 204) {
+                        console.log("User deleted successfully");
+                        alert("Account deleted!");
+                        localStorage.clear();
+                        navigate('/')
+                        window.location.reload()
+                    } else {
+                        console.log("Failed to delete user");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    };
 
 
     const handleFileChange = (event) => {
@@ -123,6 +175,31 @@ const UserProfile = () => {
                 }));
             };
             reader.readAsDataURL(file);
+
+            const csrfToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken'))
+                ?.split('=')[1];
+
+            // Create a FormData object and append the image
+            const formData = new FormData();
+            formData.append('profile_picture', file);
+
+            client.post('http://127.0.0.1:8000/api/user/upload-avatar/', formData, {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'multipart/form-data',  // Required for file upload
+                },
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        setImage(response.data.profile)
+                        console.log("Udało się");
+                    } else {
+                        console.log("Failed to update user");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
     };
 
@@ -157,50 +234,77 @@ const UserProfile = () => {
                 <div className="profile-info">
                     {isEditing ? (
                         <>
+                            <p><strong>Nazwa użytkownika:</strong></p>
                             <input
                                 type="text"
-                                name="email"
-                                value={editableUser.email}
+                                name="username"
+                                value={username}
                                 onChange={handleInputChange}
                                 className="profile-input"
                             />
-                            <input
-                                type="text"
-                                name="name"
-                                value={editableUser.name}
-                                onChange={handleInputChange}
-                                className="profile-input"
-                            />
-                            <input
-                                type="text"
-                                name="password"
-                                value={editableUser.password}
-                                onChange={handleInputChange}
-                                className="profile-input"
-                            />
-                            <input
-                                type="text"
-                                name="creditCard"
-                                value={editableUser.creditCard}
-                                onChange={handleInputChange}
-                                className="profile-input"
-                            />
+                            <p><strong>E-mail:</strong>
+                                <input
+                                    type="text"
+                                    name="email"
+                                    value={email}
+                                    onChange={handleInputChange}
+                                    className="profile-input"
+                                />
+                            </p>
+
+                            <p><strong>Imię:</strong>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={name}
+                                    onChange={handleInputChange}
+                                    className="profile-input"
+                                /></p>
+                            <p><strong>Nazwisko:</strong>
+                                <input
+                                    type="text"
+                                    name="surname"
+                                    value={surname}
+                                    onChange={handleInputChange}
+                                    className="profile-input"
+                                /></p>
+
+                            <p><strong>Telefon:</strong>
+                                <input
+                                    type="text"
+                                    name="telephone"
+                                    value={phone}
+                                    onChange={handleInputChange}
+                                    className="profile-input"
+                                />
+                            </p>
+                            <p><strong>Adres:</strong>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value={address}
+                                    onChange={handleInputChange}
+                                    className="profile-input"
+                                /></p>
+
                             <div className="profile-buttons">
-                                <button className="save-btn" onClick={handleSave}>Save</button>
-                                <button className="cancel-btn" onClick={handleCancel}>Cancel</button>
+                                <button className="save-btn" onClick={handleSave}>Zapisz zmiany</button>
+                                <button className="cancel-btn" onClick={handleCancel}>Anuluj</button>
                             </div>
                         </>
                     ) : (
                         <>
-                            <p>Nazwa użytkownika: {username}</p>
-                            <p>E-mail: {email ? email : null}</p>
-                            <span>&nbsp;</span>
-                            <p>Imię: {name}</p>
-                            <p>Nazwisko: {surname}</p>
+                            <p><strong>Nazwa użytkownika:</strong> {username}</p>
+                            <p><strong>E-mail:</strong> {email ? email : null}</p>
+                            <p><strong>Ostatnie
+                                logowanie:</strong> {lastLogin?.slice(0, 10)}, {lastLogin?.slice(11, 19)}</p>
 
-                            <p>Telefon: {phone}</p>
-                            <p>Adres: {address}</p>
-                            <p>Ostatnie logowanie: {lastLogin?.slice(0, 10)}, {lastLogin?.slice(11, 19)}</p>
+                            <span>&nbsp;</span>
+                            <p><strong>Imię:</strong> {name ? name : "Nie podano"}</p>
+                            <p><strong>Nazwisko:</strong> {surname ? surname : "Nie podano"}</p>
+
+                            <p><strong>Telefon:</strong> {phone ? phone : "Nie podano"}</p>
+                            <p><strong>Adres:</strong> {address ? address : "Nie podano"}</p>
 
                             <div className="profile-buttons">
                                 <button className="edit-btn" onClick={handleEditToggle}>Edytuj</button>
@@ -209,11 +313,13 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
+            <h2>Statystyki</h2>
             {userType === "klient" ?
                 <div className="profile-stats">
-                    <p>Number of reservations: {user.reservations}</p>
-                    <p>Average rating: {user.rating}</p>
-                    <p>Days spent in our hotels: {user.daysSpent}</p>
+
+                    <p>Liczba rezerwacji: {resNum}</p>
+                    <p>Średnia ocen: {meanRating.toFixed(2)}</p>
+                    <p>Dni spędzone w naszych hotelach: {totalDays}</p>
                 </div> :
                 <div className="profile-stats">
                     <p>Liczba hoteli: {user.reservations}</p>
@@ -221,10 +327,10 @@ const UserProfile = () => {
                     <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
                 </div>}
 
-            <div className="profile-buttons">
-                <button className="edit-btn" onClick={handleEditToggle}>Zmień hasło</button>
+            <div className="down-buttons">
                 {userType === "klient" ?
-                    <button className="delete-btn" onClick={handleDeleteAccount}>Usuń konto</button>
+                    <button className="delete-btn" onClick={handleDeleteAccount}>Usuń
+                        konto</button>
                     : null}
 
             </div>

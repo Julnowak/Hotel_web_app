@@ -6,6 +6,7 @@ urlpatterns = [
     path('login/', views.UserLogin.as_view(), name='login'),
     path('logout/', views.UserLogout.as_view(), name='logout'),
     path('user/', views.UserView.as_view(), name='user'),
+    path('user/upload-avatar/', views.UploadAvatarView.as_view(), name='upload-avatar'),
     path('rooms/', views.RoomApi.as_view(), name='rooms'),
     path('hotels/', views.HotelApi.as_view(), name='hotels'),
     path('hotel/<int:hotel_id>/', views.OneHotelApi.as_view(), name='hotel'),

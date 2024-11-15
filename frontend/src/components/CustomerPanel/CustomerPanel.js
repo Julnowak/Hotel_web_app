@@ -31,8 +31,9 @@ const [currentReservation, setCurrentReservation] = useState(null);
                     const response = await client.get("http://127.0.0.1:8000/api/reservations/",
                         );
                     setReservations(response.data);
+
                 } catch (error) {
-                    console.error("Error fetching hotels:", error);
+                    console.error("Error fetching reservations:", error);
                 }
             };
 
@@ -43,15 +44,11 @@ const [currentReservation, setCurrentReservation] = useState(null);
                 roomType: 'Deluxe Suite',
                 status: 'Confirmed'
             });
-            setAllReservations([
-                { id: 1, hotel: 'Hotel Warszawa', date: '2024-10-20', roomType: 'Standard Room', status: 'Completed' },
-                { id: 2, hotel: 'Hotel Kraków', date: '2024-09-10', roomType: 'Suite', status: 'Cancelled' },
-                { id: 3, hotel: 'Hotel Gdańsk', date: '2024-08-05', roomType: 'Luxury Room', status: 'Completed' }
-            ]);
 
             if (!reservations.length) fetchReservations();
             setLoading(false);
-    }, [reservations.length]);
+            console.log(reservations)
+    }, [reservations, reservations.length]);
 
     if (loading) {
         return (

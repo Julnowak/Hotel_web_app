@@ -49,8 +49,8 @@ const ReservationSite = () => {
         try {
             const response = await axios.post("http://localhost:8000/api/rooms/", {
                 type: roomStandard,
-                check_in_date: checkInDate,
-                check_out_date: checkOutDate,
+                check_in: checkInDate,
+                check_out: checkOutDate,
                 hotel_id: hotelId
             });
             setRooms(response.data);
@@ -131,7 +131,7 @@ const ReservationSite = () => {
             {availableRooms.length > 0 && (
 
                 <div>
-                    <RoomReservation rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}/>
+                    <RoomReservation rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate} roomStandard={roomStandard}/>
                 </div>
             )}
         </Container>

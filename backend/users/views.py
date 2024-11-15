@@ -3,12 +3,14 @@ import datetime
 from django.contrib.auth import login, logout
 from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
     HotelSerializer, FloorSerializer, ReservationSerializer
-from .models import AppUser, Room, Hotel, Floor, Reservation, Payment
+from .models import AppUser, Room, Hotel, Floor, Reservation, Payment, Review
 from .vaildations import validate_email, validate_password, custom_validation
 
 
@@ -33,6 +35,7 @@ class UserLogin(APIView):
 
     def post(self, request):
         data = request.data
+        print(data)
         assert validate_email(data)
         assert validate_password(data)
         serializer = UserLoginSerializer(data=data)
@@ -66,7 +69,20 @@ class UserView(APIView):
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        all_res = Reservation.objects.filter(user=request.user)
+        num = all_res.count()
+
+        # Pobranie wszystkich rezerwacji dla podanego użytkownika
+        reservations = Reservation.objects.filter(user=request.user)
+        reviews = Review.objects.filter(user=request.user)
+        # Obliczanie liczby dni dla każdej rezerwacji i sumowanie
+        total_days = sum((reservation.check_out - reservation.check_in).days for reservation in reservations)
+        if reviews.count() != 0:
+            mean_rating = sum(review.rating for review in reviews)/ reviews.count()
+        else:
+            mean_rating = 0
+        return Response({'user': serializer.data, "reservations_number": num, "total_days": total_days,
+                         "mean_rating": mean_rating}, status=status.HTTP_200_OK)
 
     def post(self, request):
         print("ffffffffwfw")
@@ -74,16 +90,37 @@ class UserView(APIView):
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
     def put(self, request):
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'user': serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        user.email = request.data.get("email")
+        user.name = request.data.get("name")
+        user.username = request.data.get("username")
+        user.telephone = request.data.get("phone")
+        user.address = request.data.get("address")
+        user.surname = request.data.get("surname")
+        user.save()
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request):
         user = request.user
         user.delete()
         return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class UploadAvatarView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        user = request.user
+        profile_picture = request.FILES.get('profile_picture')  # Use 'avatar' as the field name for the image
+        if profile_picture:
+            user.profile_picture = profile_picture  # Assuming 'avatar' is a field on your User model
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'No avatar image provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoomApi(APIView):
@@ -92,8 +129,47 @@ class RoomApi(APIView):
 
     def post(self, request):
         data = request.data
+        hotel_id = int(data['hotel_id'])
+        room_type = data['type']
+        floor_id = int(data.get('floor_id', 1))
+        check_in_date = datetime.datetime.strptime(data['check_in'], "%Y-%m-%d").date()
+        check_out_date = datetime.datetime.strptime(data['check_out'], "%Y-%m-%d").date()
+
+        # Fetch all rooms based on criteria
+        rooms = Room.objects.filter(
+            hotel__hotel_id=hotel_id,
+            floor__floor_id=floor_id
+        )
+
+        # Prepare a list to store room data with availability status
+        room_data = []
+
+        for room in rooms:
+            # Check if room has any conflicting reservations
+            has_conflict = Reservation.objects.filter(
+                room=room,
+                check_in__lt=check_out_date,
+                check_out__gt=check_in_date
+            ).exists()
+
+            # Set availability status based on conflicts
+            room_status = "Available" if not has_conflict else "Unavailable"
+
+            # Append room data with the status to room_data
+            room_data.append({
+                "room_id": room.room_id,
+                "room_number": room.room_number,
+                "room_type": room_type,
+                "status": room_status
+            })
+
+        # Return the room data with availability status
+        return Response(room_data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        data = request.data
         print(data)
-        r = Room.objects.filter(type=data['type'], hotel__hotel_id=int(data['hotel_id']), floor__floor_id=1)
+        r = Room.objects.filter(type=data['type'], hotel__hotel_id=int(data['hotel_id']), floor__floor_number=data['floor_number'])
         print(r)
         serializer = RoomSerializer(r, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -134,6 +210,7 @@ class NewReservationApi(APIView):
 
         new_trans = Payment.objects.create(reservation=new_res)
         r.status = "Unavailable"
+        r.save()
         serializer = ReservationSerializer(new_res)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
