@@ -1,63 +1,111 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './GalleryPage.css';
 
-// Przykładowe dane galerii
-const photos = [
-  { id: 1, location: 'Kraków', rating: 4, imageUrl: '/images/krakow1.jpg' },
-  { id: 2, location: 'Kraków', rating: 5, imageUrl: '/images/krakow2.jpg' },
-  { id: 3, location: 'Warszawa', rating: 3, imageUrl: '/images/warszawa1.jpg' },
-  { id: 4, location: 'Warszawa', rating: 5, imageUrl: '/images/warszawa2.jpg' },
-  { id: 5, location: 'Poznań', rating: 4, imageUrl: '/images/poznan1.jpg' },
-  { id: 6, location: 'Poznań', rating: 3, imageUrl: '/images/poznan2.jpg' },
+// Image data structure for all categories
+const galleryData = [
+    {
+        category: 'Standard',
+        images: [
+            {src: '/images/hotel_rooms_images/room1.jpg', title: 'Pokój 1-osobowy', description: 'Idealny dla osób...'},
+            {src: '/images/hotel_rooms_images/room2.jpg', title: 'Pokój 2-osobowy', description: 'Idealny dla osób...'},
+        ],
+    },
+    {
+        category: 'Deluxe',
+        images: [
+            {src: '/images/hotel_rooms_images/room3.jpg', title: 'Pokój 1-osobowy', description: 'Idealny dla osób...'},
+            {src: '/images/hotel_rooms_images/room4.jpg', title: 'Pokój 2-osobowy', description: 'Idealny dla osób...'},
+        ],
+    },
+    {
+        category: 'Apartamenty',
+        images: [
+            {src: '/images/hotel_rooms_images/room5.jpg', title: 'Pokój 1-osobowy', description: 'Idealny dla osób...'},
+            {src: '/images/hotel_rooms_images/room6.jpg', title: 'Pokój 2-osobowy', description: 'Idealny dla osób...'},
+        ],
+    },
+    {
+        category: 'Udogodnienia',
+        images: [
+            {src: '/images/hotel_rooms_images/room2.jpg', title: 'Pokój 1-osobowy', description: 'Idealny dla osób...'},
+            {src: '/images/hotel_rooms_images/room1.jpg', title: 'Pokój 2-osobowy', description: 'Idealny dla osób...'},
+        ],
+    },
 ];
 
-const GalleryPage = () => {
-  const [selectedLocation, setSelectedLocation] = useState('Wszystkie');
-  const [minRating, setMinRating] = useState(0);
+// Combine all images from all categories into one list
+const allImages = galleryData.flatMap(section => section.images);
 
-  // Filtrujemy zdjęcia na podstawie wybranej lokalizacji i oceny
-  const filteredPhotos = photos.filter(photo =>
-    (selectedLocation === 'Wszystkie' || photo.location === selectedLocation) &&
-    photo.rating >= minRating
-  );
+const Gallery = () => {
+    const [isLightboxOpen, setLightboxOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  return (
-    <div className="gallery-page">
-      <h2>Galeria Pokojów</h2>
+    const openLightbox = (index) => {
+        setCurrentImageIndex(index);
+        setLightboxOpen(true);
+    };
 
-      <div className="filters">
-        <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
-          <option value="Wszystkie">Wszystkie lokalizacje</option>
-          <option value="Kraków">Kraków</option>
-          <option value="Warszawa">Warszawa</option>
-          <option value="Poznań">Poznań</option>
-        </select>
+    const closeLightbox = () => {
+        setLightboxOpen(false);
+    };
 
-        <select value={minRating} onChange={(e) => setMinRating(parseInt(e.target.value))}>
-          <option value="0">Wszystkie oceny</option>
-          <option value="3">Min. 3 gwiazdki</option>
-          <option value="4">Min. 4 gwiazdki</option>
-          <option value="5">Min. 5 gwiazdek</option>
-        </select>
-      </div>
+    const changeImage = (direction) => {
+        setCurrentImageIndex((prevIndex) =>
+            (prevIndex + direction + allImages.length) % allImages.length // Cycle through all images
+        );
+    };
 
-      <div className="photo-gallery">
-        {filteredPhotos.length ? (
-          filteredPhotos.map(photo => (
-            <div key={photo.id} className="photo-card">
-              <img src={photo.imageUrl} alt={`${photo.location} Hotel`} />
-              <div className="photo-info">
-                <p>{photo.location}</p>
-                <p>Ocena: {photo.rating} ⭐</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>Brak wyników spełniających kryteria filtrowania.</p>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <div className="gallery-container">
+            <h1>Galeria</h1>
+
+            {/* Display gallery sections */}
+            {galleryData.map((section, index) => (
+                <div key={index}>
+                    <h2>{section.category}</h2>
+                    <div className="gallery-row">
+                        {section.images.map((image, imageIndex) => (
+                            <div
+                                key={imageIndex}
+                                className="gallery-item"
+                                onClick={() => openLightbox(allImages.indexOf(image))}
+                            >
+                                <div style={{height: "70%", display: "flex", justifyContent: "center"}}>
+                                    <img style={{height: "90%",}} src={image.src} alt={image.title}/>
+                                </div>
+
+                                <div className="caption">
+                                    <strong style={{textAlign: "center", display: "block"}}>{image.title}</strong>
+                                    <p>{image.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+
+            {isLightboxOpen && (
+                <div className="lightbox" onClick={closeLightbox}>
+                    <span className="close" onClick={closeLightbox}>×</span>
+                    <img
+                        src={allImages[currentImageIndex].src}
+                        alt={allImages[currentImageIndex].title}
+                        className="lightbox-content"
+                    />
+                    <div className="lightbox-navigation">
+                        <span className="prev" onClick={(e) => {
+                            e.stopPropagation();
+                            changeImage(-1);
+                        }}>&#10094;</span>
+                        <span className="next" onClick={(e) => {
+                            e.stopPropagation();
+                            changeImage(1);
+                        }}>&#10095;</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 };
 
-export default GalleryPage;
+export default Gallery;

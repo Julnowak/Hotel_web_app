@@ -21,7 +21,7 @@ function NavbarGuest({
                      }, setConfirmPassword, submitRegistration, errflag, submitLogin, registrationToggle, loc) {
     return (
         <div>
-            <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
+            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
                 <Container>
                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
                         <img src={hor_logo} style={{height: 30, margin: 10}}/>

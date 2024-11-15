@@ -192,7 +192,7 @@ function Root() {
 
 
     // Użytkownik zalogowany
-    document.body.style.backgroundColor = "#ffffff";
+    // document.body.style.backgroundColor = "#ffffff";
     if (currentUser) {
         return (
             <div>
@@ -233,7 +233,7 @@ function Root() {
                         <LoadingSpinner/>
                     ) : (
                         <div className="fade-in full-height-container">
-                            <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
+                            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
                                         <img src={hor_logo} style={{height: 30, margin: 10}}/>
@@ -299,7 +299,7 @@ function Root() {
                         <LoadingSpinner/>
                     ) : (
                         <div className="fade-in full-height-container">
-                            <Navbar bg="dark" variant="dark">
+                            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
                                         <img src={hor_logo} style={{height: 30, margin: 10}}/>

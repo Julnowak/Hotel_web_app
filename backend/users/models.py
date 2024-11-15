@@ -30,27 +30,6 @@ class AppUserManager(BaseUserManager):
         return user
 
 
-class AppUser(AbstractBaseUser, PermissionsMixin):
-    user_id = models.AutoField(primary_key=True)
-    email = models.EmailField(max_length=50, unique=True)
-    username = models.CharField(max_length=50)
-    telephone = models.CharField(max_length=12,blank=True, null=True)
-    address = models.CharField(max_length=200,blank=True, null=True)
-    name = models.CharField(max_length=200,blank=True, null=True)
-    surname = models.CharField(max_length=200,blank=True, null=True)
-    user_type = models.CharField(max_length=50, default="klient")
-    profile_picture = models.ImageField(blank=True, null=True)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-    objects = AppUserManager()
-
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.username
-
-
 class Hotel(models.Model):
     hotel_id = models.AutoField(primary_key=True)
     localization = models.CharField(default="Kraków", null=True, blank=True, max_length=200)
@@ -63,6 +42,29 @@ class Hotel(models.Model):
 
     def __str__(self):
         return "Hotel Weles " + self.localization + " " + str(self.hotel_id)
+
+
+class AppUser(AbstractBaseUser, PermissionsMixin):
+    user_id = models.AutoField(primary_key=True)
+    email = models.EmailField(max_length=50, unique=True)
+    username = models.CharField(max_length=50)
+    telephone = models.CharField(max_length=12,blank=True, null=True)
+    address = models.CharField(max_length=200,blank=True, null=True)
+    name = models.CharField(max_length=200,blank=True, null=True)
+    surname = models.CharField(max_length=200,blank=True, null=True)
+    user_type = models.CharField(max_length=50, default="klient")
+    profile_picture = models.ImageField(blank=True, null=True)
+    liked_hotels = models.ForeignKey(Hotel, on_delete=models.CASCADE,blank=True, null=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+    objects = AppUserManager()
+
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.username
+
 
 
 class Floor(models.Model):
