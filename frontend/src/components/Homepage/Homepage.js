@@ -95,7 +95,8 @@ const Homepage = () => {
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
-                            {hotels.map((hotel: Hotel) => (
+                           
+                            {hotels.map((hotel) => (
                                 <Marker key={hotel.hotel_id} position={[hotel.latitude, hotel.longitude]}>
                                     <Popup>
                                         <h4 style={{borderBottom: "2px solid #000"}}>Hotel
