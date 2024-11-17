@@ -8,6 +8,7 @@ const hotelData = {
   1: { name: 'Hotel Kraków', image: '/images/krakow.jpg', reviews: [4, 5, 5, 3], description: 'Hotel w sercu Krakowa.' },
   2: { name: 'Hotel Warszawa', image: '/images/warszawa.jpg', reviews: [5, 4, 5, 5], description: 'Nowoczesny hotel w Warszawie.' },
   3: { name: 'Hotel Poznań', image: '/images/poznan.jpg', reviews: [3, 4, 3, 4], description: 'Hotel przyjazny rodzinom w Poznaniu.' },
+  4: { name: 'Hotel Niewiesz-Kolonia', image: '/images/niewiesz-kolonia.jpg', reviews: [5, 5, 5, 5], description: 'Hotel przyjazny ludziom wielkiej woli.' },
 };
 
 
