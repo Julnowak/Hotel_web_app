@@ -57,6 +57,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -149,17 +150,15 @@ ASGI_APPLICATION = "users_service.asgi.application"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = [
-'http://localhost:3000',
-'http://127.0.0.1:3000'
-]
-
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",  # Replace with the frontend URL or domain
+    "http://127.0.0.1:3000",  # React frontend URL
+    "http://localhost:3000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:3000",  # Frontend domain
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
 ]
 
 import os

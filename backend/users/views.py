@@ -14,6 +14,14 @@ from .models import AppUser, Room, Hotel, Floor, Reservation, Payment, Review
 from .vaildations import validate_email, validate_password, custom_validation
 
 
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+
+
+def csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
+
+
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 

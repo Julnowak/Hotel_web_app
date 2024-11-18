@@ -38,7 +38,8 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.withCredentials = true;
 
 const client = axios.create({
-    baseURL: "http://localhost:3000"
+    baseURL: "http://localhost:3000",
+    withCredentials: true,
 })
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -140,16 +141,26 @@ function Root() {
 
     }
 
+    async function getCsrfToken() {
+    const response = await client.get("http://127.0.0.1:8000/api/csrf/");
+    return response.data.csrfToken;
+}
+
     async function submitLogin({e}: { e: any }) {
         e.preventDefault();
 
         try {
+            const csrfToken = await getCsrfToken();
             const response = await client.post(
                 "http://127.0.0.1:8000/api/login/",
                 {
                     email: email,
-                    password: password
-                })
+                        password: password,
+                    }, {
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                        },
+                    });
 
             setErrflag(false);
             const em = response.data.email;
