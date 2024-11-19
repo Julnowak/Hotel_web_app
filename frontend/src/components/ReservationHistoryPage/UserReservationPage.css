@@ -1,0 +1,20 @@
+body {
+  background-color: #f8f9fa;
+}
+
+h1 {
+  color: #343a40;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.card-title {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.pagination {
+  margin-top: 20px;
+}

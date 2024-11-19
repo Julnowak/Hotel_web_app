@@ -1,0 +1,22 @@
+.room-prices-section {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.room-price-setting {
+  background-color: #ffffff;
+  padding: 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.room-price-setting:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  border-radius: 5px;
+}

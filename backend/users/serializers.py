@@ -4,7 +4,7 @@ from rest_framework import serializers
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, get_user_model
 
-from users.models import Hotel, Reservation, Room, Floor
+from users.models import Hotel, Reservation, Room, Floor, Review
 
 UserModel = get_user_model()
 
@@ -54,8 +54,30 @@ class HotelSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    hotel = serializers.CharField(source='room.hotel.__str__', read_only=True)  # Pobiera nazwę hotelu
+    room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+
     class Meta:
         model = Reservation
+        fields = [
+            'reservation_id',
+            'price',
+            'status',
+            'check_in',
+            'check_out',
+            'is_paid',
+            'people_number',
+            'hotel',  # Dodane pole dla hotelu
+            'room_type',  # Dodane pole dla typu pokoju
+        ]
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    hotel = serializers.CharField(source='room.hotel.__str__', read_only=True)  # Pobiera nazwę hotelu
+    room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+
+    class Meta:
+        model = Review
         fields = '__all__'
 
 

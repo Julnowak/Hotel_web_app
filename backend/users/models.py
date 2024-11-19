@@ -41,7 +41,7 @@ class Hotel(models.Model):
     description = models.TextField(default="Opis nie został jeszcze wprowadzony.")
 
     def __str__(self):
-        return "Hotel Weles " + self.localization + " " + str(self.hotel_id)
+        return "Hotel Weles " + self.localization + " " + str(self.address)
 
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
@@ -64,7 +64,6 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-
 
 
 class Floor(models.Model):

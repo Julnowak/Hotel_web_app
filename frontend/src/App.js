@@ -30,6 +30,9 @@ import Hotels from "./components/Hotels/Hotels";
 import HotelPage from "./components/HotelPage/HotelPage";
 import GalleryPage from "./components/GalleryPage/GalleryPage";
 import ReceptionistPanel from "./components/ReceptionistPanel/ReceptionistPanel";
+import UserReservationsPage from "./components/ReservationHistoryPage/UserReservationPage";
+import EditReservationPage from "./components/EditReservationPage/EditReservationPage";
+import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -141,51 +144,64 @@ function Root() {
 
     }
 
-    async function getCsrfToken() {
-    const response = await client.get("http://127.0.0.1:8000/api/csrf/");
+const getCsrfToken = async () => {
+    const response = await client.get('http://127.0.0.1:8000/api/csrf/', {
+        withCredentials: true, // Ensure cookies are included
+    });
     return response.data.csrfToken;
-}
+};
 
-    async function submitLogin({e}: { e: any }) {
-        e.preventDefault();
+async function submitLogin({ e }: { e: any }) {
+    e.preventDefault();
 
-        try {
-            const csrfToken = await getCsrfToken();
-            const response = await client.post(
-                "http://127.0.0.1:8000/api/login/",
-                {
-                    email: email,
-                        password: password,
-                    }, {
-                        headers: {
-                            "X-CSRFToken": csrfToken,
-                        },
-                    });
+    try {
+        // Fetch CSRF token before login
+        const csrfToken = await getCsrfToken();
 
-            setErrflag(false);
-            const em = response.data.email;
-            const name = response.data.username;
-            const ut = response.data.user_type;
-            const user_id = response.data.id;
-
-            localStorage.setItem('email', em);
-            localStorage.setItem('username', name);
-            localStorage.setItem('user_type', ut);
-            localStorage.setItem('user_id', user_id);
-
-            setCurrentUser(true);
-            setUserType(ut);
-            console.log(response.data.user_type)
-            if (response.data.user_type === 'właściciel') {
-                navigate('/owner/panel')
-            } else if (response.data.user_type === 'klient') {
-                navigate('/customer/panel')
+        // Perform login
+        const response = await client.post(
+            "http://127.0.0.1:8000/api/login/",
+            {
+                email: email,
+                password: password,
+            },
+            {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
             }
-        } catch (error) {
-            setErrflag(true);
-            console.error('Login failed:', error);// Login failed
+        );
+
+        // Store user data
+        setErrflag(false);
+        const em = response.data.email;
+        const name = response.data.username;
+        const ut = response.data.user_type;
+        const user_id = response.data.id;
+
+        localStorage.setItem('email', em);
+        localStorage.setItem('username', name);
+        localStorage.setItem('user_type', ut);
+        localStorage.setItem('user_id', user_id);
+
+        setCurrentUser(true);
+        setUserType(ut);
+
+        // Fetch new CSRF token after login
+        const newCsrfToken = await getCsrfToken();
+        client.defaults.headers.common["X-CSRFToken"] = newCsrfToken;
+
+        // Navigate based on user type
+        if (response.data.user_type === 'właściciel') {
+            navigate('/owner/panel');
+        } else if (response.data.user_type === 'klient') {
+            navigate('/customer/panel');
         }
+    } catch (error) {
+        setErrflag(true);
+        console.error('Login failed:', error);
     }
+}
 
 
     function submitLogout({e}: { e: any }) {
@@ -225,7 +241,10 @@ function Root() {
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
-                                <Route path='/your_reservation/' element={<ReservationManagement/>}/>
+                                <Route path='/rooms/prices/' element={<ManageRoomPricesPage />}/>
+                                <Route path='/userReservations/' element={<UserReservationsPage/>}/>
+                                <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
+                                <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                             </Routes>
                         </div>

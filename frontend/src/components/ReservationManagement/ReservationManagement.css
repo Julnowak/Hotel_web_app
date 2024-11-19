@@ -1,0 +1,19 @@
+body {
+  background-color: #f8f9fa;
+}
+
+h1 {
+  color: #007bff;
+}
+
+.container {
+  max-width: 600px;
+}
+
+button {
+  border-radius: 5px;
+}
+
+.alert {
+  text-align: center;
+}

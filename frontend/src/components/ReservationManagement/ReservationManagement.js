@@ -1,21 +1,31 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+
+import axios from "axios";
+import {useNavigate, useParams} from "react-router-dom";
 
 
 const ReservationDetails = () => {
-    // Sample reservation details (replace with dynamic data as needed)
-    const reservation = {
-        id: 1,
-        hotel: 'Hotel Warszawa',
-        date: '2024-11-15',
-        roomType: 'Deluxe Suite',
-        status: 'Confirmed'
-    };
+    
+    const params = useParams()
+    const [reservation, setReservation] = useState(null);
+    const navigate = useNavigate()
 
-    // Function to handle modification
-    const handleModifyReservation = () => {
-        alert('Feature to modify reservation coming soon!');
-    };
+    // Fetch list of hotels
+    useEffect(() => {
+        const fetchReservation = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/reservation/${params.id}`);
+                setReservation(response.data);
+                console.log(response.data)
+            } catch (error) {
+                console.error("Error fetching reservation:", error);
+            }
+        };
+
+        if (!reservation) fetchReservation();
+    }, [params, reservation]);
+
 
     // Function to handle cancellation
     const handleCancelReservation = () => {
@@ -27,18 +37,22 @@ const ReservationDetails = () => {
             <h2 className="text-center mb-4 fw-bold">Szczegóły Rezerwacji</h2>
 
             {/* Reservation Details Card */}
-            <Card className="shadow-lg border-0 rounded-3">
+            {reservation?
+                <Card className="shadow-lg border-0 rounded-3">
                 <Card.Body className="p-4">
                     <Card.Title className="mb-3 fs-4 fw-semibold">
-                        Hotel: {reservation.hotel}
+                        {reservation.hotel}
                     </Card.Title>
                     <Row className="align-items-center">
                         <Col md={8}>
                             <p className="mb-1">
-                                <strong>Data:</strong> {reservation.date}
+                                <strong>Data zameldowania:</strong> {reservation.check_in}, 14:00
                             </p>
                             <p className="mb-1">
-                                <strong>Typ pokoju:</strong> {reservation.roomType}
+                                <strong>Data wymeldowania:</strong> {reservation.check_out}, 12:00
+                            </p>
+                            <p className="mb-1">
+                                <strong>Typ pokoju:</strong> {reservation.room_type}
                             </p>
                             <p className="mb-1">
                                 <strong>Status:</strong>{' '}
@@ -60,7 +74,7 @@ const ReservationDetails = () => {
                             <Button
                                 variant="outline-primary"
                                 className="me-2 rounded-pill px-3 py-2"
-                                onClick={handleModifyReservation}
+                                onClick={function (){ navigate(`/edit_reservation/${params.id}/`)}}
                             >
                                 Zmień
                             </Button>
@@ -75,6 +89,8 @@ const ReservationDetails = () => {
                     </Row>
                 </Card.Body>
             </Card>
+                :null}
+
         </Container>
     );
 };

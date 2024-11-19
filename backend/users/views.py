@@ -4,15 +4,19 @@ from django.contrib.auth import login, logout
 from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.shortcuts import get_object_or_404
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
-    HotelSerializer, FloorSerializer, ReservationSerializer
+    HotelSerializer, FloorSerializer, ReservationSerializer, ReviewSerializer
 from .models import AppUser, Room, Hotel, Floor, Reservation, Payment, Review
 from .vaildations import validate_email, validate_password, custom_validation
-
+from django.contrib.auth import login
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import permissions, status
 
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
@@ -39,17 +43,19 @@ class UserRegister(APIView):
 
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
         data = request.data
-        print(data)
         assert validate_email(data)
         assert validate_password(data)
+
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.check_user(data)
             login(request, user)
+
+            # Set CSRF token
+            csrf_token = get_token(request)
 
             user_data = {
                 'id': user.user_id,
@@ -58,7 +64,9 @@ class UserLogin(APIView):
                 'user_type': user.user_type,
             }
 
-            return Response(user_data, status=status.HTTP_200_OK)
+            response = Response(user_data, status=status.HTTP_200_OK)
+            response.set_cookie('csrftoken', csrf_token)  # Set the CSRF token cookie
+            return response
 
 
 class UserLogout(APIView):
@@ -176,11 +184,42 @@ class RoomApi(APIView):
 
     def put(self, request):
         data = request.data
-        print(data)
-        r = Room.objects.filter(type=data['type'], hotel__hotel_id=int(data['hotel_id']), floor__floor_number=data['floor_number'])
-        print(r)
-        serializer = RoomSerializer(r, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        hotel_id = int(data['hotel_id'])
+        room_type = data['type']
+        floor_id = int(data.get('floor_id', 1))
+        check_in_date = datetime.datetime.strptime(data['check_in'], "%Y-%m-%d").date()
+        check_out_date = datetime.datetime.strptime(data['check_out'], "%Y-%m-%d").date()
+
+        # Fetch all rooms based on criteria
+        rooms = Room.objects.filter(
+            hotel__hotel_id=hotel_id,
+            floor__floor_id=floor_id
+        )
+
+        # Prepare a list to store room data with availability status
+        room_data = []
+
+        for room in rooms:
+            # Check if room has any conflicting reservations
+            has_conflict = Reservation.objects.filter(
+                room=room,
+                check_in__lt=check_out_date,
+                check_out__gt=check_in_date
+            ).exists()
+
+            # Set availability status based on conflicts
+            room_status = "Available" if not has_conflict else "Unavailable"
+
+            # Append room data with the status to room_data
+            room_data.append({
+                "room_id": room.room_id,
+                "room_number": room.room_number,
+                "room_type": room_type,
+                "status": room_status
+            })
+
+        # Return the room data with availability status
+        return Response(room_data, status=status.HTTP_200_OK)
 
     def get(self, request):
         print("fafwaa")
@@ -278,6 +317,109 @@ class ReservationsAPI(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        reservations = Reservation.objects.filter(user=request.user)
+        # Pobierz wszystkie rezerwacje z powiązanymi pokojami i hotelami
+        reservations = Reservation.objects.select_related('room__hotel').all().filter(user=request.user)
+
+        # Serializacja danych
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AvailableRoomsView(APIView):
+    def get(self, request):
+        available_rooms = Room.objects.filter(status="Available")
+        serializer = RoomSerializer(available_rooms, many=True)
+        return Response(serializer.data)
+
+
+class ReservationDetailsAPI(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, reservation_id):
+        reservation = get_object_or_404(Reservation, reservation_id=reservation_id)
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data)
+
+    def put(self, request, reservation_id):
+        reservation = get_object_or_404(Reservation, reservation_id=reservation_id)
+        serializer = ReservationSerializer(reservation, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, reservation_id):
+        reservation = get_object_or_404(Reservation, reservation_id=reservation_id)
+        reservation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewsApi(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        data = request.data
+        print(data)
+        h = Hotel.objects.get(hotel_id=int(data.get("hotel")['hotel_id']))
+        new_review = Review.objects.create(user=request.user, rating=data.get("rating"), description=data.get("description"),
+                                           hotel=h)
+        revs = Review.objects.filter(hotel=h)
+        suma = [float(i[0]) for i in revs.values_list("rating")]
+        print(suma)
+        if revs.count():
+            h.rating = sum(suma)/revs.count()
+        else:
+            h.rating = 0
+        h.save()
+
+        serializer = ReviewSerializer(new_review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request):
+        res = Review.objects.all()
+        print(res)
+        serializer = ReviewSerializer(res, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserReservationsPagination(PageNumberPagination):
+    page_size = 5  # Liczba elementów na stronie
+    page_size_query_param = 'per_page'
+
+
+class UserReservationsView(APIView):
+    def get(self, request):
+        paginator = UserReservationsPagination()
+        reservations = Reservation.objects.filter(user=request.user).select_related('room__hotel')
+        paginated_reservations = paginator.paginate_queryset(reservations, request)
+        serializer = ReservationSerializer(paginated_reservations, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
+class RoomPricesView(APIView):
+    def get(self, request):
+        rooms = Room.objects.all()
+        data = {
+            room.room_id: {
+                "room_number": room.room_number,
+                "hotel_name": room.hotel.localization,
+                "price": room.price,
+            }
+            for room in rooms
+        }
+        return Response(data)
+
+    def put(self, request):
+        for room_id, room_data in request.data.items():
+            try:
+                room = Room.objects.get(pk=room_id)
+                room.price = room_data.get("price", room.price)
+                room.save()
+            except Room.DoesNotExist:
+                return Response(
+                    {"error": f"Room with ID {room_id} does not exist."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        return Response({"message": "Room prices updated successfully."})

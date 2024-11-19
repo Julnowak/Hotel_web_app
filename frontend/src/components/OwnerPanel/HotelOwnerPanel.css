@@ -116,3 +116,51 @@ input[type="number"]:focus {
     align-items: flex-start;
   }
 }
+
+
+
+.hotel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+/* Pokoje u góry */
+.rooms-top {
+  display: flex;
+
+}
+
+/* Środkowa sekcja */
+.center-section {
+  display: flex;
+  align-items: center;
+}
+
+/* Pokoje po lewej i prawej stronie */
+.rooms-left, .rooms-right {
+  display: flex;
+  flex-direction: column;
+
+}
+
+/* Styl dla pokoi */
+.room {
+  width: 50px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #888;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+
+}
+
+/* Styl obrazka w środku */
+.image-container img {
+  width: 400px; /* Dopasuj do rozmiaru obrazka */
+  height: auto;
+  border: 2px solid #ccc;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+
