@@ -22,7 +22,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                 check_in: checkIn,
                 check_out: checkOut,
                 hotel_id: hotel.hotel_id
-                floor: floor
+                    
             });
                 setNewRooms(response.data);
                 console.log(response.data)
