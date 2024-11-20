@@ -21,8 +21,8 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                 type: roomStandard,
                 check_in: checkIn,
                 check_out: checkOut,
-                hotel_id: hotel.hotel_id
-                    
+                hotel_id: hotel.hotel_id,
+                floor_num: newFloor
             });
                 setNewRooms(response.data);
                 console.log(response.data)
@@ -50,11 +50,10 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
 
     return (
         <div className="room-reservation-container">
-            <h1>Room Reservation System</h1>
+            <h1>Wybierz piętro</h1>
 
             {/* Floor Selection */}
             <div className="floor-selector">
-                <label>Select Floor: </label>
                 <div>
                     {floors.map((f) => (
                         <button
@@ -199,13 +198,13 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
 
             {selectedRoom && (
                 <div className="room-details" style={{ color: "black" }}>
-                    <h2>Room {selectedRoom.room_number} Details</h2>
+                    <h2>Pokój {selectedRoom.room_number}, piętro {floor} - szczegóły</h2>
                     <p>Status: {selectedRoom.status}</p>
-                    <p>Type: {selectedRoom.type}</p>
-                    <p>Price: ${selectedRoom.price}</p>
+                    <p>Typ: {selectedRoom.room_type}</p>
+                    <p>Cena: {selectedRoom.price} zł</p>
                     {selectedRoom.status === "Available" && (
                         <a href={`/reservation/room/${selectedRoom.room_id}/?checkIn=${checkIn}&checkOut=${checkOut}`}>
-                            <button>Reserve</button>
+                            <button>Zarezerwuj</button>
                         </a>
                     )}
                 </div>

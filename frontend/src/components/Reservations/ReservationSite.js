@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import RoomReservation from "./RoomReservation";
 import axios from "axios";
-import Hotel from "../../interfaces/Hotel.ts";
 
 const ReservationSite = () => {
     const [roomStandard, setRoomStandard] = useState('standard');

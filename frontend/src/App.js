@@ -33,19 +33,7 @@ import ReceptionistPanel from "./components/ReceptionistPanel/ReceptionistPanel"
 import UserReservationsPage from "./components/ReservationHistoryPage/UserReservationPage";
 import EditReservationPage from "./components/EditReservationPage/EditReservationPage";
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
-
-
-// AXIOS CONNECTION FOR LOGIN //
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-axios.defaults.withCredentials = true;
-
-const client = axios.create({
-    baseURL: "http://localhost:3000",
-    withCredentials: true,
-})
-
-// AXIOS CONNECTION FOR LOGIN //
+import client from "./components/client";
 
 function Root() {
 
@@ -126,13 +114,13 @@ function Root() {
                 setUserType(ut);
                 console.log(user_type)
                 if (response.data.user_type === 'właściciel') {
-                    navigate('/owner/panel/')
+                    navigate('http://127.0.0.1:3000/owner/panel/')
                 } else if (response.data.user_type === 'klient') {
-                    navigate('/customer/panel/')
+                    navigate('http://127.0.0.1:3000/customer/panel/')
                 } else if (response.data.user_type === 'recepcjonista') {
-                    navigate('/receptionist/panel/')
+                    navigate('http://127.0.0.1:3000/receptionist/panel/')
                 } else if (response.data.user_type === 'personel') {
-                    navigate('/personel/panel/')
+                    navigate('http://127.0.0.1:3000/personel/panel/')
                 }
 
             } catch (error) {
@@ -144,19 +132,11 @@ function Root() {
 
     }
 
-const getCsrfToken = async () => {
-    const response = await client.get('http://127.0.0.1:8000/api/csrf/', {
-        withCredentials: true, // Ensure cookies are included
-    });
-    return response.data.csrfToken;
-};
 
 async function submitLogin({ e }: { e: any }) {
     e.preventDefault();
 
     try {
-        // Fetch CSRF token before login
-        const csrfToken = await getCsrfToken();
 
         // Perform login
         const response = await client.post(
@@ -165,11 +145,6 @@ async function submitLogin({ e }: { e: any }) {
                 email: email,
                 password: password,
             },
-            {
-                headers: {
-                    "X-CSRFToken": csrfToken,
-                },
-            }
         );
 
         // Store user data
@@ -187,10 +162,6 @@ async function submitLogin({ e }: { e: any }) {
         setCurrentUser(true);
         setUserType(ut);
 
-        // Fetch new CSRF token after login
-        const newCsrfToken = await getCsrfToken();
-        client.defaults.headers.common["X-CSRFToken"] = newCsrfToken;
-
         // Navigate based on user type
         if (response.data.user_type === 'właściciel') {
             navigate('/owner/panel');
@@ -207,8 +178,7 @@ async function submitLogin({ e }: { e: any }) {
     function submitLogout({e}: { e: any }) {
         e.preventDefault();
         client.post(
-            "http://127.0.0.1:8000/api/logout/",
-            {withCredentials: true}
+            "http://127.0.0.1:8000/api/logout/"
         ).then(function () {
             setCurrentUser(false);
             localStorage.clear();
@@ -272,13 +242,13 @@ async function submitLogin({ e }: { e: any }) {
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                         <Nav className="me-auto">
                                             <Nav className="me-auto">
-                                                <Nav.Link href="/hotels" className="mx-2 text-uppercase fw-light">
+                                                <Nav.Link href="http://127.0.0.1:3000/hotels" className="mx-2 text-uppercase fw-light">
                                                     Hotele
                                                 </Nav.Link>
-                                                <Nav.Link href="/gallery" className="mx-2 text-uppercase fw-light">
+                                                <Nav.Link href="http://127.0.0.1:3000/gallery" className="mx-2 text-uppercase fw-light">
                                                     Galeria
                                                 </Nav.Link>
-                                                <Nav.Link href="/reservation" className="mx-2 text-uppercase fw-light">
+                                                <Nav.Link href="http://127.0.0.1:3000/reservation" className="mx-2 text-uppercase fw-light">
                                                     Rezerwuj
                                                 </Nav.Link>
                                             </Nav>

@@ -164,3 +164,6 @@ CSRF_TRUSTED_ORIGINS = [
 import os
 MEDIA_URL = '../frontend/public/images/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../frontend/public/images/media/')
+
+CSRF_COOKIE_SECURE = False  # Set to True only for HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Allows JavaScript to read the CSRF cookie

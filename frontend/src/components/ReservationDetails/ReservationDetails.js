@@ -24,6 +24,7 @@ const ReservationDetails = () => {
             }
         })
             .then(response => {
+                console.log(response.data)
                 setReservation(response.data);
                 setLoading(false);
             })
@@ -51,6 +52,7 @@ const ReservationDetails = () => {
         }
     )
             .then(response => {
+
                 setPaymentSuccess(true);
                 // setReservation({...reservation, is_paid: true});
                 if (localStorage.getItem("klient")){
@@ -75,14 +77,14 @@ const ReservationDetails = () => {
 
             {/* Room Image */}
             <div className="room-image-container">
-                <img src={"https://johndog.pl/wp-content/uploads/2023/05/artykul-john-dog-rasy-kotow-kot-bengalski-803x503px.jpg"} alt="Room" className="room-image"/>
+                <img src={`/images/hotel_rooms_images/room_${reservation.room_type}.jpg`} alt="Room" className="room-image"/>
             </div>
 
             <div className="reservation-info">
                 <p><strong>Użytkownik:</strong> {reservation.user}</p>
 
-                {reservation.name && (
-                    <p><strong>Imię:</strong> {reservation.name}</p>
+                {reservation.user_name && (
+                    <p><strong>Imię:</strong> {reservation.user_name}</p>
                 )}
 
                 {reservation.surname && (

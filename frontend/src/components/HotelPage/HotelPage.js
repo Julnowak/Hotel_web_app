@@ -3,13 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import './HotelPage.css';
 import axios from "axios";
 import StarRating from "../StarRating/StarRating";
-
-const hotelData = {
-  1: { name: 'Hotel Kraków', image: '/images/krakow.jpg', reviews: [4, 5, 5, 3], description: 'Hotel w sercu Krakowa.' },
-  2: { name: 'Hotel Warszawa', image: '/images/warszawa.jpg', reviews: [5, 4, 5, 5], description: 'Nowoczesny hotel w Warszawie.' },
-  3: { name: 'Hotel Poznań', image: '/images/poznan.jpg', reviews: [3, 4, 3, 4], description: 'Hotel przyjazny rodzinom w Poznaniu.' },
-  4: { name: 'Hotel Niewiesz-Kolonia', image: '/images/niewiesz-kolonia.jpg', reviews: [5, 5, 5, 5], description: 'Hotel przyjazny ludziom wielkiej woli.' },
-};
+import client from "../client";
 
 
 const HotelPage = () => {
@@ -28,21 +22,12 @@ const HotelPage = () => {
       setNewReview("");
       setShowForm(false);
 
-      const csrfToken = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken'))
-            ?.split('=')[1];
 
-        axios.post('http://127.0.0.1:8000/api/reviews/', {
+        client.post('http://127.0.0.1:8000/api/reviews/', {
             rating: newRating,
             description: newReview,
             hotel: hotel,
 
-        }, {
-            headers: {
-                'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json',
-            },
         })
             .then(response => {
                 if (response.status === 200) {
@@ -86,7 +71,7 @@ const HotelPage = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/hotel/${id}/`);
+                const response = await client.get(`http://127.0.0.1:8000/api/hotel/${id}/`);
                 setHotel(response.data)
             } catch (error) {
                 console.error("Error fetching hotels:", error);
@@ -97,7 +82,7 @@ const HotelPage = () => {
 
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/reviews/`);
+                const response = await client.get(`http://127.0.0.1:8000/api/reviews/`);
                 setReviews(response.data)
             } catch (error) {
                 console.error("Error fetching hotels:", error);

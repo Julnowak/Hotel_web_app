@@ -1,6 +1,6 @@
 import datetime
 
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view
@@ -48,11 +48,11 @@ class UserLogin(APIView):
         data = request.data
         assert validate_email(data)
         assert validate_password(data)
-
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.check_user(data)
+            user = authenticate(request, email=data['email'], password=data['password'])
             login(request, user)
+
 
             # Set CSRF token
             csrf_token = get_token(request)
@@ -176,7 +176,8 @@ class RoomApi(APIView):
                 "room_id": room.room_id,
                 "room_number": room.room_number,
                 "room_type": room_type,
-                "status": room_status
+                "status": room_status,
+                "price": room.price,
             })
 
         # Return the room data with availability status
@@ -186,14 +187,18 @@ class RoomApi(APIView):
         data = request.data
         hotel_id = int(data['hotel_id'])
         room_type = data['type']
-        floor_id = int(data.get('floor_id', 1))
+        print(data)
+        try:
+            floor_num = int(data.get('floor_num'))
+        except:
+            floor_id = 1
         check_in_date = datetime.datetime.strptime(data['check_in'], "%Y-%m-%d").date()
         check_out_date = datetime.datetime.strptime(data['check_out'], "%Y-%m-%d").date()
 
         # Fetch all rooms based on criteria
         rooms = Room.objects.filter(
             hotel__hotel_id=hotel_id,
-            floor__floor_id=floor_id
+            floor__floor_number=floor_num
         )
 
         # Prepare a list to store room data with availability status

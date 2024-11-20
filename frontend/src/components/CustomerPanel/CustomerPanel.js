@@ -1,17 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, Card, Button, Table, Spinner} from 'react-bootstrap';
-import axios from "axios";
-
-// AXIOS CONNECTION FOR LOGIN //
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.withCredentials = true;
-
-const client = axios.create({
-    baseURL: "http://127.0.0.1:3000",
-})
-
-// AXIOS CONNECTION FOR LOGIN //
+import client from "../client"
 
 const CustomerPanel = () => {
     document.body.style.backgroundColor = '#767676';
@@ -21,11 +10,6 @@ const CustomerPanel = () => {
     const [loading, setLoading] = useState(true);
     const [reservations, setReservations] = useState([]);
 
-    const getCsrfToken = async () => {
-        const response = await fetch('http://127.0.0.1:8000/api/csrf/', {credentials: 'include'});
-        const data = await response.json();
-        return data.csrfToken; // Ensure this matches what your backend sends
-    };
 
     // Fetch current reservation and all reservations (simulated fetch)
     useEffect(() => {
@@ -33,23 +17,15 @@ const CustomerPanel = () => {
         // Simulating API calls
 
         const fetchReservations = async () => {
-            const csrfToken = await getCsrfToken();
-            console.log(csrfToken)
-            if (csrfToken) {
                 try {
-                    const response = await client.get("http://127.0.0.1:8000/api/reservations/", {
-                        headers: {
-                            "X-CSRFToken": csrfToken,
-                        },
-                        withCredentials: true, // Add this to send cookies
-                    });
+
+                    const response = await client.get("http://127.0.0.1:8000/api/reservations/",);
                     setReservations(response.data);
                     console.log(response.data)
 
                 } catch (error) {
                     console.error("Error fetching reservations:", error);
                 }
-            }
 
         };
 

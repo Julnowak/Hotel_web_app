@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Container, Navbar, Nav, Row, Col, Card, Form, Button, Carousel} from 'react-bootstrap';
+import {Container, Carousel} from 'react-bootstrap';
 import './Header.css';
 import logo from '../../assets/weles_white.png';
 import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
@@ -7,8 +7,8 @@ import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-import axios from "axios";
 import StarRating from "../StarRating/StarRating";
+import client from "../client";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -33,7 +33,7 @@ const Homepage = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/hotels/");
+                const response = await client.get("http://127.0.0.1:8000/api/hotels/");
                 setHotels(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);

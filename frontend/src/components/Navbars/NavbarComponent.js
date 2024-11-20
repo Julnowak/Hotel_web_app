@@ -6,6 +6,7 @@ import hor_logo from '../../assets/weles_hori_white.png';
 const NavbarComponent = ({clicked, handleClick, submitLogout}) => {
 
     const [user_type, setUserType] = useState(localStorage.getItem("user_type"));
+
     return (
         <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
             <Container>
