@@ -44,7 +44,8 @@
 
 .hotel-info-container {
     display: flex; /* Enables flexbox layout */
-    align-items: stretch; /* Ensures children stretch to equal height */
+    max-width: 900px;
+    margin: auto;
     gap: 10px; /* Adds spacing between children */
 
 }

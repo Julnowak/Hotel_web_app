@@ -3,7 +3,7 @@ import {Navbar, Container, Nav, Button} from 'react-bootstrap';
 import hor_logo from '../../assets/weles_hori_white.png';
 
 
-const NavbarComponent = ({clicked, handleClick, submitLogout}) => {
+const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
 
     const [user_type, setUserType] = useState(localStorage.getItem("user_type"));
 
@@ -47,7 +47,7 @@ const NavbarComponent = ({clicked, handleClick, submitLogout}) => {
                         {/* Profile Link with Circular Image */}
                         <Nav.Link href="http://127.0.0.1:3000/profile/"
                                   className="mx-2 text-uppercase fw-light d-flex align-items-center">
-                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile"
+                            <img src={"https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"} alt="Profile"
                                  className="profile-image"
                                  style={{width: 32, height: 32, borderRadius: '50%', marginRight: 10}}/>
                         </Nav.Link>

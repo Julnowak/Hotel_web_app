@@ -50,7 +50,8 @@ const ReservationSite = () => {
         const errors = {};
         if (!hotelId) errors.hotelId = "Proszę wybrać hotel.";
         if (!roomStandard) errors.roomStandard = "Proszę wybrać standard pokoju.";
-        if (!checkInDate) errors.checkInDate = "Proszę wybrać datę zameldowania.";
+        console.log(checkInDate)
+        if (!checkInDate || new Date(checkInDate) < new Date().setHours(0, 0, 0, 0)) errors.checkInDate = "Proszę wybrać poprawną datę zameldowania.";
         if (!checkOutDate) errors.checkOutDate = "Proszę wybrać datę wymeldowania.";
         else if (checkOutDate <= checkInDate) errors.checkOutDate = "Data wymeldowania musi być późniejsza niż zameldowania.";
 

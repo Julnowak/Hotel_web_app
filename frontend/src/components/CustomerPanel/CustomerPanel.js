@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, Card, Button, Table, Spinner} from 'react-bootstrap';
 import client from "../client"
+import Cookies from "js-cookie";
+import "./CustomerPanel.css"
 
 const CustomerPanel = () => {
     document.body.style.backgroundColor = '#767676';
@@ -17,15 +19,25 @@ const CustomerPanel = () => {
         // Simulating API calls
 
         const fetchReservations = async () => {
-                try {
-
-                    const response = await client.get("http://127.0.0.1:8000/api/reservations/",);
-                    setReservations(response.data);
-                    console.log(response.data)
-
-                } catch (error) {
-                    console.error("Error fetching reservations:", error);
+            try {
+                const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+                if (!csrfToken) {
+                    console.error("CSRF token not found!");
+                    return;
                 }
+
+                const response = await client.get("http://127.0.0.1:8000/api/reservations/", {},
+                    {
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                        },
+                    },);
+                setReservations(response.data);
+                console.log(response.data)
+
+            } catch (error) {
+                console.error("Error fetching reservations:", error);
+            }
 
         };
 
@@ -105,7 +117,15 @@ const CustomerPanel = () => {
                                         <td>{reservation.hotel}</td>
                                         <td>{reservation.check_in}</td>
                                         <td>{reservation.room_type}</td>
-                                        <td>{reservation.status}</td>
+                                        <td style={{
+                                            backgroundColor: reservation.status === 'Opłacona' ? 'green' :
+                                                reservation.status === 'Anulowana' ? 'red' :
+                                                    reservation.status === 'W trakcie' ? 'blue' :
+                                                        reservation.status === 'Zakończona' ? 'green' : 'grey',
+                                            color: 'white'
+                                        }}>
+                                            {reservation.status}
+                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>

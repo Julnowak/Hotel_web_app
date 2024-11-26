@@ -70,12 +70,11 @@ class UserLogin(APIView):
 
 
 class UserLogout(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can log out
+    authentication_classes = (SessionAuthentication,)  # Use session-based authentication
 
     def post(self, request):
-        logout(request)
-
+        logout(request)  # This logs out the user (clears session)Clear the session cookie explicitly
         return Response(status=status.HTTP_200_OK)
 
 

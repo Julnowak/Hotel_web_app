@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Pagination, Container, Row, Col } from "react-bootstrap";
+import { Button, Pagination, Container, Row, Col, Badge } from "react-bootstrap";
 import axios from "axios";
-import './UserReservationPage.css'
+import './UserReservationPage.css';
 
 const UserReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
@@ -32,27 +32,58 @@ const UserReservationsPage = () => {
   return (
     <Container className="py-5">
       <h1 className="text-center mb-4">Moje Rezerwacje</h1>
-      <Row className="g-4">
+      <div className="reservation-list">
         {reservations.map((reservation) => (
-          <Col md={6} lg={4} key={reservation.reservation_id}>
-            <Card className="shadow-sm">
-              <Card.Body>
-                <Card.Title>{reservation.hotel}</Card.Title>
-                <Card.Text>
-                  <strong>Rodzaj pokoju:</strong> {reservation.room_type} <br />
-                  <strong>Status:</strong> {reservation.status} <br />
-                  <strong>Data zameldowania:</strong> {reservation.check_in} <br />
-                  <strong>Data wymeldowania:</strong> {reservation.check_out} <br />
-                  <strong>Liczba osób:</strong> {reservation.people_number} <br />
-                </Card.Text>
-                <Button variant="primary" href={`/manage_reservation/${reservation.reservation_id}`}>
-                  Zarządzaj
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
+          <div key={reservation.reservation_id} className="reservation-item shadow-sm">
+            <Row className="align-items-center g-3">
+              {/* Zdjęcie pokoju */}
+              <Col xs={12} md={4}>
+                <img
+                  src={"https://catpaw.pl/wp-content/uploads/2024/09/Kot-Europjeski.png" || "/images/default-room.jpg"} // Domyślny obrazek jeśli brak
+                  alt={reservation.room_type}
+                  className="img-fluid rounded reservation-image"
+                />
+              </Col>
+              {/* Informacje o rezerwacji */}
+              <Col xs={12} md={8}>
+                <div >
+                  <h4>{reservation.hotel}</h4>
+                  <p>
+                    <strong>Rodzaj pokoju:</strong> {reservation.room_type} <br />
+                    <strong>Data zameldowania:</strong> {reservation.check_in} <br />
+                    <strong>Data wymeldowania:</strong> {reservation.check_out} <br />
+                    <strong>Liczba osób:</strong> {reservation.people_number} <br />
+                    <strong>Status:</strong>{" "}
+                    <Badge
+                      bg={
+                        reservation.status === "Opłacona"
+                          ? "success"
+                          : reservation.status === "Anulowana"
+                          ? "danger"
+                          : reservation.status === "W trakcie"
+                          ? "warning"
+                          : reservation.status === "Zakończona"
+                          ? "primary"
+                          : "secondary"
+                      }
+                    >
+                      {reservation.status}
+                    </Badge>
+                  </p>
+                  <Button
+                    variant="primary"
+                    href={`/manage_reservation/${reservation.reservation_id}`}
+                    className="mt-2"
+                  >
+                    Zarządzaj
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </div>
         ))}
-      </Row>
+      </div>
+      {/* Paginacja */}
       <div className="d-flex justify-content-center mt-4">
         <Pagination>
           {Array.from({ length: totalPages }, (_, index) => (

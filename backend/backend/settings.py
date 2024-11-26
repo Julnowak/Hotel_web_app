@@ -150,7 +150,6 @@ ASGI_APPLICATION = "users_service.asgi.application"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # React frontend URL
     "http://localhost:3000",

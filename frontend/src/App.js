@@ -35,6 +35,7 @@ import EditReservationPage from "./components/EditReservationPage/EditReservatio
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 import client from "./components/client";
 import PaymentSim from "./components/PaymentSim/PaymementSim";
+import HotelGallery from "./components/HotelGallery/HotelGallery";
 
 function Root() {
 
@@ -46,6 +47,7 @@ function Root() {
     const [errflag, setErrflag] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [user_type, setUserType] = useState("klient");
+    const [pp, setPP] = useState(null);
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
@@ -60,7 +62,7 @@ function Root() {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 500);
-        client.get("http://127.0.0.1:8000/api/user/")
+        const response = client.get("http://127.0.0.1:8000/api/user/")
             .then(function () {
                 setCurrentUser(true);
             })
@@ -105,11 +107,14 @@ function Root() {
                 const name = response.data.username;
                 const ut = response.data.user_type;
                 const user_id = response.data.id;
+                const profile_pic = response.data.profile_picture
+                setPP(profile_pic)
 
                 localStorage.setItem('email', em);
                 localStorage.setItem('username', name);
                 localStorage.setItem('user_type', ut);
                 localStorage.setItem('user_id', user_id);
+                localStorage.setItem('profile_pic', response.data.profile_picture);
 
                 setCurrentUser(true);
                 setUserType(ut);
@@ -146,6 +151,7 @@ async function submitLogin({ e }: { e: any }) {
                 email: email,
                 password: password,
             },
+
         );
 
         // Store user data
@@ -154,20 +160,22 @@ async function submitLogin({ e }: { e: any }) {
         const name = response.data.username;
         const ut = response.data.user_type;
         const user_id = response.data.id;
-
+        const profile_pic = response.data.profile_picture
+        setPP(profile_pic)
         localStorage.setItem('email', em);
         localStorage.setItem('username', name);
         localStorage.setItem('user_type', ut);
         localStorage.setItem('user_id', user_id);
+        localStorage.setItem('profile_pic', response.data.profile_picture);
 
         setCurrentUser(true);
         setUserType(ut);
 
         // Navigate based on user type
         if (response.data.user_type === 'właściciel') {
-            navigate('/owner/panel');
+            navigate('/owner/panel/');
         } else if (response.data.user_type === 'klient') {
-            navigate('/customer/panel');
+            navigate('/customer/panel/');
         }
     } catch (error) {
         setErrflag(true);
@@ -183,6 +191,8 @@ async function submitLogin({ e }: { e: any }) {
         ).then(function () {
             setCurrentUser(false);
             localStorage.clear();
+            document.cookie = "sessionid=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+            document.cookie = "csrftoken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
             navigate('/')
             window.location.reload()
         });
@@ -200,7 +210,7 @@ async function submitLogin({ e }: { e: any }) {
                     <div className="fade-in full-height-container">
 
                         <div className="fade-in full-height-container">
-                            <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}/>
+                            <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout} profile_pic={pp}/>
 
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
@@ -212,6 +222,7 @@ async function submitLogin({ e }: { e: any }) {
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
+                                <Route path='/gallery/:id' element={<HotelGallery/>}/>
                                 <Route path='/rooms/prices/' element={<ManageRoomPricesPage />}/>
                                 <Route path='/payment/:id' element={<PaymentSim />}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>

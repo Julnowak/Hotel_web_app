@@ -154,8 +154,8 @@ const HotelPage = () => {
                 <span>&nbsp;</span>
                 <div className="buttons">
                     <Link className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>
-                    {/*<Link to={`/hotel/${id}/gallery`} className="gallery-button">Zobacz galerię</Link>*/}
-                    <Link to={`/gallery/`} className="gallery-button">Zobacz galerię</Link>
+                    <Link to={`/gallery/${id}/`} className="gallery-button">Zobacz galerię</Link>
+                    {/*<Link to={`/gallery/`} className="gallery-button">Zobacz galerię</Link>*/}
                 </div>
                 <span>&nbsp;</span>
                 <div className="reviews" style={{padding: "20px", maxWidth: "600px", margin: "auto"}}>

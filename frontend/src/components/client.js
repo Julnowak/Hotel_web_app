@@ -1,14 +1,14 @@
 import axios from "axios";
 
 // Global Axios Config
-axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfCookieName = 'csrfToken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.withCredentials = true;
 
 // Custom Axios Instance
 const client = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:3000",
+    baseURL: "http://127.0.0.1:3000",
     timeout: 10000, // 10-second timeout
+    withCredentials: true,
 });
 
 // Interceptors for Global Error Handling
