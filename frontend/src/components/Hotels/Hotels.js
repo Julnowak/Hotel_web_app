@@ -49,10 +49,10 @@ const Hotels = () => {
         {hotels.map(hotel => (
           <div key={hotel.hotel_id} className="hotel-card">
             <img src={"/images/hotel_loc_images/" + normalizeString(hotel.localization) + ".jpg"} alt={hotel.name} />
-            <h4 style={{margin:5}}>Hotel Weles {hotel.localization}</h4>
+            <h4 style={{margin:5}}>{hotel.localization}</h4>
             <p>{hotel.address}</p>
             <StarRating rating={hotel.rating}/>
-            <Link to={`/hotel/${hotel.hotel_id}`} className="button">Zobacz szczegóły</Link>
+            <Link to={`/hotel/${hotel.hotel_id}`} className="button reserve-button">Zobacz szczegóły</Link>
           </div>
         ))}
       </div>

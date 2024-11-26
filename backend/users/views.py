@@ -341,6 +341,18 @@ class ReservationDetailsAPI(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    # dla zmiany statusu zamówienia
+    def post(self, request, reservation_id):
+        operation_type = request.data["operation_type"]
+        reservation = get_object_or_404(Reservation, reservation_id=int(reservation_id))
+        if operation_type == "zapłata":
+            reservation.status = "Opłacona"
+        elif operation_type == "anulowanie":
+            reservation.status = "Anulowana"
+        reservation.save()
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data)
+
     def get(self, request, reservation_id):
         reservation = get_object_or_404(Reservation, reservation_id=reservation_id)
         serializer = ReservationSerializer(reservation)
@@ -366,25 +378,24 @@ class ReviewsApi(APIView):
 
     def post(self, request):
         data = request.data
-        print(data)
         h = Hotel.objects.get(hotel_id=int(data.get("hotel")['hotel_id']))
         new_review = Review.objects.create(user=request.user, rating=data.get("rating"), description=data.get("description"),
                                            hotel=h)
         revs = Review.objects.filter(hotel=h)
         suma = [float(i[0]) for i in revs.values_list("rating")]
-        print(suma)
         if revs.count():
             h.rating = sum(suma)/revs.count()
         else:
             h.rating = 0
         h.save()
 
-        serializer = ReviewSerializer(new_review)
+        res = Review.objects.filter(hotel__hotel_id=int(data.get("hotel")['hotel_id']))
+        print(res)
+        serializer = ReviewSerializer(res, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request):
-        res = Review.objects.all()
-        print(res)
+        res = Review.objects.filter(hotel__hotel_id=int(request.query_params.get('hotel_id')))
         serializer = ReviewSerializer(res, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

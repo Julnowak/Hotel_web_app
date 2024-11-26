@@ -197,9 +197,9 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
       </div>
 
             {selectedRoom && (
-                <div className="room-details" style={{ color: "black" }}>
+                <div className="room-details" style={{ color: "black" }} >
                     <h2>Pokój {selectedRoom.room_number}, piętro {floor} - szczegóły</h2>
-                    <p>Status: {selectedRoom.status}</p>
+                    <p>Status: {selectedRoom.status ==='Available'?"Dostępny":null}</p>
                     <p>Typ: {selectedRoom.room_type}</p>
                     <p>Cena: {selectedRoom.price} zł</p>
                     {selectedRoom.status === "Available" && (

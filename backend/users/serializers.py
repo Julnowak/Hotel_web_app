@@ -75,10 +75,13 @@ class ReservationSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     hotel = serializers.CharField(source='room.hotel.__str__', read_only=True)  # Pobiera nazwę hotelu
     room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+    user = UserSerializer()
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = [
+            'review_id', 'rating', 'description', 'room', 'user', 'hotel', 'room_type', 'created_at'
+        ]
 
 
 class FloorSerializer(serializers.ModelSerializer):

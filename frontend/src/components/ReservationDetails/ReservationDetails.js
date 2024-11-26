@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import "./ReservationDetails.css"
+import client from "../client";
 
 
 const ReservationDetails = () => {
@@ -17,7 +18,7 @@ const ReservationDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/newReservation/${params.id}/`, {
+        client.get(`http://127.0.0.1:8000/api/newReservation/${params.id}/`, {
             params: {
                 checkIn: checkIn,
                 checkOut: checkOut

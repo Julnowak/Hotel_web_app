@@ -22,7 +22,7 @@
 .reserve-button, .gallery-button {
   padding: 10px 20px;
   color: white;
-  background-color: #007bff;
+  background-color: #ff7329;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -31,7 +31,7 @@
 }
 
 .reserve-button:hover, .gallery-button:hover {
-  background-color: #0056b3;
+  background-color: #f85802;
 }
 
 .reviews {
@@ -40,4 +40,30 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.hotel-info-container {
+    display: flex; /* Enables flexbox layout */
+    align-items: stretch; /* Ensures children stretch to equal height */
+    gap: 10px; /* Adds spacing between children */
+
+}
+
+.hotel-description {
+    flex: 1;                       /* Opis zajmuje maksymalną dostępną przestrzeń */
+    margin: 0 20px;            /* Odstęp od sekcji ocen */
+    font-size: 16px;               /* Rozmiar czcionki */
+    color: #333;                   /* Kolor tekstu */
+    text-align: justify;
+}
+
+.hotel-rating {
+    display: flex;
+    flex-direction: column;        /* Układa elementy w kolumnie */
+}
+
+.rating-average {
+    font-size: 14px;               /* Mniejszy rozmiar czcionki dla średniej */
+    color: #666;                   /* Delikatny kolor tekstu */
+    margin-top: 5px;               /* Odstęp między gwiazdkami a tekstem */
 }

@@ -112,6 +112,7 @@ class Review(models.Model):
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "Recenzja " + str(self.review_id)

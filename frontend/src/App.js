@@ -34,6 +34,7 @@ import UserReservationsPage from "./components/ReservationHistoryPage/UserReserv
 import EditReservationPage from "./components/EditReservationPage/EditReservationPage";
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 import client from "./components/client";
+import PaymentSim from "./components/PaymentSim/PaymementSim";
 
 function Root() {
 
@@ -212,6 +213,7 @@ async function submitLogin({ e }: { e: any }) {
                                 <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
                                 <Route path='/rooms/prices/' element={<ManageRoomPricesPage />}/>
+                                <Route path='/payment/:id' element={<PaymentSim />}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                                 <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>

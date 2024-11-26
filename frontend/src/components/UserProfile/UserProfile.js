@@ -58,11 +58,9 @@ const UserProfile = () => {
                 setTotalDays(response.data['total_days'])
                 setMeanRating(response.data['mean_rating'])
                 setResNum(response.data['reservations_number'])
-                console.log(resNum)
                 if (response.data['user'].profile_picture) {
                     setImage(response.data['user'].profile_picture.slice(15))
                 }
-                console.log(image)
             })
             .catch(function () {
                 console.log("error")
