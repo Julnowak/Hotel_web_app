@@ -1,0 +1,251 @@
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin: 20px;
+  min-height: 60vh;
+}
+
+.status-btn {
+  padding: 10px;
+  /*margin: 10px;*/
+
+  cursor: pointer;
+}
+
+.status-btn.zajęty {
+  background-color: #3fa110;
+}
+
+.status-btn.wolny {
+  background-color: #858585;
+}
+
+.status-btn.do-sprzątania {
+  background-color: #462263;
+}
+
+.status-btn.do-naprawy {
+  background-color: #bb2200;
+}
+
+.roomStatus{
+  width: 50px;
+  height: 40px;
+  background-color: #ffffff;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.roomStatus.zajęty {
+  background-color: #3fa110;
+}
+
+.roomStatus.wolny {
+  background-color: #b9b8b8;
+}
+
+.roomStatus.do-sprzątania {
+  background-color: #462263;
+}
+
+.roomStatus.do-naprawy {
+  background-color: #bb2200;
+}
+
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modall {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 400px;
+}
+
+.filter-form {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  margin: 20px;
+  background-color: #2c2f33; /* Ciemne tło */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Miękki cień */
+}
+
+.filter-label {
+  color: #ffffff; /* Kolor tekstu */
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-select{
+  margin-top: 5px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.filter-input {
+  margin-top: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover,
+.filter-input:hover {
+  border-color: #ff7329; /* Zielona obwódka przy najechaniu */
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  border-color: #ff7329;
+  box-shadow: 0 0 5px #ff7329;
+}
+
+.filter-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Modal tło */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* Półprzezroczyste tło */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Animacja wchodzenia modala */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Tytuł w modalu */
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Tekst w modalu */
+.modal-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Select dropdown */
+.modal-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease;
+}
+
+.modal-select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Zielony cień przy focus */
+}
+
+/* Kontener na przyciski */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Styl przycisków */
+.modal-button {
+  flex: 1;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+/* Anuluj przycisk */
+.cancel-button-modal {
+  background-color: #f44336; /* Czerwony */
+  color: #fff;
+}
+
+.cancel-button-modal:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+/* Zapisz przycisk */
+.save-button-modal {
+  background-color: #4caf50; /* Zielony */
+  color: #fff;
+}
+
+.save-button-modal:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #fff0f0;
+    background-color: #3f3535;
+    cursor: pointer;
+}
+
+.pagination-button.active {
+    background-color: #ff7329;
+    color: white;
+    border-color: #ff5f07;
+}
+
+.pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

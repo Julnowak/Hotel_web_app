@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {BrowserRouter, Route, Routes, useNavigate} from "react-router-dom";
+import {BrowserRouter, Route, Routes, useNavigate, useMatch} from "react-router-dom";
 
 import Homepage from "./components/Homepage/Homepage";
 import axios from 'axios'
@@ -36,6 +36,8 @@ import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/M
 import client from "./components/client";
 import PaymentSim from "./components/PaymentSim/PaymementSim";
 import HotelGallery from "./components/HotelGallery/HotelGallery";
+import Cookies from "js-cookie";
+import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
 
 function Root() {
 
@@ -51,6 +53,7 @@ function Root() {
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
+    const match = useMatch("/hotel/:id");
 
     const handleClick = () => {
         setClicked(true); // Set clicked state to true on click
@@ -124,9 +127,7 @@ function Root() {
                 } else if (response.data.user_type === 'klient') {
                     navigate('http://127.0.0.1:3000/customer/panel/')
                 } else if (response.data.user_type === 'recepcjonista') {
-                    navigate('http://127.0.0.1:3000/receptionist/panel/')
-                } else if (response.data.user_type === 'personel') {
-                    navigate('http://127.0.0.1:3000/personel/panel/')
+                    navigate('/receptionist/panel/');
                 }
 
             } catch (error) {
@@ -156,6 +157,7 @@ async function submitLogin({ e }: { e: any }) {
 
         // Store user data
         setErrflag(false);
+
         const em = response.data.email;
         const name = response.data.username;
         const ut = response.data.user_type;
@@ -177,6 +179,9 @@ async function submitLogin({ e }: { e: any }) {
         } else if (response.data.user_type === 'klient') {
             navigate('/customer/panel/');
         }
+        else if (response.data.user_type === 'recepcjonista') {
+            navigate('/receptionist/panel/');
+        }
     } catch (error) {
         setErrflag(true);
         console.error('Login failed:', error);
@@ -186,13 +191,21 @@ async function submitLogin({ e }: { e: any }) {
 
     function submitLogout({e}: { e: any }) {
         e.preventDefault();
+        const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+                if (!csrfToken) {
+                    console.error("CSRF token not found!");
+                    return;
+                }
         client.post(
-            "http://127.0.0.1:8000/api/logout/"
+            "http://127.0.0.1:8000/api/logout/", {},
+            {
+                  headers: {
+                    "X-CSRFToken": csrfToken,
+                  },
+                },
         ).then(function () {
             setCurrentUser(false);
             localStorage.clear();
-            document.cookie = "sessionid=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-            document.cookie = "csrftoken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
             navigate('/')
             window.location.reload()
         });
@@ -218,6 +231,7 @@ async function submitLogin({ e }: { e: any }) {
                                 <Route path='/hotel/:id' element={<HotelPage/>}/>
                                 <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                                 <Route path='/owner/panel/' element={<OwnerPanel/>}/>
+                                <Route path='/room/statuses/' element={<RoomStatuses/>}/>
                                 <Route path='/receptionist/panel/' element={<ReceptionistPanel/>}/>
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/profile/' element={<UserProfile/>}/>
@@ -239,7 +253,7 @@ async function submitLogin({ e }: { e: any }) {
             </div>
         );
     } else {
-        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation") {
+        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation"|| match) {
             return (
                 <div>
                     {isLoading ? (

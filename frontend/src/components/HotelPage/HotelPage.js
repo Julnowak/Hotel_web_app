@@ -110,6 +110,7 @@ const HotelPage = () => {
     }, [hotel, id, reviews]);
 
     console.log("frontend/public/images/media/fox-study_44rp7YD.jpg".slice(15))
+
     function normalizeString(text) {
         // Mapowanie polskich znaków na ich odpowiedniki bez ogonków
         const polishCharMap = {
@@ -153,9 +154,10 @@ const HotelPage = () => {
 
                 <span>&nbsp;</span>
                 <div className="buttons">
-                    <Link className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>
+                    {localStorage.getItem("user_type") === "klient" || null ?
+                        <Link className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>: null}
+
                     <Link to={`/gallery/${id}/`} className="gallery-button">Zobacz galerię</Link>
-                    {/*<Link to={`/gallery/`} className="gallery-button">Zobacz galerię</Link>*/}
                 </div>
                 <span>&nbsp;</span>
                 <div className="reviews" style={{padding: "20px", maxWidth: "600px", margin: "auto"}}>
@@ -220,16 +222,17 @@ const HotelPage = () => {
                             ))
                         )}
                     </div>
-
-                    <div style={{width: "100%", textAlign: "center"}}>
-                        {showForm ? null :
-                        <button
-                            onClick={() => setShowForm(!showForm)}
-                            className="reserve-button"
-                        >
-                             Dodaj opinię
-                        </button>}
-                    </div>
+                    {localStorage.getItem("user_type") === "klient" ?
+                        <div style={{width: "100%", textAlign: "center"}}>
+                            {showForm ? null :
+                                <button
+                                    onClick={() => setShowForm(!showForm)}
+                                    className="reserve-button"
+                                >
+                                    Dodaj opinię
+                                </button>}
+                        </div>
+                        : null}
 
 
                     {showForm && (
@@ -245,7 +248,7 @@ const HotelPage = () => {
                         >
                             <h4 style={{textAlign: "center"}}>Dodaj swoją opinię</h4>
                             <div style={{marginBottom: "10px"}}>
-                                <p style={{display: "inline", marginRight: 20 }}>Wybierz ocenę:</p>
+                                <p style={{display: "inline", marginRight: 20}}>Wybierz ocenę:</p>
                                 {renderStars(
                                     hoverRating || newRating,
                                     (rating) => setHoverRating(rating),
@@ -297,13 +300,13 @@ const HotelPage = () => {
                                 </button>
 
                                 {showForm ?
-                                <button
-                                    onClick={() => setShowForm(!showForm)}
-                                    className="reserve-button"
-                                    style={{textAlign: "center", margin: 20}}
-                                >
-                                     Anuluj
-                                </button>: null}
+                                    <button
+                                        onClick={() => setShowForm(!showForm)}
+                                        className="reserve-button"
+                                        style={{textAlign: "center", margin: 20}}
+                                    >
+                                        Anuluj
+                                    </button> : null}
                             </div>
                         </div>
                     )}

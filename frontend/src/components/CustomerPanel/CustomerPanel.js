@@ -118,11 +118,11 @@ const CustomerPanel = () => {
                                         <td>{reservation.check_in}</td>
                                         <td>{reservation.room_type}</td>
                                         <td style={{
-                                            backgroundColor: reservation.status === 'Opłacona' ? 'green' :
-                                                reservation.status === 'Anulowana' ? 'red' :
-                                                    reservation.status === 'W trakcie' ? 'blue' :
-                                                        reservation.status === 'Zakończona' ? 'green' : 'grey',
-                                            color: 'white'
+                                            backgroundColor: reservation.status === 'Opłacona' ? 'lightgreen' :
+                                                reservation.status === 'Anulowana' ? 'palevioletred' :
+                                                    reservation.status === 'W trakcie' ? 'lightblue' :
+                                                        reservation.status === 'Zakończona' ? 'lightcyan' : 'lightgray',
+
                                         }}>
                                             {reservation.status}
                                         </td>

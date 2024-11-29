@@ -30,7 +30,10 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
                         {user_type === "klient" ? (
                             <Nav.Link href="http://127.0.0.1:3000/customer/panel/"
                                       className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
-                        ) : (
+                        ) : user_type === "recepcjonista" ? (
+                            <Nav.Link href="http://127.0.0.1:3000/receptionist/panel/"
+                                      className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
+                        ): (
                             <Nav.Link href="http://127.0.0.1:3000/owner/panel/"
                                       className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
                         )}

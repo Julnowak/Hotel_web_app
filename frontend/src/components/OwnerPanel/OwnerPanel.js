@@ -6,6 +6,8 @@ import RoomReservation from "../Reservations/RoomReservation";
 
 import axios from "axios";
 import {Form} from "react-bootstrap";
+import RoomsVisual from "../RoomsVisual/RoomsVisual";
+import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
 
 const OwnerPanel = () => {
     // Stan dla aktualnej lokalizacji hotelu
@@ -140,9 +142,11 @@ const OwnerPanel = () => {
                         />
                     </div>
                 ))}
-                <a href={'/rooms/prices/'}>
-                    Zobacz więcej...
-                </a>
+
+                <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
+                    <a href={"/allReservations/"}>Zobacz więcej...</a>
+                </div>
+
             </section>
 
             {/* Sekcja śledzenia statusów pokojów */}
@@ -157,7 +161,7 @@ const OwnerPanel = () => {
                 {/*</ul>*/}
 
                 {hotel && hotelId ?
-                    <RoomReservation rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
+                    <RoomsVisual rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
                                      roomStandard={roomStandard}/>
                     : null}
 

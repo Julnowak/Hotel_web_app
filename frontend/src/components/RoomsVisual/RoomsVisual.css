@@ -1,13 +1,13 @@
-/*.room-reservation-container {*/
-/*  max-width: 1100px;*/
-/*  margin: 20px auto;*/
-/*  padding: 30px;*/
-/*  font-family: 'Arial', sans-serif;*/
-/*  background-color: #f9f9f9;*/
-/*  border-radius: 15px;*/
-/*  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);*/
-/*  text-align: center;*/
-/*}*/
+.room-reservation-container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
 h1 {
   margin-bottom: 20px;
@@ -42,8 +42,8 @@ h1 {
 
 .rooms-section {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
-  grid-template-rows: repeat(3, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 15px;
   justify-items: center;
   position: relative;
@@ -98,7 +98,7 @@ h1 {
 
 .room-box:hover {
   transform: translateY(-5px);
-  background-color: #47d6c3; 
+  background-color: #47d6c3;
 }
 
 
@@ -196,7 +196,7 @@ button:hover {
   }
 
   .rooms-section {
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(3, 1fr);
 }
 
@@ -213,18 +213,6 @@ button:hover {
 
 @media (max-width: 480px) {
   .rooms-section {
-      grid-template-columns: 1fr; 
+      grid-template-columns: 1fr;
   }
 }
-
-
-/*.corridor {*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  width: 100px;*/
-/*  background-color: #ccc;*/
-/*  font-weight: bold;*/
-/*  color: #444;*/
-/*  border-radius: 5px;*/
-/*}*/

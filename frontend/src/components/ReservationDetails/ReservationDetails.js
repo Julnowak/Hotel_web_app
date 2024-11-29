@@ -53,16 +53,8 @@ const ReservationDetails = () => {
         }
     )
             .then(response => {
-
                 setPaymentSuccess(true);
-                // setReservation({...reservation, is_paid: true});
-                if (localStorage.getItem("klient")){
-                    navigate("/customer/panel/")
-                }
-                else {
-                    navigate("/")
-                }
-
+                navigate(`/payment/${response.data.reservation_id}`)
             })
             .catch(err => {
                 setError('Payment failed');

@@ -311,19 +311,22 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
-            <h2>Statystyki</h2>
+
+            {userType !== "recepcjonista" ?
+            <h2>Statystyki</h2>: null}
+
             {userType === "klient" ?
                 <div className="profile-stats">
 
                     <p>Liczba rezerwacji: {resNum}</p>
                     <p>Średnia ocen: {meanRating.toFixed(2)}</p>
                     <p>Dni spędzone w naszych hotelach: {totalDays}</p>
-                </div> :
+                </div> : userType === "właściciel" ?
                 <div className="profile-stats">
                     <p>Liczba hoteli: {user.reservations}</p>
                     <p>Liczba pokoi: {user.rating}</p>
                     <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
-                </div>}
+                </div>: null}
 
             <div className="down-buttons">
                 {userType === "klient" ?

@@ -1,14 +1,11 @@
 import datetime
 
 from django.contrib.auth import login, logout, authenticate
-from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
     HotelSerializer, FloorSerializer, ReservationSerializer, ReviewSerializer
 from .models import AppUser, Room, Hotel, Floor, Reservation, Payment, Review
@@ -168,7 +165,7 @@ class RoomApi(APIView):
             ).exists()
 
             # Set availability status based on conflicts
-            room_status = "Available" if not has_conflict else "Unavailable"
+            room_status = "Wolny" if not has_conflict else "Zajęty"
 
             # Append room data with the status to room_data
             room_data.append({
@@ -212,7 +209,7 @@ class RoomApi(APIView):
             ).exists()
 
             # Set availability status based on conflicts
-            room_status = "Available" if not has_conflict else "Unavailable"
+            room_status = "Wolny" if not has_conflict else "Zajęty"
 
             # Append room data with the status to room_data
             room_data.append({
@@ -230,7 +227,7 @@ class RoomApi(APIView):
         print(request.data)
         r = Room.objects.all()
         print(r)
-        serializer = RoomSerializer(r)
+        serializer = RoomSerializer(r, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -260,9 +257,22 @@ class NewReservationApi(APIView):
                                              )
 
         new_trans = Payment.objects.create(reservation=new_res)
-        r.status = "Unavailable"
+        r.status = "Zajęty"
         r.save()
         serializer = ReservationSerializer(new_res)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RoomStatusChange(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request, room_id):
+        data = request.data
+        r = Room.objects.get(room_id=room_id)
+        r.status = data['newStatus']
+        r.save()
+        serializer = RoomSerializer(r)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -322,16 +332,28 @@ class ReservationsAPI(APIView):
 
     def get(self, request):
         # Pobierz wszystkie rezerwacje z powiązanymi pokojami i hotelami
-        reservations = Reservation.objects.select_related('room__hotel').all().filter(user=request.user)
+        reservations = Reservation.objects.select_related('room__hotel').all().filter(user=request.user).order_by("-check_in")
 
         # Serializacja danych
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class RoomStatuses(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, hotel_id):
+        rooms = Room.objects.filter(hotel__hotel_id=hotel_id)
+
+        # Serializacja danych
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AvailableRoomsView(APIView):
     def get(self, request):
-        available_rooms = Room.objects.filter(status="Available")
+        available_rooms = Room.objects.filter(status="Wolny")
         serializer = RoomSerializer(available_rooms, many=True)
         return Response(serializer.data)
 
@@ -438,3 +460,18 @@ class RoomPricesView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         return Response({"message": "Room prices updated successfully."})
+
+
+class ReservationPagination(PageNumberPagination):
+    page_size = 5  # Ilość elementów na stronie
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class ReservationViewSet(APIView):
+    def get(self, request):
+        paginator = ReservationPagination()
+        reservations = Reservation.objects.all().order_by('-check_in')
+        paginated_reservations = paginator.paginate_queryset(reservations, request)
+        serializer = ReservationSerializer(paginated_reservations, many=True)
+        return paginator.get_paginated_response(serializer.data)

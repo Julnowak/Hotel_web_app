@@ -164,3 +164,16 @@ input[type="number"]:focus {
 }
 
 
+/* Link style for "Zobacz więcej..." */
+a {
+    color: #9e5a2c; /* Bright orange color */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+a:hover {
+    color: #9e5a2c; /* Slightly lighter orange on hover */
+    text-shadow: 0px 0px 5px rgb(145, 82, 40); /* Glowing effect */
+    text-decoration: underline; /* Adds underline on hover */
+}

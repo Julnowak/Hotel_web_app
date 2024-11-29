@@ -54,7 +54,8 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     surname = models.CharField(max_length=200,blank=True, null=True)
     user_type = models.CharField(max_length=50, default="klient")
     profile_picture = models.ImageField(blank=True, null=True)
-    liked_hotels = models.ForeignKey(Hotel, on_delete=models.CASCADE,blank=True, null=True)
+    liked_hotels = models.ManyToManyField(Hotel, blank=True, null=True, related_name="liked_hotels")
+    recepcionist_hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE,blank=True, null=True, related_name="recepcionist_hotel")
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     objects = AppUserManager()
@@ -100,6 +101,7 @@ class Reservation(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE, blank=True, null=True)
     people_number = models.IntegerField(default=1)
+    creation_date = models.DateField(auto_now_add=True, blank=True)
 
     def __str__(self):
         return "Rezerwacja" + self.reservation_id + " " + str(self.id)
