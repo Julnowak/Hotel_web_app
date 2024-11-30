@@ -137,6 +137,11 @@ button:focus {
   border: 2px solid #ccc;
 }
 
+.bg-dosprzatania {
+    background-color: #462263 !important;
+}
+
+
 .selected {
   border: 2px solid #007bff;
   background-color: #75c4e9;
@@ -216,3 +221,4 @@ button:hover {
       grid-template-columns: 1fr;
   }
 }
+

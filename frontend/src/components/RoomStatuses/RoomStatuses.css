@@ -29,30 +29,6 @@
   background-color: #bb2200;
 }
 
-.roomStatus{
-  width: 50px;
-  height: 40px;
-  background-color: #ffffff;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.roomStatus.zajęty {
-  background-color: #3fa110;
-}
-
-.roomStatus.wolny {
-  background-color: #b9b8b8;
-}
-
-.roomStatus.do-sprzątania {
-  background-color: #462263;
-}
-
-.roomStatus.do-naprawy {
-  background-color: #bb2200;
-}
-
-
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -248,4 +224,42 @@
 .pagination-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+.roomStatus{
+  width: 50px;
+  height: 40px;
+  background-color: #ffffff;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  display: flex; /* Enable Flexbox */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Optionally center horizontally */
+}
+
+.roomStatus.zajęty {
+  background-color: #3fa110;
+}
+
+.roomStatus.wolny {
+  background-color: #b9b8b8;
+}
+
+.roomStatus.do-sprzątania {
+  background-color: #462263;
+}
+
+.roomStatus.do-naprawy {
+  background-color: #bb2200;
+}
+
+.roomStatus.selected {
+  border: 2px solid #030607;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.roomStatus.unavailable-selected {
+  background-color: rgb(255, 100, 100);
+  color: white;
+  border: 2px solid #FF0000;
 }

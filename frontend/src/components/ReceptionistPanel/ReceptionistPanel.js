@@ -126,11 +126,11 @@ const ReceptionistPanel = () => {
             <section>
                 <h3>Aktualny status pokoi</h3>
                 {hotel && hotelId ?
-                    <RoomsVisual rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
+                    <RoomsVisual rms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
                                  roomStandard={roomStandard}/>
                     : null}
                 <div style={{textAlign: "right"}}>
-                    <a href="/room/statuses/">Zobacz więcej...</a>
+                    <a href="#">Zobacz więcej...</a>
                 </div>
             </section>
 
