@@ -37,6 +37,8 @@ import PaymentSim from "./components/PaymentSim/PaymementSim";
 import HotelGallery from "./components/HotelGallery/HotelGallery";
 import Cookies from "js-cookie";
 import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
+import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
+import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
 
 function Root() {
 
@@ -239,10 +241,12 @@ function Root() {
                                 <Route path='/gallery/:id' element={<HotelGallery/>}/>
                                 <Route path='/rooms/prices/' element={<ManageRoomPricesPage/>}/>
                                 <Route path='/payment/:id' element={<PaymentSim/>}/>
+                                <Route path='/receptionistReservations/' element={<ReservationsList/>}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                                 <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
+                                <Route path='/receptionist/manage/reservation/:id/' element={<ReceptionistManageReservation/>}/>
                             </Routes>
                         </div>
                         <Footer/>

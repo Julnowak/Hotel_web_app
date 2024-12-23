@@ -3,6 +3,7 @@ import './ReceptionistPanel.css';
 import RoomsVisual from "../RoomsVisual/RoomsVisual";
 import client from "../client";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
 const ReceptionistPanel = () => {
@@ -19,6 +20,7 @@ const ReceptionistPanel = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchHotels = async () => {
@@ -38,9 +40,23 @@ const ReceptionistPanel = () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${1}`);
                 setRooms(response.data);
-                console.log(rooms)
             } catch (error) {
                 console.error("Error fetching hotels:", error);
+            }
+        };
+
+        const fetchReservations = async (page) => {
+            setLoading(true);
+            try {
+                const response = await client.get(`http://127.0.0.1:8000/api/personelReservations/`, {
+                    params: {page},
+                });
+                setReservations(response.data);
+                setTotalPages(Math.ceil(response.data.length / 5));
+            } catch (error) {
+                console.error('Error fetching reservations:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -52,26 +68,11 @@ const ReceptionistPanel = () => {
             console.log(hotel)
         }
 
-        if (!reservations.length) {
+        if (!reservations?.length) {
             fetchReservations(currentPage);
         }
 
     }, [checkInDate, checkOutDate, currentPage, hotel, hotelId, hotels, reservations.length, roomStandard, rooms, rooms.length]);
-
-    const fetchReservations = async (page = 1) => {
-        setLoading(true);
-        try {
-            const response = await client.get(`http://127.0.0.1:8000/api/personelReservations/`, {
-                params: {page},
-            });
-            setReservations(response.data.results);
-            setTotalPages(Math.ceil(response.data.count / 5));
-        } catch (error) {
-            console.error('Error fetching reservations:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
 
     const handlePageChange = (page) => {
@@ -94,24 +95,28 @@ const ReceptionistPanel = () => {
                             <p>Loading...</p>
                         ) : (
                             <div>
-                            <ul className="reservations-list">
-                              {reservations.map((reservation) => (
-                                <li class={"amo"} key={reservation.reservation_id}>
-                                  <span>Rezerwacja ID: {reservation.reservation_id}</span>
-                                  <span>Check-in: {reservation.check_in}</span>
-                                </li>
-                              ))}
-                            </ul>
+                                <ul className="reservations-list">
+                                    {reservations?.slice((currentPage - 1) * 5, currentPage * 5).map((reservation) => (
+                                        <li class={"amo"} style={{cursor: "pointer"}} onClick={function () {
+                                            navigate(`/receptionist/manage/reservation/${reservation.reservation_id}/`)
+                                        }} key={reservation.reservation_id}>
+                                            <span>Rezerwacja ID: {reservation.reservation_id}</span>
+                                            <span>Check-in: {reservation.check_in}</span>
+                                        </li>
+                                    ))}
+                                </ul>
 
-                            <div className="pagination">
-                              <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                                Poprzednia
-                              </button>
-                              <span>{currentPage} z {totalPages}</span>
-                              <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                                Następna
-                              </button>
-                            </div>
+                                <div className="pagination">
+                                    <button onClick={() => handlePageChange(currentPage - 1)}
+                                            disabled={currentPage === 1}>
+                                        Poprzednia
+                                    </button>
+                                    <span>{currentPage} z {totalPages}</span>
+                                    <button onClick={() => handlePageChange(currentPage + 1)}
+                                            disabled={currentPage === totalPages}>
+                                        Następna
+                                    </button>
+                                </div>
                             </div>
 
                         )}
@@ -119,7 +124,7 @@ const ReceptionistPanel = () => {
                 </div>
 
                 <div style={{textAlign: "right"}}>
-                    <a href="/userReservations/">Zobacz więcej...</a>
+                    <a href="/receptionistReservations/">Zobacz więcej...</a>
                 </div>
             </section>
 

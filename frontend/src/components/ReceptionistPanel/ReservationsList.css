@@ -1,0 +1,64 @@
+/* Reservations Container */
+.reservations-container {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.search-bar input:focus {
+    border-color: #ff7329;
+    outline: none;
+}
+
+/* Reservations Table */
+.reservations-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.reservations-table th,
+.reservations-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+.reservations-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+.reservations-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.reservations-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* No results */
+.reservations-table td[colspan="4"] {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+}

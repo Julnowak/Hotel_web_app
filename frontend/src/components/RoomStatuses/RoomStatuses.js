@@ -34,7 +34,7 @@ const RoomStatuses = () => {
         newStatus: newStatus,
         });
     } catch (error) {
-        console.error("Error fetching hotels:", error);
+        console.error("Error fetching rooms:", error);
     }
   };
 

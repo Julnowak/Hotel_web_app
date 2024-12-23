@@ -155,9 +155,9 @@ const HotelPage = () => {
                 <span>&nbsp;</span>
                 <div className="buttons">
                     {localStorage.getItem("user_type") === "klient" || null ?
-                        <Link className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>: null}
+                        <Link style={{color: "white"}} className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>: null}
 
-                    <Link to={`/gallery/${id}/`} className="gallery-button">Zobacz galerię</Link>
+                    <Link to={`/gallery/${id}/`} style={{color: "white"}} className="gallery-button">Zobacz galerię</Link>
                 </div>
                 <span>&nbsp;</span>
                 <div className="reviews" style={{padding: "20px", maxWidth: "600px", margin: "auto"}}>
@@ -223,7 +223,7 @@ const HotelPage = () => {
                         )}
                     </div>
                     {localStorage.getItem("user_type") === "klient" ?
-                        <div style={{width: "100%", textAlign: "center"}}>
+                        <div style={{width: "100%", textAlign: "center", marginTop: 20}}>
                             {showForm ? null :
                                 <button
                                     onClick={() => setShowForm(!showForm)}
@@ -258,22 +258,6 @@ const HotelPage = () => {
                                     }
                                 )}
                             </div>
-
-
-                            {/*<label style={{ display: "block", margin: "10px 0" }}>*/}
-                            {/*  Nazwa:*/}
-                            {/*  <input*/}
-                            {/*    value={newReview}*/}
-                            {/*    onChange={(e) => setNewReview(e.target.value)}*/}
-                            {/*    placeholder="Podaj swoją nazwę..."*/}
-                            {/*    style={{*/}
-                            {/*      width: "100%",*/}
-                            {/*      padding: "8px",*/}
-                            {/*      borderRadius: "4px",*/}
-                            {/*      border: "1px solid #ccc",*/}
-                            {/*    }}*/}
-                            {/*  />*/}
-                            {/*</label>*/}
 
                             <label style={{display: "block", margin: "10px 0"}}>
                                 <textarea

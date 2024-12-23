@@ -487,16 +487,9 @@ class RoomPricesView(APIView):
         return Response({"message": "Room prices updated successfully."})
 
 
-class ReservationPagination(PageNumberPagination):
-    page_size = 5  # Ilość elementów na stronie
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
-
 class ReservationViewSet(APIView):
     def get(self, request):
-        paginator = ReservationPagination()
-        reservations = Reservation.objects.all().order_by('-check_in')
-        paginated_reservations = paginator.paginate_queryset(reservations, request)
-        serializer = ReservationSerializer(paginated_reservations, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        reservations = Reservation.objects.filter(check_in__lte=datetime.datetime.today()).order_by('-check_in')
+        print(Reservation.objects.filter(check_in__gte=datetime.datetime.today()))
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
