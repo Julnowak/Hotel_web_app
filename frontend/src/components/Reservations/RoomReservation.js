@@ -79,9 +79,9 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Available" ? 'available' : 'unavailable'}
+                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
-                            ${room.status === "Unavailable" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
+                            ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
                         >
                             {room.room_number}
@@ -97,9 +97,9 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Available" ? 'available' : 'unavailable'}
+                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
-                            ${room.status === "Unavailable" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
+                            ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
                         >
                             {room.room_number}
@@ -184,9 +184,9 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Available" ? 'available' : 'unavailable'}
+                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
-                            ${room.status === "Unavailable" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
+                            ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
                         >
                             {room.room_number}
@@ -199,10 +199,10 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
             {selectedRoom && (
                 <div className="room-details" style={{ color: "black" }} >
                     <h2>Pokój {selectedRoom.room_number}, piętro {floor} - szczegóły</h2>
-                    <p>Status: {selectedRoom.status ==='Available'?"Dostępny":null}</p>
+                    <p>Status: {selectedRoom.status}</p>
                     <p>Typ: {selectedRoom.room_type}</p>
                     <p>Cena: {selectedRoom.price} zł</p>
-                    {selectedRoom.status === "Available" && (
+                    {selectedRoom.status === "Wolny" && (
                         <a href={`/reservation/room/${selectedRoom.room_id}/?checkIn=${checkIn}&checkOut=${checkOut}`}>
                             <button>Zarezerwuj</button>
                         </a>

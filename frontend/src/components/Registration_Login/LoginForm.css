@@ -1,16 +1,10 @@
-/*body {*/
-/*    margin: 0;*/
-/*    font-family: 'Arial', sans-serif;*/
-/*    background-color: #121212;*/
-/*    color: #ffffff;*/
-/*}*/
 
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #121212;
+    background-color: #17120e;
 }
 
 .login-card {
@@ -25,7 +19,7 @@
 .login-card h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: #f4a261;
+    color: #ff7329;
 }
 
 .login-form .form-group {
@@ -36,7 +30,7 @@
 .login-form label {
     display: block;
     margin-bottom: 5px;
-    color: #f4a261;
+    color: #ff7329;
 }
 
 .login-form input {
@@ -51,16 +45,18 @@
 }
 
 .login-form input:focus {
-    border-color: #f4a261;
-    box-shadow: 0 0 5px rgba(244, 162, 97, 0.5);
+    border-color: #ff7329;
+    box-shadow: 0 0 5px rgb(253, 115, 41);
 }
 
 .options {
-    display: flex;
+
     justify-content: space-between;
     align-items: center;
+    vertical-align: middle;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 40px;
+    margin-top: 15px;
 }
 
 .forgot-password-link {
@@ -74,9 +70,10 @@
 }
 
 .login-button {
-    width: 100%;
+    width: 200px;
     padding: 10px;
-    background-color: #f4a261;
+    background-color: #ff7329;
+    margin: auto;
     border: none;
     border-radius: 4px;
     color: #1c1c1c;
@@ -131,4 +128,8 @@
 
 .cancel-button:hover {
     background-color: #dcdcdc;
+}
+
+.forgot-password-link{
+    color: #67605b;
 }

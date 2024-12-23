@@ -130,7 +130,7 @@ const ReceptionistPanel = () => {
                                  roomStandard={roomStandard}/>
                     : null}
                 <div style={{textAlign: "right"}}>
-                    <a href="#">Zobacz więcej...</a>
+                    <a href="/room/statuses/">Zobacz więcej...</a>
                 </div>
             </section>
 

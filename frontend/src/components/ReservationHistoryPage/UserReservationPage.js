@@ -18,6 +18,7 @@ const UserReservationsPage = () => {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/userReservations/?page=${page}&per_page=${reservationsPerPage}`
       );
+
       setReservations(response.data.results); // Zakładamy, że wyniki są w `results`
       setTotalPages(response.data.total_pages);
     } catch (error) {

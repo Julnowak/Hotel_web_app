@@ -21,7 +21,7 @@ function NavbarGuest({
                      }, setConfirmPassword, submitRegistration, errflag, submitLogin, registrationToggle, loc) {
     return (
         <div>
-            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
+            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#000001"}}>
                 <Container>
                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
                         <img src={hor_logo} style={{height: 30, margin: 10}}/>
@@ -30,7 +30,7 @@ function NavbarGuest({
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
 
                         {loc === "/" ?
-                            <Nav className="me-auto">
+                            <Nav className="me-auto align-items-center">
                                 <Nav.Link href="#about" className="mx-2 text-uppercase fw-light">
                                     Nasze hotele
                                 </Nav.Link>
@@ -46,7 +46,7 @@ function NavbarGuest({
                             </Nav> : null
                         }
 
-                        <Navbar.Text>
+                        <Navbar.Text className={'d-flex justify-content-center'}>
                             {loc !== "/" ? (
                                 <Button href="/login"
                                         id="form_btn"

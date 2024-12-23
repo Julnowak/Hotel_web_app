@@ -2,10 +2,10 @@ import datetime
 
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
     HotelSerializer, FloorSerializer, ReservationSerializer, ReviewSerializer
 from .models import AppUser, Room, Hotel, Floor, Reservation, Payment, Review
@@ -28,11 +28,23 @@ class UserRegister(APIView):
 
     def post(self, request):
         validated_data = custom_validation(request.data)
+        print(validated_data)
+
+        if AppUser.objects.filter(username=validated_data['username'].lower()):
+            return Response({"error": "Wybrana nazwa użytkownika już istnieje."}, status=status.HTTP_401_UNAUTHORIZED)
+        if AppUser.objects.filter(email=validated_data['email']):
+            return Response({"error": "Istnieje już konto powiązane z tym adresem email."},status.HTTP_401_UNAUTHORIZED)
+        if len(validated_data['password']) < 8:
+            return Response({"error": "Hasło powinno mieć minimum 8 znaków."}, status=status.HTTP_401_UNAUTHORIZED)
+        if validated_data['password'] != validated_data['confirmPassword']:
+            return Response({"error": "Hasła nie są ze sobą zgodne."}, status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = UserRegisterSerializer(data=validated_data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.create(validated_data)
             user.user_type = validated_data['user_type']
             user.save()
+
             if user:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(status.HTTP_400_BAD_REQUEST)
@@ -43,27 +55,32 @@ class UserLogin(APIView):
 
     def post(self, request):
         data = request.data
+        print(data)
+
+        # Validate email and password
         assert validate_email(data)
         assert validate_password(data)
+
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = authenticate(request, email=data['email'], password=data['password'])
-            login(request, user)
+            try:
+                login(request, user)
+                # Set CSRF token
+                csrf_token = get_token(request)
 
+                user_data = {
+                    'id': user.user_id,
+                    'username': user.username,
+                    'email': user.email,
+                    'user_type': user.user_type,
+                }
 
-            # Set CSRF token
-            csrf_token = get_token(request)
-
-            user_data = {
-                'id': user.user_id,
-                'username': user.username,
-                'email': user.email,
-                'user_type': user.user_type,
-            }
-
-            response = Response(user_data, status=status.HTTP_200_OK)
-            response.set_cookie('csrftoken', csrf_token)  # Set the CSRF token cookie
-            return response
+                response = Response(user_data, status=status.HTTP_200_OK)
+                response.set_cookie('csrftoken', csrf_token)  # Set the CSRF token cookie
+                return response
+            except:
+                return Response({"error": "Wprowadzono nieprawidłowy email lub hasło."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserLogout(APIView):
@@ -334,9 +351,17 @@ class ReservationsAPI(APIView):
         # Pobierz wszystkie rezerwacje z powiązanymi pokojami i hotelami
         reservations = Reservation.objects.select_related('room__hotel').all().filter(user=request.user).order_by("-check_in")
 
+        today = datetime.datetime.now().date()
+        current_reservations = reservations.filter(
+            check_in__lte=today,
+            check_out__gte=today,
+            status__in=["Opłacona", "W trakcie"]
+        )
+
         # Serializacja danych
         serializer = ReservationSerializer(reservations, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        ser = ReservationSerializer(current_reservations, many=True)
+        return Response({"main_data": serializer.data, "current_data": ser.data}, status=status.HTTP_200_OK)
 
 
 class RoomStatuses(APIView):
@@ -429,7 +454,7 @@ class UserReservationsPagination(PageNumberPagination):
 class UserReservationsView(APIView):
     def get(self, request):
         paginator = UserReservationsPagination()
-        reservations = Reservation.objects.filter(user=request.user).select_related('room__hotel')
+        reservations = Reservation.objects.filter(user=request.user).select_related('room__hotel').order_by("-check_in")
         paginated_reservations = paginator.paginate_queryset(reservations, request)
         serializer = ReservationSerializer(paginated_reservations, many=True)
         return paginator.get_paginated_response(serializer.data)

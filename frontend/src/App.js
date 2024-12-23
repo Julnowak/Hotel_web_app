@@ -3,7 +3,6 @@ import './App.css';
 import {BrowserRouter, Route, Routes, useNavigate, useMatch} from "react-router-dom";
 
 import Homepage from "./components/Homepage/Homepage";
-import axios from 'axios'
 import {useState, useEffect} from 'react'
 import "./Scrollbar.css"
 
@@ -46,7 +45,7 @@ function Root() {
     const [email, setEmail] = useState(null);
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
-    const [errflag, setErrflag] = useState(false);
+    const [errmess, setErrmess] = useState(null);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [user_type, setUserType] = useState("klient");
     const [pp, setPP] = useState(null);
@@ -65,7 +64,7 @@ function Root() {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 500);
-        const response = client.get("http://127.0.0.1:8000/api/user/")
+        client.get("http://127.0.0.1:8000/api/user/")
             .then(function () {
                 setCurrentUser(true);
             })
@@ -78,131 +77,131 @@ function Root() {
 
     function update_form_btn() {
         if (registrationToggle) {
-            document.getElementById("form_btn").innerHTML = "Zarejestruj się";
+            document.getElementById("targetButton").innerHTML = "Zarejestruj się";
             setRegistrationToggle(false);
         } else {
-            document.getElementById("form_btn").innerHTML = "Zaloguj się";
+            document.getElementById("targetButton").innerHTML = "Zaloguj się";
             setRegistrationToggle(true);
         }
     }
 
     async function submitRegistration({e}: { e: any }) {
         e.preventDefault();
-        client.post(
-            "http://127.0.0.1:8000/api/register/",
-            {
+
+        try {
+            // Step 1: Register the user
+            await client.post("http://127.0.0.1:8000/api/register/", {
                 email: email,
                 username: username,
                 password: password,
-                user_type: "klient"
-            }
-        ).then(async function () {
-            try {
-                const [response] = await Promise.all([client.post(
-                    "http://127.0.0.1:8000/api/login/",
-                    {
-                        email: email,
-                        password: password
-                    })])
+                user_type: "klient",
+                confirmPassword: confirmPassword
+            });
 
-                setErrflag(false);
-                const em = response.data.email;
-                const name = response.data.username;
-                const ut = response.data.user_type;
-                const user_id = response.data.id;
-                const profile_pic = response.data.profile_picture
-                setPP(profile_pic)
-
-                localStorage.setItem('email', em);
-                localStorage.setItem('username', name);
-                localStorage.setItem('user_type', ut);
-                localStorage.setItem('user_id', user_id);
-                localStorage.setItem('profile_pic', response.data.profile_picture);
-
-                setCurrentUser(true);
-                setUserType(ut);
-                console.log(user_type)
-                if (response.data.user_type === 'właściciel') {
-                    navigate('http://127.0.0.1:3000/owner/panel/')
-                } else if (response.data.user_type === 'klient') {
-                    navigate('http://127.0.0.1:3000/customer/panel/')
-                } else if (response.data.user_type === 'recepcjonista') {
-                    navigate('/receptionist/panel/');
-                }
-
-            } catch (error) {
-                setErrflag(true);
-                console.error('Login failed:', error);// Login failed
-            }
-
-        });
-
-    }
-
-
-async function submitLogin({ e }: { e: any }) {
-    e.preventDefault();
-
-    try {
-
-        // Perform login
-        const response = await client.post(
-            "http://127.0.0.1:8000/api/login/",
-            {
+            // Step 2: Login the user
+            const response = await client.post("http://127.0.0.1:8000/api/login/", {
                 email: email,
                 password: password,
-            },
+            });
 
-        );
+            // Extract response data
+            const {email: em, username: name, user_type: ut, id: user_id, profile_picture} = response.data;
 
-        // Store user data
-        setErrflag(false);
+            // Update localStorage
+            localStorage.setItem("email", em);
+            localStorage.setItem("username", name);
+            localStorage.setItem("user_type", ut);
+            localStorage.setItem("user_id", user_id);
+            localStorage.setItem("profile_pic", profile_picture);
 
-        const em = response.data.email;
-        const name = response.data.username;
-        const ut = response.data.user_type;
-        const user_id = response.data.id;
-        const profile_pic = response.data.profile_picture
-        setPP(profile_pic)
-        localStorage.setItem('email', em);
-        localStorage.setItem('username', name);
-        localStorage.setItem('user_type', ut);
-        localStorage.setItem('user_id', user_id);
-        localStorage.setItem('profile_pic', response.data.profile_picture);
+            // Update state
+            setPP(profile_picture);
+            setCurrentUser(true);
+            setUserType(ut);
 
-        setCurrentUser(true);
-        setUserType(ut);
 
-        // Navigate based on user type
-        if (response.data.user_type === 'właściciel') {
-            navigate('/owner/panel/');
-        } else if (response.data.user_type === 'klient') {
-            navigate('/customer/panel/');
+            if (response.data.user_type === 'właściciel') {
+                navigate('/owner/panel/')
+            } else if (response.data.user_type === 'klient') {
+                navigate('/customer/panel/')
+            } else if (response.data.user_type === 'recepcjonista') {
+                navigate('/receptionist/panel/');
+            }
+        } catch (error) {
+            // Handle errors
+            if (error.response) {
+                // Server responded with a status other than 2xx
+                setErrmess(error.response.data.error || "Błąd rejestracji");
+            } else if (error.request) {
+                // Request was made but no response received
+                setErrmess("Brak odpowiedzi z serwera");
+            } else {
+                // Something else caused the error
+                setErrmess(error.message || "Nieznany błąd");
+            }
         }
-        else if (response.data.user_type === 'recepcjonista') {
-            navigate('/receptionist/panel/');
-        }
-    } catch (error) {
-        setErrflag(true);
-        console.error('Login failed:', error);
     }
-}
+
+
+    async function submitLogin({e}: { e: any }) {
+        e.preventDefault();
+
+        try {
+
+            // Perform login
+            const response = await client.post(
+                "http://127.0.0.1:8000/api/login/",
+                {
+                    email: email,
+                    password: password,
+                    login: username
+                },
+            );
+
+            const em = response.data.email;
+            const name = response.data.username;
+            const ut = response.data.user_type;
+            const user_id = response.data.id;
+            const profile_pic = response.data.profile_picture
+            setPP(profile_pic)
+            localStorage.setItem('email', em);
+            localStorage.setItem('username', name);
+            localStorage.setItem('user_type', ut);
+            localStorage.setItem('user_id', user_id);
+            localStorage.setItem('profile_pic', response.data.profile_picture);
+
+            setCurrentUser(true);
+            setUserType(ut);
+
+            // Navigate based on user type
+            if (response.data.user_type === 'właściciel') {
+                navigate('/owner/panel/');
+            } else if (response.data.user_type === 'klient') {
+                navigate('/customer/panel/');
+            } else if (response.data.user_type === 'recepcjonista') {
+                navigate('/receptionist/panel/');
+            }
+        } catch (error) {
+            setErrmess(error.response.data.error);
+            console.error('Login failed:', error);
+        }
+    }
 
 
     function submitLogout({e}: { e: any }) {
         e.preventDefault();
         const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
-                if (!csrfToken) {
-                    console.error("CSRF token not found!");
-                    return;
-                }
+        if (!csrfToken) {
+            console.error("CSRF token not found!");
+            return;
+        }
         client.post(
             "http://127.0.0.1:8000/api/logout/", {},
             {
-                  headers: {
+                headers: {
                     "X-CSRFToken": csrfToken,
-                  },
                 },
+            },
         ).then(function () {
             setCurrentUser(false);
             localStorage.clear();
@@ -223,7 +222,8 @@ async function submitLogin({ e }: { e: any }) {
                     <div className="fade-in full-height-container">
 
                         <div className="fade-in full-height-container">
-                            <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout} profile_pic={pp}/>
+                            <NavbarComponent clicked={clicked} handleClick={handleClick} submitLogout={submitLogout}
+                                             profile_pic={pp}/>
 
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
@@ -237,8 +237,8 @@ async function submitLogin({ e }: { e: any }) {
                                 <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
                                 <Route path='/gallery/:id' element={<HotelGallery/>}/>
-                                <Route path='/rooms/prices/' element={<ManageRoomPricesPage />}/>
-                                <Route path='/payment/:id' element={<PaymentSim />}/>
+                                <Route path='/rooms/prices/' element={<ManageRoomPricesPage/>}/>
+                                <Route path='/payment/:id' element={<PaymentSim/>}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                                 <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>
@@ -253,34 +253,36 @@ async function submitLogin({ e }: { e: any }) {
             </div>
         );
     } else {
-        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation"|| match) {
+        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation" || match) {
             return (
                 <div>
                     {isLoading ? (
                         <LoadingSpinner/>
                     ) : (
                         <div className="fade-in full-height-container">
-                            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
+                            <Navbar variant="dark" expand="lg" className="shadow-sm"
+                                    style={{backgroundColor: "#000001"}}>
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                        <img src={hor_logo} style={{height: 30, margin: 10}}/>
+                                        <img src={hor_logo} style={{height: 30, margin: 10}} alt={"image"}/>
                                     </Navbar.Brand>
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                                        <Nav className="me-auto">
-                                            <Nav className="me-auto">
-                                                <Nav.Link href="http://127.0.0.1:3000/hotels" className="mx-2 text-uppercase fw-light">
+                                        <Nav className="me-auto align-items-center">
+                                                <Nav.Link href="http://127.0.0.1:3000/hotels"
+                                                          className="mx-2 text-uppercase fw-light">
                                                     Hotele
                                                 </Nav.Link>
-                                                <Nav.Link href="http://127.0.0.1:3000/gallery" className="mx-2 text-uppercase fw-light">
+                                                <Nav.Link href="http://127.0.0.1:3000/gallery"
+                                                          className="mx-2 text-uppercase fw-light">
                                                     Galeria
                                                 </Nav.Link>
-                                                <Nav.Link href="http://127.0.0.1:3000/reservation" className="mx-2 text-uppercase fw-light">
+                                                <Nav.Link href="http://127.0.0.1:3000/reservation"
+                                                          className="mx-2 text-uppercase fw-light">
                                                     Rezerwuj
                                                 </Nav.Link>
-                                            </Nav>
                                         </Nav>
-                                        <Navbar.Text>
+                                        <Navbar.Text className={'d-flex justify-content-center'}>
                                             <Button href="/login"
                                                     id="form_btn"
                                                     variant="outline-light"
@@ -326,17 +328,33 @@ async function submitLogin({ e }: { e: any }) {
                         <LoadingSpinner/>
                     ) : (
                         <div className="fade-in full-height-container">
-                            <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
+                            <Navbar variant="dark" expand="lg" className="shadow-sm"
+                                    style={{backgroundColor: "#000001"}}>
                                 <Container>
                                     <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
-                                        <img src={hor_logo} style={{height: 30, margin: 10}}/>
+                                        <img src={hor_logo} style={{height: 30, margin: 10}} alt={"image"}/>
                                     </Navbar.Brand>
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                                        {/* Navbar Links */}
+                                        <Nav className="me-auto align-items-center">
+                                            <Nav.Link
+                                                href="/hotels"
+                                                className="mx-2 text-uppercase fw-light"
+                                                style={{display: "flex", alignItems: "center"}}
+                                            >
+                                                Hotele
+                                            </Nav.Link>
+                                            <Nav.Link href="/gallery" className="mx-2 text-uppercase fw-light">
+                                                Galeria
+                                            </Nav.Link>
 
-                                        <Navbar.Text>
+                                        </Nav>
+                                        <Navbar.Text
+                                            className={'d-flex justify-content-center'}
+                                        >
                                             <Button
-                                                id="form_btn"
+                                                id="targetButton"
                                                 onClick={update_form_btn}
                                                 variant="outline-light"
                                                 className="px-4 py-2 fw-semibold shadow-sm rounded-pill"
@@ -344,7 +362,9 @@ async function submitLogin({ e }: { e: any }) {
                                                     transition: "background-color 0.3s ease, color 0.3s ease",
                                                     backgroundColor: clicked ? "#ffffff" : "transparent", // Change background to white on click
                                                     color: clicked ? "#000000" : "#ffffff", // Change text color to black on click
-                                                    marginTop: 10, marginBottom: 10, width: 200
+                                                    marginTop: 10,
+                                                    marginBottom: 10,
+                                                    width: 200,
                                                 }}
                                                 onMouseEnter={(e) => {
                                                     e.target.style.backgroundColor = "#ffffff"; // Change background to white
@@ -353,7 +373,8 @@ async function submitLogin({ e }: { e: any }) {
                                                 onMouseLeave={(e) => {
                                                     e.target.style.backgroundColor = "transparent"; // Revert background to transparent
                                                     e.target.style.color = "#ffffff"; // Revert text color to white on leave
-                                                }}>
+                                                }}
+                                            >
                                                 Zarejestruj się
                                             </Button>
                                         </Navbar.Text>
@@ -367,10 +388,10 @@ async function submitLogin({ e }: { e: any }) {
                                                       setPassword={setPassword}
                                                       confirmPassword={confirmPassword}
                                                       setConfirmPassword={setConfirmPassword}
-                                                      submitRegistration={submitRegistration}/>
+                                                      submitRegistration={submitRegistration} errmess={errmess}/>
                                 ) : (
                                     <LoginForm email={email} setEmail={setEmail} password={password}
-                                               setPassword={setPassword} submitLogin={submitLogin} errflag={errflag}/>
+                                               setPassword={setPassword} submitLogin={submitLogin} errmess={errmess}/>
                                 )
                             }
                         </div>

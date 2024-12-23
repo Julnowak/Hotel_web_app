@@ -8,7 +8,7 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
     const [user_type, setUserType] = useState(localStorage.getItem("user_type"));
 
     return (
-        <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#17120EFF"}}>
+        <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#000001"}}>
             <Container>
                 {/* Logo */}
                 <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
@@ -20,8 +20,8 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     {/* Navbar Links */}
 
-                    <Nav className="me-auto">
-                    <Nav.Link href="/hotels" className="mx-2 text-uppercase fw-light">
+                    <Nav className="me-auto align-items-center">
+                    <Nav.Link href="/hotels" style={{verticalAlign: "middle"}} className="mx-2 text-uppercase fw-light">
                         Hotele
                     </Nav.Link>
                     <Nav.Link href="/gallery" className="mx-2 text-uppercase fw-light">
@@ -47,17 +47,17 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
                             null
                         }
 
-                        {/* Profile Link with Circular Image */}
-                        <Nav.Link href="http://127.0.0.1:3000/profile/"
-                                  className="mx-2 text-uppercase fw-light d-flex align-items-center">
-                            <img src={"https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"} alt="Profile"
-                                 className="profile-image"
-                                 style={{width: 32, height: 32, borderRadius: '50%', marginRight: 10}}/>
-                        </Nav.Link>
                     </Nav>
+                                        {/* Profile Link with Circular Image */}
+                    <Nav.Link href="http://127.0.0.1:3000/profile/"
+                              className="mx-2 text-uppercase fw-light d-flex justify-content-center" style={{margin: 20}}>
+                        <img src={"https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"} alt="Profile"
+                             className="profile-image"
+                             style={{width: 32, height: 32, borderRadius: '50%', marginRight: 10}}/>
+                    </Nav.Link>
 
                     {/* Logout Button */}
-                    <Navbar.Text>
+                    <Navbar.Text className={'d-flex justify-content-center'}>
                         <form onSubmit={e => submitLogout({e})}>
                             <Button
                                 id="form_btn"
