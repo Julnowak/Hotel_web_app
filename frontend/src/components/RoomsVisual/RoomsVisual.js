@@ -36,7 +36,6 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
     const handleDateChange = (event) => {
         const date = event.target.value;
         setSelectedDate(date);
-        // onDateChange(date); // Przekazanie zmiany do nadrzędnego komponentu
     };
 
     const handleFloorChange = (newFloor) => {
@@ -65,28 +64,29 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
             client.get(`http://127.0.0.1:8000/api/floors/${hotel.hotel_id}`)
                 .then(response => {
                     setFloors(response.data);
+                    setNewRooms(rms)
                 })
                 .catch(() => {
                     console.log("Error fetching floors");
                 });
+
         }
-        if (!newRooms?.length) setNewRooms(rms)
-    }, [hotel, rooms, floors, newRooms, rms]);
+    }, [hotel, rooms, floors, newRooms, rms, flag])
 
 
     return (
         <div className="room-reservation-container">
 
             {/* Filtracja po dniu */}
-            <div className="filter-container">
-                <label htmlFor="date-filter">Wybierz dzień:</label>
-                <input
-                    type="date"
-                    id="date-filter"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                />
-            </div>
+            {/*<div className="filter-container">*/}
+            {/*    <label htmlFor="date-filter">Wybierz dzień:</label>*/}
+            {/*    <input*/}
+            {/*        type="date"*/}
+            {/*        id="date-filter"*/}
+            {/*        value={selectedDate}*/}
+            {/*        onChange={handleDateChange}*/}
+            {/*    />*/}
+            {/*</div>*/}
 
             {/* Floor Selection */}
             <div className="floor-selector">
@@ -254,30 +254,37 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
             {selectedRoom && (
                 <div className="room-details" style={{color: "black"}}>
                     <h2>Pokój {selectedRoom.room_number}, piętro {floor} - szczegóły</h2>
-                    <p>Status:
-                        <Badge
-                            bg={
-                                selectedRoom.status === 'Wolny'
-                                    ? 'secondary'
-                                    : selectedRoom.status === 'Zajęty'
-                                        ? 'success'
-                                        : selectedRoom.status === 'Do naprawy'
-                                            ? 'danger'
-                                            : selectedRoom.status === 'Do sprzątania'
-                                                ? 'dosprzatania'
-                                                : 'secondary'
-                            }
-                            className="fs-6"
-                        >
-                            {selectedRoom.status}
-                        </Badge>
-                    </p>
-                    <p>Typ: {selectedRoom.room_standard}</p>
-                    <p>Cena: {selectedRoom.price.toFixed(2)} zł</p>
+                    <div style={{marginTop: 20}}>
+                        <p><b>Status:</b>
+                            <Badge
+                                bg={
+                                    selectedRoom.status === 'Wolny'
+                                        ? 'secondary'
+                                        : selectedRoom.status === 'Zajęty'
+                                            ? 'success'
+                                            : selectedRoom.status === 'Do naprawy'
+                                                ? 'danger'
+                                                : selectedRoom.status === 'Do sprzątania'
+                                                    ? 'dosprzatania'
+                                                    : 'secondary'
+                                }
+                                className="fs-6"
+                            >
+                                {selectedRoom.status}
+                            </Badge>
+                        </p>
+                        <p><b>Typ:</b> {selectedRoom.type}</p>
+                        <p><b>Cena:</b>  {selectedRoom.price?.toFixed(2)} zł</p>
+                        <p><b>Liczba miejsc:</b>  {selectedRoom.people_capacity}</p>
+                    </div>
 
+                    <div style={{textAlign: "center", margin: 20}}>
                     <button onClick={function () {
                         setFlag(true)
-                    }}>Zmień status</button>
+                    }}>Zmień status
+                    </button>
+                    </div>
+
                     {selectedRoom && flag && (
                         <RoomModal
                             room={selectedRoom}

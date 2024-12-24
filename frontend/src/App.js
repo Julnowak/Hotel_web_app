@@ -39,6 +39,7 @@ import Cookies from "js-cookie";
 import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
 import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
 import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
+import ManageRoomPage from "./components/ManageRoomPage/ManageRoomPage";
 
 function Root() {
 
@@ -244,6 +245,7 @@ function Root() {
                                 <Route path='/receptionistReservations/' element={<ReservationsList/>}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
+                                <Route path='/manage_room/:id/' element={<ManageRoomPage/>}/>
                                 <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                                 <Route path='/receptionist/manage/reservation/:id/' element={<ReceptionistManageReservation/>}/>

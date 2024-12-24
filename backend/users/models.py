@@ -38,6 +38,7 @@ class Hotel(models.Model):
     phone = models.IntegerField(null=True, blank=True)
     rating = models.DecimalField(default=0.00, decimal_places=2, max_digits=3)
     address = models.CharField(null=True, blank=True, max_length=2000)
+    defaultPrices = models.JSONField(null=True, blank=True)
     description = models.TextField(default="Opis nie został jeszcze wprowadzony.")
 
     def __str__(self):
@@ -84,6 +85,7 @@ class Room(models.Model):
     price = models.FloatField(default=0.00)
     status = models.CharField(default="Available", max_length=200)
     people_capacity = models.IntegerField(default=2)
+    custom = models.BooleanField(default=False)
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

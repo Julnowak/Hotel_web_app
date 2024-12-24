@@ -8,6 +8,7 @@ import axios from "axios";
 import {Form} from "react-bootstrap";
 import RoomsVisual from "../RoomsVisual/RoomsVisual";
 import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
+import client from "../client";
 
 const OwnerPanel = () => {
     // Stan dla aktualnej lokalizacji hotelu
@@ -17,59 +18,140 @@ const OwnerPanel = () => {
     const [hotel, setHotel] = useState(null);
     const [rooms, setRooms] = useState([]);
     const [hotels, setHotels] = useState([])
-    const [hotelId, setHotelId] = useState(null);
+    const [hotelId, setHotelId] = useState(1);
+    const [chartData, setChartData] = useState(null);
     const [roomStandard, setRoomStandard] = useState('standard');
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [roomPrices, setRoomPrices] = useState({});
+    const [roomPricesFlag, setRoomPricesFlag] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchHotels = async () => {
             try {
                 const response = await axios.get("http://127.0.0.1:8000/api/hotels/");
                 setHotels(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error("Error fetching hotels:", error);
             }
         };
 
-        if (!hotels.length) {
+        const fetchPrices = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/prices/${hotelId}`);
+                setRoomPrices(response.data);
+            } catch (error) {
+                console.error("Error fetching hotels:", error);
+            }
+        };
+
+        const fetchRooms = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
+                    {
+                        params: {
+                            check_in: checkInDate,
+                            check_out: checkOutDate,
+                            floor: 1
+                        }
+                    });
+                setRooms(response.data);
+            } catch (error) {
+                console.error("Error fetching hotels:", error);
+            }
+        };
+
+        const fetchChartData = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/chart_data/${hotelId}`);
+                const monthlyPrices = response.data.monthly_prices;
+
+                // Convert data into labels and dataset for the chart
+                const labels = Object.keys(monthlyPrices).map(date => {
+                    const [year, month] = date.split('-');
+                    return new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+                });
+
+                const data = Object.values(monthlyPrices);
+
+                // Set data for the chart
+                setChartData({
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Przychód',
+                            data,
+                            borderColor: 'green',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Koszty',
+                            data: [1000, 1500, 2000, 6000, 7000],
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+
+                    ],
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        if (!roomPricesFlag) {
+            fetchPrices()
+            setRoomPricesFlag(true)
+        }
+
+        if (!hotels?.length) {
             fetchHotels()
         }
 
         if (!hotel) {
             setHotel(hotels?.find(h => h.hotel_id === parseInt(1)))
             setHotelId(1)
-            console.log(hotel)
         }
 
+        if (!chartData?.length) {
+            fetchChartData()
+        }
 
-        // try {
-        //     const response = axios.post("http://localhost:8000/api/rooms/", {
-        //         type: roomStandard,
-        //         check_in: checkInDate,
-        //         check_out: checkOutDate,
-        //         hotel_id: hotelId
-        //     });
-        //     setRooms(response.data);
-        //
-        // } catch (error) {
-        //     console.log("issues")
-        // }
+        if (!rooms.length) fetchRooms();
+        
+    }, [chartData, checkInDate, checkOutDate, hotel, hotelId, hotels, roomStandard]);
 
-    }, [checkInDate, checkOutDate, hotel, hotelId, hotels, roomStandard]);
 
-    // Stan dla cen różnych standardów pokojów
-    const [roomPrices, setRoomPrices] = useState({
-        standard: 100,
-        deluxe: 150,
-        suite: 250,
-    });
+        const handleSave = async () => {
+        try {
+            const csrfToken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken'))
+            ?.split('=')[1];
 
-    // Stan dla statusów pokojów
-    const [roomStatuses, setRoomStatuses] = useState([
-        {roomNumber: 101, status: 'Occupied'},
-        {roomNumber: 102, status: 'Available'},
-        {roomNumber: 103, status: 'Cleaning'},
-        {roomNumber: 104, status: 'Available'},
-    ]);
+            await client.put(`http://127.0.0.1:8000/api/prices/${hotelId}/`,
+            {
+                prices: roomPrices
+            },
+            {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            }});
+            setIsEditing(false);
+        } catch (error) {
+            setError('Błąd podczas zapisywania rezerwacji');
+        }
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        // setUpdatedReservation(reservation); // Reset to original reservation
+    };
+
 
     // Dane dla wykresów zysków i strat
     const profitData = {
@@ -121,7 +203,7 @@ const OwnerPanel = () => {
                     value={hotelId || ''} // Ensure default selection is set
                     onChange={handleHotelChange}
                 >
-                    {hotels.map((h) => (
+                    {hotels?.map((h) => (
                         <option key={h.hotel_id} value={h.hotel_id}>
                             Hotel Weles - {h.localization}
                         </option>
@@ -132,16 +214,33 @@ const OwnerPanel = () => {
             {/* Sekcja zarządzania cenami pokojów */}
             <section className="room-prices-section">
                 <h2>Zarządzaj cenami pokojów</h2>
+                <h5 style={{marginBottom:40}}>W tym miejscu możesz ustawić ogólne ceny pokoju w zależności od standardu. Cena jest
+                wskazana dla <b>jednej osoby</b> i podana w złotówkach.</h5>
                 {Object.keys(roomPrices).map((standard) => (
                     <div key={standard} className="room-price-setting">
-                        <label>{standard.charAt(0).toUpperCase() + standard.slice(1)} Room: </label>
-                        <input
-                            type="number"
-                            value={roomPrices[standard]}
-                            onChange={(e) => handlePriceChange(standard, parseInt(e.target.value))}
-                        />
+                        <h5><b>Pokój typu "{standard.charAt(0) + standard.slice(1)}"</b></h5>
+                        <div className="form-group">
+                            <input
+                                type="number"
+                                name={`price ${standard}`}
+                                value={roomPrices[standard].toFixed(2)}
+                                onChange={(e) => handlePriceChange(standard, parseInt(e.target.value))}
+                                disabled={!isEditing}
+                            />
+                        </div>
                     </div>
                 ))}
+
+                <div className="form-actions">
+                    {isEditing ? (
+                        <>
+                            <button onClick={handleSave}>Zapisz</button>
+                            <button onClick={handleCancel}>Anuluj</button>
+                        </>
+                    ) : (
+                        <button onClick={() => setIsEditing(true)}>Edytuj</button>
+                    )}
+                </div>
 
                 <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
                     <a href={"/rooms/prices/"}>Zobacz więcej...</a>
@@ -153,7 +252,7 @@ const OwnerPanel = () => {
             <section className="room-status-section">
                 <h2>Statusy pokojów</h2>
                 {hotel && hotelId ?
-                    <RoomsVisual rooms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
+                    <RoomsVisual rms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
                                      roomStandard={roomStandard}/>
                     : null}
 
@@ -161,8 +260,22 @@ const OwnerPanel = () => {
 
             {/* Sekcja analizy zysków i strat */}
             <section className="profit-analysis-section">
-                <h2>Profit and Loss Analysis</h2>
-                <Line data={profitData}/>
+                {chartData ? (
+                <Line
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                        },
+                    }}
+                />
+            ) : (
+                <p>Loading...</p>
+            )}
             </section>
 
         </div>

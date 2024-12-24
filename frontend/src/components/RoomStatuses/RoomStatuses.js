@@ -11,7 +11,12 @@ const RoomStatuses = () => {
   useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${1}`);
+                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${1}`,{
+                    params: {
+                        check_in: new Date(),
+                        check_out: new Date(),
+                    }
+                });
                 setRooms(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);

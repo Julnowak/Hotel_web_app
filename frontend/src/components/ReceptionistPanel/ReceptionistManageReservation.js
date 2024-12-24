@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {useParams} from "react-router-dom";
 import "./ReceptionistManageReservation.css"
+import client from "../client";
 
 const ReceptionistManageReservation = () => {
     const [reservation, setReservation] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedReservation, setUpdatedReservation] = useState({});
     const [error, setError] = useState('');
+    const [guest, setGuest] = useState('');
     const params = useParams()
     
 
     useEffect(() => {
         const fetchReservation = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/reservation/${params.id}`);
-                setReservation(response.data);
-                setUpdatedReservation(response.data);
+                const response = await client.get(`http://127.0.0.1:8000/api/receptionist/reservation/${params.id}`);
+                setReservation(response.data.reservation_data);
+                setUpdatedReservation(response.data.reservation_data);
+                setGuest(response.data.user_data)
             } catch (error) {
                 setError('Błąd pobierania rezerwacji');
             }
@@ -32,7 +34,16 @@ const ReceptionistManageReservation = () => {
 
     const handleSave = async () => {
         try {
-            await axios.put(`http://127.0.0.1:8000/api/reservations/${params.id}/`, updatedReservation);
+            const csrfToken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken'))
+            ?.split('=')[1];
+
+            await client.put(`http://127.0.0.1:8000/api/receptionist/reservation/${params.id}/`, updatedReservation,{
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            }});
             setIsEditing(false);
         } catch (error) {
             setError('Błąd podczas zapisywania rezerwacji');
@@ -44,12 +55,13 @@ const ReceptionistManageReservation = () => {
         setUpdatedReservation(reservation); // Reset to original reservation
     };
 
+
     if (!reservation) {
         return <div>Ładowanie rezerwacji...</div>;
     }
 
     return (
-        <div className="reservation-details">
+        <div className="reservation-details-receptionist">
             <h1>Szczegóły Rezerwacji</h1>
             {error && <p className="error">{error}</p>}
             <div className="reservation-form">
@@ -67,17 +79,28 @@ const ReceptionistManageReservation = () => {
                     <input
                         type="text"
                         name="guest_name"
-                        value={updatedReservation.guest_name}
+                        value={guest.username}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
                 </div>
                 <div className="form-group">
-                    <label>Data rezerwacji:</label>
+                    <label>Data zameldowania:</label>
                     <input
                         type="date"
-                        name="reservation_date"
-                        value={updatedReservation.reservation_date}
+                        name="check_in"
+                        value={updatedReservation.check_in}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Data wymeldowania:</label>
+                    <input
+                        type="date"
+                        name="check_out"
+                        value={updatedReservation.check_out}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -87,8 +110,8 @@ const ReceptionistManageReservation = () => {
                     <label>Liczba gości:</label>
                     <input
                         type="number"
-                        name="guests_number"
-                        value={updatedReservation.guests_number}
+                        name="people_number"
+                        value={updatedReservation.people_number}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />

@@ -15,6 +15,21 @@ const HotelPage = () => {
     const [newRating, setNewRating] = useState(0);
     const [newReview, setNewReview] = useState("");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const reviewsPerPage = 5;
+
+    // Calculate the index range for the current page
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const currentReviews = reviews?.slice(indexOfFirstReview, indexOfLastReview);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(reviews?.length / reviewsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     const handleAddReview = () => {
         if (newReview && newRating) {
             setReviews([...reviews, {rating: newRating, review: newReview}]);
@@ -99,17 +114,15 @@ const HotelPage = () => {
                         }
                     });
                 setReviews(response.data)
-                console.log(response.data)
+                console.log(response.data[0].user.profile_picture.slice(15))
             } catch (error) {
                 console.error("Error fetching hotels:", error);
             }
         };
         if (!reviews) fetchReviews();
-
-
     }, [hotel, id, reviews]);
 
-    console.log("frontend/public/images/media/fox-study_44rp7YD.jpg".slice(15))
+
 
     function normalizeString(text) {
         // Mapowanie polskich znaków na ich odpowiedniki bez ogonków
@@ -176,7 +189,7 @@ const HotelPage = () => {
                                 Brak recenzji hotelu. Bądź pierwszym, który oceni nasz hotel!
                             </p>
                         ) : (
-                            reviews?.map((review, index) => (
+                            currentReviews?.map((review, index) => (
                                 <div
                                     key={index}
                                     style={{
@@ -189,7 +202,7 @@ const HotelPage = () => {
                                 >
                                     {/* Profile Picture */}
                                     <img
-                                        src={review.user?.profile_image?.slice(15) || "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"}
+                                        src={review.user?.profile_picture?.slice(15) || "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"}
                                         alt="Profile"
                                         style={{
                                             width: "50px",
@@ -234,6 +247,26 @@ const HotelPage = () => {
                         </div>
                         : null}
 
+                    {/* Pagination Controls */}
+                    <div style={{ textAlign: "center", marginTop: "20px" }}>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => handlePageChange(i + 1)}
+                                style={{
+                                    padding: "8px 12px",
+                                    margin: "0 5px",
+                                    background: currentPage === i + 1 ? "#333" : "#fff",
+                                    color: currentPage === i + 1 ? "#fff" : "#333",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
 
                     {showForm && (
                         <div

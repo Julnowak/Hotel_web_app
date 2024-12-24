@@ -38,7 +38,14 @@ const ReceptionistPanel = () => {
 
         const fetchRooms = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${1}`);
+                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
+                    {
+                        params: {
+                            check_in: checkInDate,
+                            check_out: checkOutDate,
+                            floor: 1
+                        }
+                    });
                 setRooms(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);

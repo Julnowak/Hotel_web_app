@@ -12,6 +12,7 @@ urlpatterns = [
     path('rooms/available/', views.AvailableRoomsView.as_view(), name='available_rooms'),
     path('roomStatusChange/<int:room_id>', views.RoomStatusChange.as_view(), name='room_status_change'),
     path('rooms/prices/', views.RoomPricesView.as_view(), name='prices_rooms'),
+    path('manage/room/<int:room_id>/', views.RoomDetailView.as_view(), name='manage_room'),
     path('rooms/<int:hotel_id>/', views.RoomStatuses.as_view(), name='rooms_by_hotel'),
     path('hotel/<int:hotel_id>/', views.OneHotelApi.as_view(), name='hotel'),
     path('floors/<int:hotel_id>', views.FloorApi.as_view(), name='floors'),
@@ -20,6 +21,9 @@ urlpatterns = [
     path('personelReservations/', views.ReservationViewSet.as_view(), name='personelReservations'),
     path('userReservations/', views.UserReservationsView.as_view(), name='user_reservations'),
     path('reservation/<int:reservation_id>/', views.ReservationDetailsAPI.as_view(), name='reservation'),
+    path('receptionist/reservation/<int:reservation_id>/', views.ReceptionistReservation.as_view(), name='receptionistReservation'),
     path('reviews/', views.ReviewsApi.as_view(), name='reviews'),
+    path('chart_data/<int:hotel_id>', views.ProfitLossChart.as_view(), name='chart_data'),
+    path('prices/<int:hotel_id>/', views.Prices.as_view(), name='prices'),
     path('csrf/', views.csrf, name='csrf'),
 ]

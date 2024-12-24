@@ -43,11 +43,24 @@ const ReservationsList = () => {
         return diffDays;
     };
 
+
     // Funkcja do obliczania koloru na podstawie różnicy dni
-    const getColorForDate = (date) => {
+    const getColorForDate = (date, stat) => {
         const diffDays = getDateDifference(date);
         console.log(Math.abs(diffDays))
-        const op = Math.abs(diffDays) // Zmniejsza intensywność czerwieni w miarę jak data się oddala
+
+        let op = 0;
+
+        if (stat === "Anulowana" || stat === "Zakończona")
+        {
+            op = 0;
+        }
+        else
+        {
+            op = Math.abs(diffDays) // Zmniejsza intensywność czerwieni w miarę jak data się oddala
+        }
+
+
 
         return `rgba(255,0,0,${op}%)`; // Kolor będzie coraz bardziej szary w miarę oddalania się daty
     };
@@ -83,10 +96,10 @@ const ReservationsList = () => {
                             }} key={reservation.reservation_id}>
                                 <td>{reservation.reservation_id}</td>
 
-                                <td style={{ backgroundColor: getColorForDate(reservation.check_in) }}>
+                                <td style={{ backgroundColor: getColorForDate(reservation.check_in, reservation.status) }}>
                                 {reservation.check_in}
                                 </td>
-                                <td style={{ backgroundColor: getColorForDate(reservation.check_in) }}>
+                                <td style={{ backgroundColor: getColorForDate(reservation.check_in, reservation.status) }}>
                                     {reservation.check_out}
                                 </td>
                                 <td>{reservation.guest_name}</td>
@@ -101,7 +114,7 @@ const ReservationsList = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="4">Brak wyników</td>
+                            <td colSpan="5">Brak wyników</td>
                         </tr>
                     )}
                 </tbody>
