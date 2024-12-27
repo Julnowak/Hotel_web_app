@@ -426,7 +426,7 @@ class UserReservationsView(APIView):
 
 class RoomPricesView(APIView):
     def get(self, request):
-        rooms = Room.objects.all()
+        rooms = Room.objects.filter(hotel__hotel_id=request.GET['hotelId'])
         data = {
             room.room_id: {
                 "room_number": room.room_number,
@@ -513,6 +513,7 @@ class Prices(APIView):
 
     def get(self, request, hotel_id):
         hotel = Hotel.objects.get(hotel_id=hotel_id)
+        print(hotel_id)
         print(hotel.defaultPrices)
         return Response(hotel.defaultPrices, status=status.HTTP_200_OK)
 

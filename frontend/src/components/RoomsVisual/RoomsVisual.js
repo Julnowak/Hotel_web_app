@@ -92,7 +92,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
             <div className="floor-selector">
                 <div>
                     {floors.map((f) => (
-                        <button
+                        <button id={`floor_btn_${f.floor_number}`}
                             key={f.floor_number}
                             className={floor === f.floor_number ? 'selected' : ''}
                             onClick={() => handleFloorChange(f.floor_number)}
