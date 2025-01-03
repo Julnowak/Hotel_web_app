@@ -80,7 +80,9 @@ class UserLogin(APIView):
                 }
 
                 response = Response(user_data, status=status.HTTP_200_OK)
-                response.set_cookie('csrftoken', csrf_token)  # Set the CSRF token cookie
+                print(csrf_token)
+                # response.set_cookie('csrftoken', csrf_token)
+                print(response.data)
                 return response
             except:
                 return Response({"error": "Wprowadzono nieprawidłowy email lub hasło."}, status=status.HTTP_401_UNAUTHORIZED)
@@ -333,7 +335,12 @@ class RoomStatuses(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, hotel_id):
-        rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__floor_id=int(request.GET['floor'][0]))
+        print("FFFFFFFFFFFFFFFFF")
+        print(request.GET)
+        try:
+            rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__floor_id=int(request.GET['floor'][0]))
+        except:
+            rooms = Room.objects.filter(hotel__hotel_id=hotel_id)
 
         # Serializacja danych
         serializer = RoomSerializer(rooms, many=True)

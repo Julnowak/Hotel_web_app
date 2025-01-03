@@ -152,7 +152,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # React frontend URL
-    "http://localhost:3000",
+    "http://localhost:3000"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -166,3 +166,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../frontend/public/images/media/')
 
 CSRF_COOKIE_SECURE = False  # Set to True only for HTTPS
 CSRF_COOKIE_HTTPONLY = False  # Allows JavaScript to read the CSRF cookie
+

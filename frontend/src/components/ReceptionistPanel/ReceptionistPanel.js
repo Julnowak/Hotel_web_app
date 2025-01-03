@@ -22,61 +22,62 @@ const ReceptionistPanel = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchHotels = async () => {
-            try {
-                const response = await client.get("http://127.0.0.1:8000/api/hotels/");
-                setHotels(response.data);
-            } catch (error) {
-                console.error("Error fetching hotels:", error);
-            }
-        };
-
-        if (!hotels.length) {
-            fetchHotels()
+    const fetchHotels = async () => {
+        try {
+            const response = await client.get("http://127.0.0.1:8000/api/hotels/");
+            setHotels(response.data);
+        } catch (error) {
+            console.error("Error fetching hotels:", error);
         }
+    };
 
-        const fetchRooms = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
-                    {
-                        params: {
-                            check_in: checkInDate,
-                            check_out: checkOutDate,
-                            floor: 1
-                        }
-                    });
-                setRooms(response.data);
-            } catch (error) {
-                console.error("Error fetching hotels:", error);
-            }
-        };
+    if (!hotels.length) {
+        fetchHotels()
+    }
 
-        const fetchReservations = async (page) => {
-            setLoading(true);
-            try {
-                const response = await client.get(`http://127.0.0.1:8000/api/personelReservations/`, {
-                    params: {page},
+    const fetchRooms = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
+                {
+                    params: {
+                        check_in: checkInDate,
+                        check_out: checkOutDate,
+                        floor: 1,
+                    }
                 });
-                setReservations(response.data);
-                setTotalPages(Math.ceil(response.data.length / 5));
-            } catch (error) {
-                console.error('Error fetching reservations:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+            setRooms(response.data);
+        } catch (error) {
+            console.error("Error fetching hotels:", error);
+        }
+    };
+
+    const fetchReservations = async (page) => {
+        setLoading(true);
+        try {
+            const response = await client.get(`http://127.0.0.1:8000/api/personelReservations/`, {
+                params: {page},
+            });
+            setReservations(response.data);
+            setTotalPages(Math.ceil(response.data.length / 5));
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
 
         if (!rooms.length) fetchRooms();
 
         if (!hotel) {
             setHotel(hotels?.find(h => h.hotel_id === parseInt(1)))
             setHotelId(1)
-            console.log(hotel)
         }
 
         if (!reservations?.length) {
             fetchReservations(currentPage);
+            document.getElementById('floor_btn_1')?.click()
         }
 
     }, [checkInDate, checkOutDate, currentPage, hotel, hotelId, hotels, reservations.length, roomStandard, rooms, rooms.length]);

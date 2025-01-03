@@ -76,7 +76,7 @@ const Gallery = () => {
 
                                 <div className="caption">
                                     <strong style={{textAlign: "center", display: "block"}}>{image.title}</strong>
-                                    <p>{image.description}</p>
+                                    <p style={{padding: 20}}>{image.description}</p>
                                 </div>
                             </div>
                         ))}

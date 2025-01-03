@@ -15,6 +15,7 @@ const RoomStatuses = () => {
                     params: {
                         check_in: new Date(),
                         check_out: new Date(),
+
                     }
                 });
                 setRooms(response.data);

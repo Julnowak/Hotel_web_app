@@ -33,10 +33,6 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
             console.error("Error fetching hotels:", error);
         }
     };
-    const handleDateChange = (event) => {
-        const date = event.target.value;
-        setSelectedDate(date);
-    };
 
     const handleFloorChange = (newFloor) => {
         const fetchRooms = async () => {
