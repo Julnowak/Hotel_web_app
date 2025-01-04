@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Navbar, Container, Nav, Button} from 'react-bootstrap';
 import hor_logo from '../../assets/weles_hori_white.png';
+import {WEBSITE_BASE_URL} from "../../config";
 
 
 const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
@@ -11,7 +12,7 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
         <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#000001"}}>
             <Container>
                 {/* Logo */}
-                <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                <Navbar.Brand href={`${WEBSITE_BASE_URL}/`} className="fw-bold">
                     <img src={hor_logo} style={{height: 30, margin: 10}} alt="Logo"/>
                 </Navbar.Brand>
 
@@ -28,19 +29,19 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
                         Galeria
                     </Nav.Link>
                         {user_type === "klient" ? (
-                            <Nav.Link href="http://127.0.0.1:3000/customer/panel/"
+                            <Nav.Link href={`${WEBSITE_BASE_URL}/customer/panel/`}
                                       className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
                         ) : user_type === "recepcjonista" ? (
-                            <Nav.Link href="http://127.0.0.1:3000/receptionist/panel/"
+                            <Nav.Link href={`${WEBSITE_BASE_URL}/receptionist/panel/`}
                                       className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
                         ): (
-                            <Nav.Link href="http://127.0.0.1:3000/owner/panel/"
+                            <Nav.Link href={`${WEBSITE_BASE_URL}/owner/panel/`}
                                       className="mx-2 text-uppercase fw-light">Panel</Nav.Link>
                         )}
 
                         {user_type === "klient" ? (
                                 <div>
-                                    <Nav.Link href="http://127.0.0.1:3000/reservation/"
+                                    <Nav.Link href={`${WEBSITE_BASE_URL}/reservation/`}
                                               className="mx-2 text-uppercase fw-light">Rezerwuj</Nav.Link>
                                 </div>
                             ) :
@@ -49,7 +50,7 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
 
                     </Nav>
                                         {/* Profile Link with Circular Image */}
-                    <Nav.Link href="http://127.0.0.1:3000/profile/"
+                    <Nav.Link href={`${WEBSITE_BASE_URL}/profile/`}
                               className="mx-2 text-uppercase fw-light d-flex justify-content-center" style={{margin: 20}}>
                         <img src={"https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"} alt="Profile"
                              className="profile-image"

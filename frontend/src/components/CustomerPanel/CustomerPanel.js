@@ -3,6 +3,7 @@ import {Container, Row, Col, Card, Button, Table, Spinner, Badge, Pagination} fr
 import client from "../client"
 import Cookies from "js-cookie";
 import "./CustomerPanel.css"
+import {API_BASE_URL} from "../../config";
 
 const CustomerPanel = () => {
 
@@ -38,7 +39,7 @@ const CustomerPanel = () => {
                     return;
                 }
 
-                const response = await client.get("http://127.0.0.1:8000/api/reservations/", {},
+                const response = await client.get(`${API_BASE_URL}/reservations/`, {},
                     {
                         headers: {
                             "X-CSRFToken": csrfToken,
