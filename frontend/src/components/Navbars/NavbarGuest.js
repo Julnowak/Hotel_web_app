@@ -6,6 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import Button from "react-bootstrap/Button";
 import RegistrationForm from "../Registration_Login/RegistrationForm";
 import LoginForm from "../Registration_Login/LoginForm";
+import {WEBSITE_BASE_URL} from "../../config";
 
 function NavbarGuest({
                          clicked,
@@ -23,7 +24,7 @@ function NavbarGuest({
         <div>
             <Navbar variant="dark" expand="lg" className="shadow-sm" style={{backgroundColor: "#000001"}}>
                 <Container>
-                    <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                    <Navbar.Brand href={`${WEBSITE_BASE_URL}/`} className="fw-bold">
                         <img src={hor_logo} style={{height: 30, margin: 10}}/>
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>

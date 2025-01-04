@@ -4,6 +4,7 @@ import './Hotels.css';
 import StarRating from "../StarRating/StarRating";
 
 import axios from "axios";
+import {API_BASE_URL} from "../../config";
 
 // const hotels = [
 //   { id: 1, name: 'Hotel Weles', city: 'Kraków', image: '/images/hotel_loc_images/krakow.jpg' },
@@ -32,7 +33,7 @@ const Hotels = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/hotels/");
+                const response = await axios.get(`${API_BASE_URL}/hotels/`);
                 setHotels(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);

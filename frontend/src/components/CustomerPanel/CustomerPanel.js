@@ -32,7 +32,7 @@ const CustomerPanel = () => {
 
         const fetchReservations = async () => {
             try {
-                const csrfToken = Cookies.get("csrfToken"); // Extract CSRF token from cookies
+                const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
                 if (!csrfToken) {
                     console.error("CSRF token not found!");
                     return;

@@ -152,7 +152,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # React frontend URL
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://10.0.2.2:3000"
 ]
 
 CSRF_TRUSTED_ORIGINS = [

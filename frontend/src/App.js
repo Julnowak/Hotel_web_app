@@ -33,6 +33,7 @@ import UserReservationsPage from "./components/ReservationHistoryPage/UserReserv
 import EditReservationPage from "./components/EditReservationPage/EditReservationPage";
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 import client from "./components/client";
+import {API_BASE_URL, WEBSITE_BASE_URL} from "./config";
 import PaymentSim from "./components/PaymentSim/PaymementSim";
 import HotelGallery from "./components/HotelGallery/HotelGallery";
 import Cookies from "js-cookie";
@@ -67,7 +68,7 @@ function Root() {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 500);
-        client.get("http://127.0.0.1:8000/api/user/")
+        client.get(`${API_BASE_URL}/user/`)
             .then(function () {
                 setCurrentUser(true);
             })
@@ -93,7 +94,7 @@ function Root() {
 
         try {
             // Step 1: Register the user
-            await client.post("http://127.0.0.1:8000/api/register/", {
+            await client.post(`${API_BASE_URL}/register/`, {
                 email: email,
                 username: username,
                 password: password,
@@ -102,7 +103,7 @@ function Root() {
             });
 
             // Step 2: Login the user
-            const response = await client.post("http://127.0.0.1:8000/api/login/", {
+            const response = await client.post(`${API_BASE_URL}/login/`, {
                 email: email,
                 password: password,
             });
@@ -153,7 +154,7 @@ function Root() {
 
             // Perform login
             const response = await client.post(
-                "http://127.0.0.1:8000/api/login/",
+                `${API_BASE_URL}/login/`,
                 {
                     email: email,
                     password: password,
@@ -199,7 +200,7 @@ function Root() {
             return;
         }
         client.post(
-            "http://127.0.0.1:8000/api/logout/", {},
+            `${API_BASE_URL}/logout/`, {},
             {
                 headers: {
                     "X-CSRFToken": csrfToken,
@@ -269,21 +270,21 @@ function Root() {
                             <Navbar variant="dark" expand="lg" className="shadow-sm"
                                     style={{backgroundColor: "#000001"}}>
                                 <Container>
-                                    <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                    <Navbar.Brand href={`${WEBSITE_BASE_URL}/`} className="fw-bold">
                                         <img src={hor_logo} style={{height: 30, margin: 10}} alt={"image"}/>
                                     </Navbar.Brand>
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                                         <Nav className="me-auto align-items-center">
-                                                <Nav.Link href="http://127.0.0.1:3000/hotels"
+                                                <Nav.Link href={`${WEBSITE_BASE_URL}/hotels`}
                                                           className="mx-2 text-uppercase fw-light">
                                                     Hotele
                                                 </Nav.Link>
-                                                <Nav.Link href="http://127.0.0.1:3000/gallery"
+                                                <Nav.Link href={`${WEBSITE_BASE_URL}/gallery`}
                                                           className="mx-2 text-uppercase fw-light">
                                                     Galeria
                                                 </Nav.Link>
-                                                <Nav.Link href="http://127.0.0.1:3000/reservation"
+                                                <Nav.Link href={`${WEBSITE_BASE_URL}/reservation`}
                                                           className="mx-2 text-uppercase fw-light">
                                                     Rezerwuj
                                                 </Nav.Link>
@@ -337,7 +338,7 @@ function Root() {
                             <Navbar variant="dark" expand="lg" className="shadow-sm"
                                     style={{backgroundColor: "#000001"}}>
                                 <Container>
-                                    <Navbar.Brand href="http://127.0.0.1:3000/" className="fw-bold">
+                                    <Navbar.Brand href={`${WEBSITE_BASE_URL}/`} className="fw-bold">
                                         <img src={hor_logo} style={{height: 30, margin: 10}} alt={"image"}/>
                                     </Navbar.Brand>
                                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>

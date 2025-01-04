@@ -81,7 +81,7 @@ class UserLogin(APIView):
 
                 response = Response(user_data, status=status.HTTP_200_OK)
                 print(csrf_token)
-                # response.set_cookie('csrftoken', csrf_token)
+                response.set_cookie('csrftoken', csrf_token)
                 print(response.data)
                 return response
             except:

@@ -1,12 +1,13 @@
 import axios from "axios";
+import {WEBSITE_BASE_URL} from "../config";
 
 // Global Axios Config
-axios.defaults.xsrfCookieName = 'csrfToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 // Custom Axios Instance
 const client = axios.create({
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: `${WEBSITE_BASE_URL}`,
     timeout: 10000, // 10-second timeout
     withCredentials: true,
 });

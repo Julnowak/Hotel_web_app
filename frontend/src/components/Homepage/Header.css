@@ -82,7 +82,7 @@
 .container_main {
     display: flex; /* Use Flexbox to create a two-column layout */
     justify-content: space-between; /* Space between columns */
-    padding: 20px; /* Optional padding */
+    padding: 10px; /* Optional padding */
 }
 
 .left-column, .right-column {
