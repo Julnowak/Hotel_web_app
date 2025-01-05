@@ -41,6 +41,7 @@ import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
 import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
 import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
 import ManageRoomPage from "./components/ManageRoomPage/ManageRoomPage";
+import HotelCosts from "./components/OwnerPanel/CostEdit/HotelCosts";
 
 function Root() {
 
@@ -232,10 +233,11 @@ function Root() {
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                                 <Route path='/hotels/' element={<Hotels/>}/>
+                                <Route path='/hotelCosts/:id' element={<HotelCosts/>}/>
                                 <Route path='/hotel/:id' element={<HotelPage/>}/>
                                 <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                                 <Route path='/owner/panel/' element={<OwnerPanel/>}/>
-                                <Route path='/room/statuses/' element={<RoomStatuses/>}/>
+                                <Route path='/room/statuses/:id' element={<RoomStatuses/>}/>
                                 <Route path='/receptionist/panel/' element={<ReceptionistPanel/>}/>
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/profile/' element={<UserProfile/>}/>
@@ -243,7 +245,7 @@ function Root() {
                                 <Route path='/gallery/:id' element={<HotelGallery/>}/>
                                 <Route path='/rooms/prices/' element={<ManageRoomPricesPage/>}/>
                                 <Route path='/payment/:id' element={<PaymentSim/>}/>
-                                <Route path='/receptionistReservations/' element={<ReservationsList/>}/>
+                                <Route path='/receptionistReservations/:id/' element={<ReservationsList/>}/>
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                                 <Route path='/manage_room/:id/' element={<ManageRoomPage/>}/>

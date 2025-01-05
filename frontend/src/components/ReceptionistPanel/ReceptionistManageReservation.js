@@ -10,13 +10,14 @@ const ReceptionistManageReservation = () => {
     const [error, setError] = useState('');
     const [guest, setGuest] = useState('');
     const params = useParams()
-    
+
 
     useEffect(() => {
         const fetchReservation = async () => {
             try {
                 const response = await client.get(`http://127.0.0.1:8000/api/receptionist/reservation/${params.id}`);
                 setReservation(response.data.reservation_data);
+                console.log(response.data.reservation_data)
                 setUpdatedReservation(response.data.reservation_data);
                 setGuest(response.data.user_data)
             } catch (error) {
@@ -125,6 +126,7 @@ const ReceptionistManageReservation = () => {
                         onChange={handleChange}
                         disabled={!isEditing}
                     >
+                        <option value="Oczekująca">Oczekująca</option>
                         <option value="Opłacona">Opłacona</option>
                         <option value="Częściowo opłacona">Częściowo opłacona</option>
                         <option value="Anulowana">Anulowana</option>

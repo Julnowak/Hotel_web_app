@@ -293,6 +293,9 @@ const OwnerPanel = () => {
                     <RoomsVisual rms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
                                  roomStandard={roomStandard} changed={changed}/>
                     : null}
+                <div style={{textAlign: "right"}}>
+                    <a href={`/room/statuses/${hotelId}`}>Zobacz więcej...</a>
+                </div>
 
             </section>
 
@@ -315,6 +318,10 @@ const OwnerPanel = () => {
                 ) : (
                     <p>Loading...</p>
                 )}
+
+                <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
+                    <a href={`/hotelCosts/${hotelId}`}>Zobacz więcej...</a>
+                </div>
             </section>
 
         </div>

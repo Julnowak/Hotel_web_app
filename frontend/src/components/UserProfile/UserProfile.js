@@ -31,6 +31,7 @@ const UserProfile = () => {
     const [phone, setPhone] = useState('');
     const [userType, setUserType] = useState('');
     const [likedHotels, setLikedHotels] = useState([]);
+    const [hotel, setHotel] = useState(null);
     const navigate = useNavigate();
 
     const [user, setUser] = useState({
@@ -62,7 +63,23 @@ const UserProfile = () => {
                 setMeanRating(response.data['mean_rating'])
                 setResNum(response.data['reservations_number'])
                 setLikedHotels(response.data['user'].liked_hotels)
-                console.log(response.data)
+                // console.log(response.data)
+
+                const fetchHotels = async () => {
+                    try {
+                        const rep = await client.get(`http://127.0.0.1:8000/api/hotel/${response.data['user'].recepcionist_hotel}/`);
+                        setHotel("Weles " + rep.data.localization)
+                        console.log(rep.data)
+                    } catch (error) {
+                        console.error("Error fetching hotels:", error);
+                    }
+                };
+
+                if (!hotel && response.data['user'].recepcionist_hotel) {
+                    fetchHotels();
+
+                }
+
                 if (response.data['user'].profile_picture) {
                     setImage(response.data['user'].profile_picture.slice(15))
                 }
@@ -236,6 +253,8 @@ const UserProfile = () => {
                     />
                 </div>
                 <div className="profile-info">
+                    {userType === "recepcjonista" ?
+                    <p><strong>Hotel: </strong>{hotel}</p>: null}
                     {isEditing ? (
                         <>
                             <p><strong>Nazwa użytkownika:</strong></p>
@@ -304,11 +323,11 @@ const UserProfile = () => {
                                 logowanie:</strong> {lastLogin?.slice(0, 10)}, {lastLogin?.slice(11, 19)}</p>
 
                             <span>&nbsp;</span>
-                            <p><strong>Imię:</strong> {name ? name : "Nie podano"}</p>
-                            <p><strong>Nazwisko:</strong> {surname ? surname : "Nie podano"}</p>
+                            <p><strong>Imię:</strong> {name ? name : "---"}</p>
+                            <p><strong>Nazwisko:</strong> {surname ? surname : "---"}</p>
 
-                            <p><strong>Telefon:</strong> {phone ? phone : "Nie podano"}</p>
-                            <p><strong>Adres:</strong> {address ? address : "Nie podano"}</p>
+                            <p><strong>Telefon:</strong> {phone ? phone : "---"}</p>
+                            <p><strong>Adres:</strong> {address ? address : "---"}</p>
 
                             <div className="profile-buttons">
                                 <button className="edit-btn" onClick={handleEditToggle}>Edytuj</button>
@@ -330,7 +349,7 @@ const UserProfile = () => {
             </div>: null}
 
 
-            {userType !== "recepcjonista" ?
+            {userType === "klient" ?
             <h2>Statystyki</h2>: null}
 
             {userType === "klient" ?
@@ -339,12 +358,7 @@ const UserProfile = () => {
                     <p>Liczba rezerwacji: {resNum}</p>
                     <p>Średnia ocen: {meanRating.toFixed(2)}</p>
                     <p>Dni spędzone w naszych hotelach: {totalDays}</p>
-                </div> : userType === "właściciel" ?
-                <div className="profile-stats">
-                    <p>Liczba hoteli: {user.reservations}</p>
-                    <p>Liczba pokoi: {user.rating}</p>
-                    <p>Średnie miesięczne zarobki: {user.daysSpent}</p>
-                </div>: null}
+                </div> :  null}
 
             <div className="down-buttons">
                 {userType === "klient" ?

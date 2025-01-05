@@ -56,6 +56,8 @@ class HotelSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     hotel = serializers.CharField(source='room.hotel.__str__', read_only=True)  # Pobiera nazwę hotelu
     room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+    room_number = serializers.CharField(source='room.room_number', read_only=True)  # Pobiera typ pokoju
+    guest = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
         model = Reservation
@@ -69,6 +71,9 @@ class ReservationSerializer(serializers.ModelSerializer):
             'people_number',
             'hotel',  # Dodane pole dla hotelu
             'room_type',  # Dodane pole dla typu pokoju
+            'room_id',
+            'room_number',
+            'guest'
         ]
 
 

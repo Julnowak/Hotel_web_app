@@ -19,6 +19,7 @@ urlpatterns = [
     path('newReservation/<int:pk>/', views.NewReservationApi.as_view(), name='new_reservation'),
     path('reservations/', views.ReservationsAPI.as_view(), name='reservations'),
     path('personelReservations/', views.ReservationViewSet.as_view(), name='personelReservations'),
+    path('recepcionistReservations/<int:hotel_id>/', views.RecepcionistReservations.as_view(), name='recepcionistReservations'),
     path('userReservations/', views.UserReservationsView.as_view(), name='user_reservations'),
     path('reservation/<int:reservation_id>/', views.ReservationDetailsAPI.as_view(), name='reservation'),
     path('receptionist/reservation/<int:reservation_id>/', views.ReceptionistReservation.as_view(), name='receptionistReservation'),

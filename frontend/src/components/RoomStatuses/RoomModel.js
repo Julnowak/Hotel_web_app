@@ -13,7 +13,7 @@ const RoomModal = ({room, closeModal, updateRoomStatus}) => {
         <div className="modal-backdrop">
             <div className="modall">
                 <h2 className="modal-title">Status pokoju</h2>
-                <p className="modal-text">Pokój numer: {room.number}</p>
+                <p className="modal-text">Pokój numer: {room.room_number}</p>
                 <p className="modal-text">Piętro: {room.floor}</p>
                 <p className="modal-text">Aktualny status: {room.status}</p>
                 <select

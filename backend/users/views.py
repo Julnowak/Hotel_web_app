@@ -377,6 +377,7 @@ class ReservationDetailsAPI(APIView):
     def get(self, request, reservation_id):
         reservation = get_object_or_404(Reservation, reservation_id=reservation_id)
         serializer = ReservationSerializer(reservation)
+
         return Response(serializer.data)
 
     def put(self, request, reservation_id):
@@ -465,7 +466,14 @@ class RoomPricesView(APIView):
 class ReservationViewSet(APIView):
     def get(self, request):
         reservations = Reservation.objects.filter(check_in__lte=datetime.datetime.today()).order_by('-check_in')
-        print(Reservation.objects.filter(check_in__gte=datetime.datetime.today()))
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RecepcionistReservations(APIView):
+
+    def get(self, request, hotel_id):
+        reservations = Reservation.objects.filter(room__hotel__hotel_id=hotel_id).order_by("-check_in")
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -514,7 +522,7 @@ class ProfitLossChart(APIView):
         for item in monthly_prices:
             all_data[f"{item['year']}-{item['month']:02d}"] = item["total_price"]
 
-        # print(all_data)
+        print(all_data)
         return Response({"reservations_data": serializer.data, "monthly_prices": all_data})
 
 

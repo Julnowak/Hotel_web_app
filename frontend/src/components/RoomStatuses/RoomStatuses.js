@@ -3,15 +3,19 @@ import RoomList from "./RoomList";
 import RoomModal from "./RoomModel";
 import "./RoomStatuses.css"
 import axios from "axios";
+import {useParams} from "react-router-dom";
+import client from "../client";
 
 const RoomStatuses = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [rooms, setRooms] = useState([]);
+  const params = useParams();
+  const [floors, setFloors] = useState([]);
 
   useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${1}`,{
+                const response = await client.get(`http://127.0.0.1:8000/api/rooms/${params.id}`,{
                     params: {
                         check_in: new Date(),
                         check_out: new Date(),
@@ -23,9 +27,19 @@ const RoomStatuses = () => {
                 console.error("Error fetching hotels:", error);
             }
         };
+        
+        if (floors.length === 0) {  // Ensuring `floors` is an array before fetching
+        client.get(`http://127.0.0.1:8000/api/floors/${params.id}`)
+            .then(response => {
+                setFloors(response.data);
+            })
+            .catch(() => {
+                console.log("Error fetching floors");
+            });
+        }
 
         if (!rooms.length) fetchRooms();
-  }, [rooms.length]);
+  }, [floors.length, params.id, rooms.length]);
 
 
   const updateRoomStatus = (roomNumber, newStatus, roomId) => {
@@ -36,7 +50,7 @@ const RoomStatuses = () => {
     );
     setSelectedRoom(null);
     try {
-        axios.post(`http://127.0.0.1:8000/api/roomStatusChange/${roomId}`,{
+        client.post(`http://127.0.0.1:8000/api/roomStatusChange/${roomId}`,{
         newStatus: newStatus,
         });
     } catch (error) {
@@ -47,7 +61,7 @@ const RoomStatuses = () => {
   return (
     <div>
       <h1 style={{margin: 20}}>Statusy pokoi</h1>
-      <RoomList rooms={rooms} setSelectedRoom={setSelectedRoom} />
+      <RoomList rooms={rooms} setSelectedRoom={setSelectedRoom} floors={floors} />
       {selectedRoom && (
         <RoomModal
           room={selectedRoom}

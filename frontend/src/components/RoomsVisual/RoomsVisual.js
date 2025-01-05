@@ -4,9 +4,10 @@ import client from "../client";
 import {Badge} from "react-bootstrap";
 import RoomModal from "../RoomStatuses/RoomModel";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
-const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => {
+const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed, reservations = []}) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [floor, setFloor] = useState(1);
     const [floors, setFloors] = useState([]);
@@ -14,7 +15,8 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [rooms, setRooms] = useState([]);
     const [flag, setFlag] = useState(false);
-    
+    const navigate = useNavigate();
+
     const handleRoomClick = (room) => {
         setSelectedRoom(room);
     };
@@ -46,7 +48,6 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => 
                     floor_num: newFloor
                 });
                 setNewRooms(response.data);
-                console.log(response.data)
             } catch (error) {
                 console.error("Error fetching rooms:", error);
             }
@@ -68,7 +69,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => 
                 });
 
         }
-    }, [hotel, rooms, floors, newRooms, rms, changed])
+    }, [hotel, rooms, floors, newRooms, rms, changed, reservations])
 
 
     return (
@@ -79,9 +80,9 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => 
                 <div>
                     {floors.map((f) => (
                         <button id={`floor_btn_${f.floor_number}`}
-                            key={f.floor_number}
-                            className={floor === f.floor_number ? 'selected' : ''}
-                            onClick={() => handleFloorChange(f.floor_number)}
+                                key={f.floor_number}
+                                className={floor === f.floor_number ? 'selected' : ''}
+                                onClick={() => handleFloorChange(f.floor_number)}
                         >
                             Piętro {f.floor_number}
                         </button>
@@ -260,15 +261,48 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => 
                             </Badge>
                         </p>
                         <p><b>Typ:</b> {selectedRoom.type}</p>
-                        <p><b>Cena:</b>  {selectedRoom.price?.toFixed(2)} zł</p>
-                        <p><b>Liczba miejsc:</b>  {selectedRoom.people_capacity}</p>
+                        <p><b>Cena:</b> {selectedRoom.price?.toFixed(2)} zł</p>
+                        <p><b>Liczba miejsc:</b> {selectedRoom.people_capacity}</p>
+                        <p><b>Powiązane rezerwacje:</b></p>
+                        <ul>
+                            {reservations
+                                .filter(reservation =>
+                                    reservation.room_id === selectedRoom.room_id &&
+                                    reservation.status !== "Zakończona" &&
+                                    reservation.status !== "Anulowana"
+                                ).length > 0 ? (
+                                reservations
+                                    .filter(reservation =>
+                                        reservation.room_id === selectedRoom.room_id &&
+                                        reservation.status !== "Zakończona" &&
+                                        reservation.status !== "Anulowana"
+                                    )
+                                    .map((filteredReservation, index) => (
+                                        <li key={index} style={{padding: 10, border: "2px solid gray",borderRadius: 10, cursor: "pointer",
+                                        marginBottom: 5}} onClick={() => {
+                                            navigate(`/receptionist/manage/reservation/${filteredReservation.reservation_id}/`);
+                                        }}>
+                                            <b>ID Rezerwacji:</b> {filteredReservation.reservation_id},
+                                            <span></span>
+                                            Od <b>{filteredReservation.check_in}</b> do <b>{filteredReservation.check_out}</b>,
+                                            <br></br>
+                                            <b> Status:</b> {filteredReservation.status},
+                                            <b> Klient:</b> {filteredReservation.guest}
+                                        </li>
+                                    ))
+                            ) : (
+                                <li>---</li>
+                            )
+                            }
+
+                        </ul>
                     </div>
 
                     <div style={{textAlign: "center", margin: 20}}>
-                    <button onClick={function () {
-                        setFlag(true)
-                    }}>Zmień status
-                    </button>
+                        <button onClick={function () {
+                            setFlag(true)
+                        }}>Zmień status
+                        </button>
                     </div>
 
                     {selectedRoom && flag && (
