@@ -11,6 +11,7 @@ const HotelPage = () => {
     const [hotel, setHotel] = useState(null);
     const [reviews, setReviews] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [liked, setLiked] = useState(null);
     const [hoverRating, setHoverRating] = useState(0);
     const [newRating, setNewRating] = useState(0);
     const [newReview, setNewReview] = useState("");
@@ -72,6 +73,31 @@ const HotelPage = () => {
         // setReviews(null)
     }
 
+    function onLike(e) {
+        e.preventDefault()
+        const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+        if (!csrfToken) {
+            console.error("CSRF token not found!");
+            return;
+        }
+
+        client.post(`http://127.0.0.1:8000/api/like/${hotel.hotel_id}/`,{}, {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            },)
+        .then(response => {
+            setLiked(!liked)
+        })
+        .catch(error => console.error('Error:', error));
+
+        client.get(`http://127.0.0.1:8000/api/like/${id}/`)
+            .then(response => {
+                setLiked(response.data.ans)
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     const renderStars = (rating, onHover = () => {
     }, onClick = () => {
     }) => {
@@ -99,11 +125,20 @@ const HotelPage = () => {
             try {
                 const response = await client.get(`http://127.0.0.1:8000/api/hotel/${id}/`);
                 setHotel(response.data)
+                client.get(`http://127.0.0.1:8000/api/like/${id}/`)
+                .then(response => {
+                    setLiked(response.data.ans)
+                    console.log(response.data.ans)
+                })
+                .catch(error => console.error('Error:', error));
             } catch (error) {
                 console.error("Error fetching hotels:", error);
             }
         };
-        if (!hotel) fetchHotels();
+        if (!hotel) {
+            fetchHotels();
+
+        }
 
         const fetchReviews = async () => {
             try {
@@ -120,6 +155,8 @@ const HotelPage = () => {
             }
         };
         if (!reviews) fetchReviews();
+
+
     }, [hotel, id, reviews]);
 
 
@@ -171,19 +208,31 @@ const HotelPage = () => {
                         <Link style={{color: "white"}} className="reserve-button" to={`/reservation/?hotelId=${hotel.hotel_id}`}>Zarezerwuj</Link>: null}
 
                     <Link to={`/gallery/${id}/`} style={{color: "white"}} className="reserve-button">Zobacz galerię</Link>
-                    {localStorage.getItem("user_type") === "klient" ?
+                    {localStorage.getItem("user_type") === "klient" ? ( !liked?
+
                                 <Link style={{color: "white"}}
-                                    // onClick={() => setShowForm(!showForm)}
+                                    onClick={onLike}
                                     className="reserve-button"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                         className="bi bi-heart" viewBox="0 0 16 16">
+                                         className="bi bi-suit-heart" viewBox="0 0 16 16">
                                         <path
-                                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                            d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.6 7.6 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
                                     </svg>
                                     <span>Polub</span>
                                 </Link>
-                        : null}
+                        : <Link style={{color: "white"}}
+                                    onClick={onLike}
+                                    className="reserve-button"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     className="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"/>
+                                </svg>
+                                    <span>Polubiono</span>
+                                </Link>
+                    ): null}
                 </div>
                 <span>&nbsp;</span>
                 <div className="reviews" style={{padding: "20px", maxWidth: "600px", margin: "auto"}}>

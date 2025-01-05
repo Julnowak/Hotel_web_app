@@ -12,12 +12,13 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
 
     const handleRoomClick = (room) => {
         setSelectedRoom(room);
+        console.log(room)
     };
 
     const handleFloorChange = (newFloor) => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.put("http://127.0.0.1:8000/api/rooms/", {
+                const response = await axios.post("http://127.0.0.1:8000/api/rooms/", {
                 type: roomStandard,
                 check_in: checkIn,
                 check_out: checkOut,
@@ -79,7 +80,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
+                            ${(room.status === "Wolny" && room.room_type === roomStandard) ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
                             ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
@@ -97,7 +98,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
+                            ${(room.status === "Wolny" && room.room_type === roomStandard) ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
                             ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
@@ -184,7 +185,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
                         <div
                             key={room.room_number}
                             className={`room
-                            ${room.status === "Wolny" ? 'available' : 'unavailable'}
+                            ${(room.status === "Wolny" && room.room_type === roomStandard) ? 'available' : 'unavailable'}
                             ${selectedRoom && selectedRoom.room_number === room.room_number ? 'selected' : ''}
                             ${room.status === "Zajęty" && selectedRoom && selectedRoom.room_number === room.room_number ? 'unavailable-selected' : ''}`}
                             onClick={() => handleRoomClick(room)}
@@ -198,11 +199,32 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
 
             {selectedRoom && (
                 <div className="room-details" style={{ color: "black" }} >
+                    <div className="room-image-container">
+                        <img src={`/images/hotel_rooms_images/room_${selectedRoom.room_type}.jpg`} alt="Room" className="room-image"/>
+                    </div>
                     <h2>Pokój {selectedRoom.room_number}, piętro {floor} - szczegóły</h2>
-                    <p>Status: {selectedRoom.status}</p>
-                    <p>Typ: {selectedRoom.room_type}</p>
-                    <p>Cena: {selectedRoom.price} zł</p>
-                    {selectedRoom.status === "Wolny" && (
+                    <p style={{ margin: "10px 0" }}>
+                        <b>Pokój {selectedRoom.capacity}-osobowy</b>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-person-fill"
+                          viewBox="0 0 16 16"
+                          style={{ marginLeft: "8px", verticalAlign: "middle" }}
+                        >
+                          <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                        </svg> x {selectedRoom.capacity}
+                      </p>
+
+                                        <p><b>Status:</b> {selectedRoom.status}</p>
+                    <p><b>Typ:</b> {selectedRoom.room_type}</p>
+                    <p><b>Cena:</b> {selectedRoom.price} zł/doba</p>
+
+
+
+                    {selectedRoom.status === "Wolny" && selectedRoom.room_type == roomStandard && (
                         <a href={`/reservation/room/${selectedRoom.room_id}/?checkIn=${checkIn}&checkOut=${checkOut}`}>
                             <button>Zarezerwuj</button>
                         </a>

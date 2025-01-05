@@ -20,6 +20,7 @@ const OwnerPanel = () => {
     const [roomStandard, setRoomStandard] = useState('standard');
 
     const [isEditing, setIsEditing] = useState(false);
+    const [changed, setChanged] = useState(false);
     const [roomPrices, setRoomPrices] = useState({});
     const [roomPricesFlag, setRoomPricesFlag] = useState(false);
     const [error, setError] = useState('');
@@ -120,6 +121,7 @@ const OwnerPanel = () => {
         }
 
         if (!rooms.length) fetchRooms();
+        document.getElementById('floor_btn_1')?.click()
 
     }, [chartData, checkInDate, checkOutDate, fetchChartData, fetchPrices, fetchRooms, hotel, hotelId, hotels, roomPricesFlag, roomStandard, rooms.length]);
 
@@ -160,7 +162,23 @@ const OwnerPanel = () => {
     const handleHotelChange = async (e) => {
         const selectedHotelId = e.target.value;
         setHotelId(selectedHotelId);
+        setChanged(true)
         setHotel(hotels.find(h => h.hotel_id === parseInt(selectedHotelId)));
+
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${selectedHotelId}`,
+                {
+                    params: {
+                        check_in: checkInDate,
+                        check_out: checkOutDate,
+                        floor: 1
+                    }
+                });
+            setRooms(response.data);
+        } catch (error) {
+            console.error("Error fetching hotels:", error);
+        }
+        document.getElementById('floor_btn_1').click()
         try {
             const response = await axios.get(`http://127.0.0.1:8000/api/prices/${selectedHotelId}`);
             console.log(response)
@@ -206,7 +224,8 @@ const OwnerPanel = () => {
         }
 
         setHotel(hotels?.find(h => h.hotel_id === parseInt(selectedHotelId)))
-        document.getElementById('floor_btn_1').click()
+        setChanged(false)
+
     };
 
     return (
@@ -272,13 +291,14 @@ const OwnerPanel = () => {
                 <h2>Statusy pokojów</h2>
                 {hotel && hotelId ?
                     <RoomsVisual rms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
-                                 roomStandard={roomStandard}/>
+                                 roomStandard={roomStandard} changed={changed}/>
                     : null}
 
             </section>
 
             {/* Sekcja analizy zysków i strat */}
             <section className="profit-analysis-section">
+                <h2>Analiza przychodów i wydatków</h2>
                 {chartData ? (
                     <Line
                         data={chartData}

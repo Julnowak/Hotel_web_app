@@ -6,6 +6,7 @@ const RoomModal = ({room, closeModal, updateRoomStatus}) => {
 
     const handleSave = () => {
         updateRoomStatus(room.room_number, newStatus, room.room_id);
+        closeModal();
     };
 
     return (

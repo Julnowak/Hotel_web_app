@@ -40,7 +40,7 @@ const UserReservationsPage = () => {
               {/* Zdjęcie pokoju */}
               <Col xs={12} md={4}>
                 <img
-                  src={"https://catpaw.pl/wp-content/uploads/2024/09/Kot-Europjeski.png" || "/images/default-room.jpg"} // Domyślny obrazek jeśli brak
+                  src={`/images/hotel_rooms_images/room_${reservation.room_type}.jpg` || "/images/default-room.jpg"} // Domyślny obrazek jeśli brak
                   alt={reservation.room_type}
                   className="img-fluid rounded reservation-image"
                 />

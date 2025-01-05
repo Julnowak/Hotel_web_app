@@ -88,8 +88,8 @@ const CustomerPanel = () => {
                                 <div>
                                     {currentReservationsPaginated?.map((cr: Reservation) => (
                                         <div key={cr.reservation_id}>
-                                            <Card.Img variant="top"
-                                                      src="https://catpaw.pl/wp-content/uploads/2024/09/Kot-Europjeski.png"/>
+                                            <Card.Img variant="top" style={{objectFit: "cover", width: "100%", height: 200}}
+                                                      src={`/images/hotel_rooms_images/room_${cr.room_type}.jpg`}/>
                                             <Card.Text>
                                                 <strong>{cr.hotel}</strong> <br/>
                                                 <strong>Nr rezerwacji:</strong> {cr.reservation_id} <br/>

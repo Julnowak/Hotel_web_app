@@ -171,8 +171,10 @@ class RoomApi(APIView):
         # Fetch all rooms based on criteria
         rooms = Room.objects.filter(
             hotel__hotel_id=hotel_id,
-            floor__floor_id=floor_id
+            floor__floor_number=floor_id
         )
+
+        print(rooms.values())
 
         # Prepare a list to store room data with availability status
         room_data = []
@@ -182,19 +184,21 @@ class RoomApi(APIView):
             has_conflict = Reservation.objects.filter(
                 room=room,
                 check_in__lt=check_out_date,
-                check_out__gt=check_in_date
+                check_out__gt=check_in_date,
             ).exists()
 
+            print(has_conflict)
             # Set availability status based on conflicts
-            room_status = "Wolny" if not has_conflict else "Zajęty"
+            room_status = "Wolny" if (room.status == "Wolny" and not has_conflict) else "Zajęty"
 
             # Append room data with the status to room_data
             room_data.append({
                 "room_id": room.room_id,
                 "room_number": room.room_number,
-                "room_type": room_type,
+                "room_type": room.type,
                 "status": room_status,
                 "price": room.price,
+                'capacity': room.people_capacity,
             })
 
         # Return the room data with availability status
@@ -203,7 +207,7 @@ class RoomApi(APIView):
     def put(self, request):
         data = request.data
         hotel_id = int(data['hotel_id'])
-        rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__floor_id=data['floor_num'])
+        rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__hotel__hotel_id=hotel_id, floor__floor_number=data['floor_num'])
 
         # Serializacja danych
         serializer = RoomSerializer(rooms, many=True)
@@ -335,13 +339,13 @@ class RoomStatuses(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, hotel_id):
-        print("FFFFFFFFFFFFFFFFF")
         print(request.GET)
         try:
-            rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__floor_id=int(request.GET['floor'][0]))
+            rooms = Room.objects.filter(hotel__hotel_id=hotel_id, floor__hotel__hotel_id=hotel_id, floor__floor_number=int(request.GET['floor'][0]))
         except:
             rooms = Room.objects.filter(hotel__hotel_id=hotel_id)
 
+        print(rooms)
         # Serializacja danych
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -555,3 +559,28 @@ class RoomDetailView(APIView):
             return Response(serializer.errors, status=400)
         except Room.DoesNotExist:
             return Response({"error": "Room not found"}, status=404)
+
+
+class LikeApi(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request, hotel_id):
+        user = request.user
+        print(user.liked_hotels.all())
+        if Hotel.objects.get(hotel_id=hotel_id) in user.liked_hotels.all():
+            user.liked_hotels.remove(Hotel.objects.get(hotel_id=hotel_id))
+        else:
+            user.liked_hotels.add(Hotel.objects.get(hotel_id=hotel_id))
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+    def get(self, request, hotel_id):
+        h = Hotel.objects.get(hotel_id=hotel_id)
+        user = request.user
+        print(h in user.liked_hotels.all())
+        if h in user.liked_hotels.all():
+            ans = True
+        else:
+            ans = False
+        return Response({"ans": ans}, status=status.HTTP_200_OK)

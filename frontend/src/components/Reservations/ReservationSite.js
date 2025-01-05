@@ -71,6 +71,7 @@ const ReservationSite = () => {
                 hotel_id: hotelId
             });
             setRooms(response.data);
+            console.log(response.data)
             setAvailableRooms(response.data);
             setMessage('W wybranym terminie są dostępne pokoje!');
         } catch (error) {
@@ -87,6 +88,7 @@ const ReservationSite = () => {
         const selectedHotelId = e.target.value;
         setHotelId(selectedHotelId);
         setHotel(hotels.find(h => h.hotel_id === parseInt(selectedHotelId)));
+        setAvailableRooms([]);
     };
 
     return (

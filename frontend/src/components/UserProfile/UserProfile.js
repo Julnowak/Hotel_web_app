@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import './UserProfile.css';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {Button, Card} from "react-bootstrap";
+import StarRating from "../StarRating/StarRating";
 
 // AXIOS CONNECTION FOR LOGIN //
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -28,6 +30,7 @@ const UserProfile = () => {
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [userType, setUserType] = useState('');
+    const [likedHotels, setLikedHotels] = useState([]);
     const navigate = useNavigate();
 
     const [user, setUser] = useState({
@@ -58,6 +61,8 @@ const UserProfile = () => {
                 setTotalDays(response.data['total_days'])
                 setMeanRating(response.data['mean_rating'])
                 setResNum(response.data['reservations_number'])
+                setLikedHotels(response.data['user'].liked_hotels)
+                console.log(response.data)
                 if (response.data['user'].profile_picture) {
                     setImage(response.data['user'].profile_picture.slice(15))
                 }
@@ -65,6 +70,7 @@ const UserProfile = () => {
             .catch(function () {
                 console.log("error")
             });
+
     }, [image, resNum]);
 
     const handleEditToggle = () => {
@@ -311,6 +317,18 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
+
+            {userType === "klient" ?
+            <div>
+            <h2>Ulubione hotele</h2>
+            {likedHotels?.map((hotel: Hotel) => (
+                <div key={hotel.hotel_id}>
+                    <h4 style={{margin:5}}>{hotel.localization}</h4>
+                    <p>{hotel.address}</p>
+                  </div>
+            ))}
+            </div>: null}
+
 
             {userType !== "recepcjonista" ?
             <h2>Statystyki</h2>: null}

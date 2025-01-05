@@ -25,5 +25,7 @@ urlpatterns = [
     path('reviews/', views.ReviewsApi.as_view(), name='reviews'),
     path('chart_data/<int:hotel_id>', views.ProfitLossChart.as_view(), name='chart_data'),
     path('prices/<int:hotel_id>/', views.Prices.as_view(), name='prices'),
+    path('like/<int:hotel_id>/', views.LikeApi.as_view(), name='like'),
     path('csrf/', views.csrf, name='csrf'),
+
 ]

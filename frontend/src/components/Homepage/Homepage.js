@@ -9,6 +9,7 @@ import L from 'leaflet';
 
 import StarRating from "../StarRating/StarRating";
 import client from "../client";
+import {Link} from "react-router-dom";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -78,7 +79,7 @@ const Homepage = () => {
                 </div>
 
 
-                <div className="container_main" style={{maxWidth: 1200, margin: "auto", color: "black"}}>
+                <div className="container_main" style={{maxWidth: 1000, margin: "auto", color: "black"}}>
                     <div className="left-column" style={{padding: 20}}>
                         <h2 style={{color: "white"}}>Lokalizacja</h2>
                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
@@ -112,7 +113,7 @@ const Homepage = () => {
                     </div>
                 </div>
 
-                <section className="about-us">
+                <section className="about-us"  style={{maxWidth: 1000, marginLeft: "auto", marginRight: "auto", }}>
                     <div className="about-us-container">
                         <h2 className="about-us-title">Nasza misja</h2>
                         <p className="about-us-description">
@@ -129,14 +130,17 @@ const Homepage = () => {
                          style={{maxWidth: 1000, margin: "auto", backgroundColor: "#1c1c1c"}}>
                     <h2>Nasze hotele</h2>
                     <Carousel>
-                        <Carousel.Item>
+                        <Carousel.Item >
                             <div className="d-block w-100" style={{position: 'relative'}}>
-                                <img
-                                    className="d-block w-100"
-                                    src="/images/hotel_loc_images/krakow.jpg"
-                                    height={500}
-                                    alt="Pokój 1"
-                                />
+                                <a href={"http://127.0.0.1:3000/hotel/1"}>
+                                    <img
+                                        className="d-block w-100"
+                                        src="/images/hotel_loc_images/krakow.jpg"
+                                        height={500}
+                                        alt="Pokój 1"
+                                    />
+                                </a>
+
                                 <div
                                     style={{
                                         position: 'absolute',
@@ -149,20 +153,22 @@ const Homepage = () => {
                                         borderRadius: '5px',
                                     }}
                                 >
-                                    <h3>Pokój 1</h3>
-                                    <p>Luksusowy pokój z widokiem.</p>
+                                    <h3>Hotel Weles Kraków</h3>
+                                    <p>Blisko krakowskiego smoka i królewskich szlaków.</p>
                                 </div>
                             </div>
                         </Carousel.Item>
 
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
-                                <img
-                                    className="d-block w-100"
-                                    src="/images/hotel_loc_images/warszawa.jpg"
-                                    alt="Pokój 2"
-                                    height={500}
-                                />
+                                <a href={"http://127.0.0.1:3000/hotel/2"}>
+                                    <img
+                                        className="d-block w-100"
+                                        src="/images/hotel_loc_images/warszawa.jpg"
+                                        alt="Pokój 2"
+                                        height={500}
+                                    />
+                                </a>
                                 <div
                                     style={{
                                         position: 'absolute',
@@ -175,20 +181,22 @@ const Homepage = () => {
                                         borderRadius: '5px',
                                     }}
                                 >
-                                    <h3>Pokój 2</h3>
-                                    <p>Przytulny i komfortowy.</p>
+                                    <h3>Hotel Weles Warszawa</h3>
+                                    <p>Wyjazd do stolicy? W Weles zapewniamy najwyższy komfort i wygodę.</p>
                                 </div>
                             </div>
                         </Carousel.Item>
 
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
+                                <a href={"http://127.0.0.1:3000/hotel/3"}>
                                 <img
                                     className="d-block w-100"
                                     src="images/hotel_loc_images/zakopane.jpg"
                                     alt="Pokój 3"
                                     height={500}
                                 />
+                                </a>
                                 <div
                                     style={{
                                         position: 'absolute',

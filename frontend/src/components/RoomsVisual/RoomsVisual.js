@@ -6,7 +6,7 @@ import RoomModal from "../RoomStatuses/RoomModel";
 import axios from "axios";
 
 
-const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
+const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed}) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [floor, setFloor] = useState(1);
     const [floors, setFloors] = useState([]);
@@ -14,6 +14,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [rooms, setRooms] = useState([]);
     const [flag, setFlag] = useState(false);
+    
     const handleRoomClick = (room) => {
         setSelectedRoom(room);
     };
@@ -56,7 +57,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
     };
 
     useEffect(() => {
-        if (floors.length === 0) {  // Ensuring `floors` is an array before fetching
+        if (floors.length === 0 || changed) {  // Ensuring `floors` is an array before fetching
             client.get(`http://127.0.0.1:8000/api/floors/${hotel.hotel_id}`)
                 .then(response => {
                     setFloors(response.data);
@@ -67,22 +68,11 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard}) => {
                 });
 
         }
-    }, [hotel, rooms, floors, newRooms, rms, flag])
+    }, [hotel, rooms, floors, newRooms, rms, changed])
 
 
     return (
         <div className="room-reservation-container">
-
-            {/* Filtracja po dniu */}
-            {/*<div className="filter-container">*/}
-            {/*    <label htmlFor="date-filter">Wybierz dzień:</label>*/}
-            {/*    <input*/}
-            {/*        type="date"*/}
-            {/*        id="date-filter"*/}
-            {/*        value={selectedDate}*/}
-            {/*        onChange={handleDateChange}*/}
-            {/*    />*/}
-            {/*</div>*/}
 
             {/* Floor Selection */}
             <div className="floor-selector">

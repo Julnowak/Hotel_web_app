@@ -1,0 +1,2 @@
+for i in range(24,31):                                                                                                                                    
+... Room.objects.create(room_number=i, hotel=Hotel.objects.get(hotel_id=1), floor=Floor.objects.get(hotel = Hotel.objects.get(hotel_id=1), floor_number=2))

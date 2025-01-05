@@ -49,7 +49,7 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
-    telephone = models.CharField(max_length=12,blank=True, null=True)
+    telephone = models.CharField(max_length=15,blank=True, null=True)
     address = models.CharField(max_length=200,blank=True, null=True)
     name = models.CharField(max_length=200,blank=True, null=True)
     surname = models.CharField(max_length=200,blank=True, null=True)
@@ -83,9 +83,10 @@ class Room(models.Model):
     room_number = models.IntegerField()
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     price = models.FloatField(default=0.00)
-    status = models.CharField(default="Available", max_length=200)
+    status = models.CharField(default="Wolny", max_length=200)
     people_capacity = models.IntegerField(default=2)
     custom = models.BooleanField(default=False)
+    image = models.ImageField(blank=True, null=True, default="standard_image.png")
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -95,6 +96,7 @@ class Room(models.Model):
 class Reservation(models.Model):
     reservation_id = models.AutoField(primary_key=True)
     price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
+    paid_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
     status = models.CharField(default="Oczekująca", max_length=200)
     check_in = models.DateField()
     check_out = models.DateField()
