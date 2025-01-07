@@ -42,6 +42,7 @@ import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
 import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
 import ManageRoomPage from "./components/ManageRoomPage/ManageRoomPage";
 import HotelCosts from "./components/OwnerPanel/CostEdit/HotelCosts";
+import HotelCostsAndEarnings from "./components/OwnerPanel/CostEdit/HotelCostsAndEarnings";
 
 function Root() {
 
@@ -233,7 +234,7 @@ function Root() {
                             <Routes>
                                 <Route path='/' element={<Homepage/>}/>
                                 <Route path='/hotels/' element={<Hotels/>}/>
-                                <Route path='/hotelCosts/:id' element={<HotelCosts/>}/>
+                                <Route path='/hotelCosts/:id' element={<HotelCostsAndEarnings/>}/>
                                 <Route path='/hotel/:id' element={<HotelPage/>}/>
                                 <Route path='/customer/panel/' element={<CustomerPanel/>}/>
                                 <Route path='/owner/panel/' element={<OwnerPanel/>}/>
