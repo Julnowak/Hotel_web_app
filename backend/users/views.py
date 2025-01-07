@@ -395,7 +395,7 @@ class ReservationDetailsAPI(APIView):
 
 
 class ReviewsApi(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
@@ -522,8 +522,19 @@ class ProfitLossChart(APIView):
         for item in monthly_prices:
             all_data[f"{item['year']}-{item['month']:02d}"] = item["total_price"]
 
-        print(all_data)
-        return Response({"reservations_data": serializer.data, "monthly_prices": all_data})
+        all_data = dict(all_data)
+        for k, v in all_data.items():
+            all_data[k] = float(v)
+
+        h = Hotel.objects.get(hotel_id=hotel_id)
+        h.earnings = all_data
+        h.save()
+
+        for k in all_data.keys():
+            if k not in h.costs.keys():
+                h.costs[k] = 0
+        h.save()
+        return Response({"reservations_data": serializer.data, "monthly_earnings": all_data, "monthly_costs": h.costs})
 
 
 class Prices(APIView):
@@ -532,8 +543,6 @@ class Prices(APIView):
 
     def get(self, request, hotel_id):
         hotel = Hotel.objects.get(hotel_id=hotel_id)
-        print(hotel_id)
-        print(hotel.defaultPrices)
         return Response(hotel.defaultPrices, status=status.HTTP_200_OK)
 
     def put(self, request, hotel_id):

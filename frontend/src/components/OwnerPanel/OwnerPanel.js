@@ -7,6 +7,8 @@ import axios from "axios";
 import {Form} from "react-bootstrap";
 import RoomsVisual from "../RoomsVisual/RoomsVisual";
 import client from "../client";
+import {useNavigate} from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 const OwnerPanel = () => {
     // Stan dla aktualnej lokalizacji hotelu
@@ -25,12 +27,18 @@ const OwnerPanel = () => {
     const [roomPricesFlag, setRoomPricesFlag] = useState(false);
     const [error, setError] = useState('');
 
+    const [reservations, setReservations] = useState([]);
+    const [allReservations, setAllReservations] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [flag, setFlag] = useState(false);
+    const navigate = useNavigate();
 
     const fetchHotels = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:8000/api/hotels/");
+            const response = await axios.get(`${API_BASE_URL}/hotels/`);
             setHotels(response.data);
-            console.log(response.data)
         } catch (error) {
             console.error("Error fetching hotels:", error);
         }
@@ -38,7 +46,7 @@ const OwnerPanel = () => {
 
     const fetchPrices = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/prices/${hotelId}`);
+            const response = await axios.get(`${API_BASE_URL}/prices/${hotelId}`);
             setRoomPrices(response.data);
         } catch (error) {
             console.error("Error fetching hotels:", error);
@@ -47,7 +55,7 @@ const OwnerPanel = () => {
 
     const fetchRooms = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
+            const response = await axios.get(`${API_BASE_URL}/rooms/${hotelId}`,
                 {
                     params: {
                         check_in: checkInDate,
@@ -62,9 +70,9 @@ const OwnerPanel = () => {
     };
     const fetchChartData = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/chart_data/${hotelId}`);
-            const monthlyPrices = response.data.monthly_prices;
-
+            const response = await axios.get(`${API_BASE_URL}/chart_data/${hotelId}`);
+            const monthlyPrices = response.data.monthly_earnings;
+            const monthlyCosts = response.data.monthly_costs;
             // Convert data into labels and dataset for the chart
             const labels = Object.keys(monthlyPrices).map(date => {
                 const [year, month] = date.split('-');
@@ -72,7 +80,7 @@ const OwnerPanel = () => {
             });
 
             const data = Object.values(monthlyPrices);
-
+            const dataCosts = Object.values(monthlyCosts);
             // Set data for the chart
             setChartData({
                 labels,
@@ -86,7 +94,7 @@ const OwnerPanel = () => {
                     },
                     {
                         label: 'Koszty',
-                        data: [1000, 1500, 2000, 6000],
+                        data: dataCosts,
                         borderColor: 'red',
                         borderWidth: 2,
                         fill: false,
@@ -97,6 +105,43 @@ const OwnerPanel = () => {
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+    };
+
+    const fetchReservations = async (page) => {
+        setFlag(true)
+        try {
+            const response = await client.get(`${API_BASE_URL}/recepcionistReservations/${hotelId}/`, {
+                params: {page},
+            });
+            setReservations(response.data.slice(0,10));
+            setAllReservations(response.data);
+            setTotalPages(Math.ceil(response.data.slice(0,10).length / 5));
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const generatePageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+        const halfRange = Math.floor(maxPagesToShow / 2);
+
+        let startPage = Math.max(1, currentPage - halfRange);
+        let endPage = Math.min(totalPages, currentPage + halfRange);
+
+        if (currentPage <= halfRange) {
+            endPage = Math.min(maxPagesToShow, totalPages);
+        } else if (currentPage + halfRange >= totalPages) {
+            startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        return pageNumbers;
     };
 
     useEffect(() => {
@@ -120,10 +165,14 @@ const OwnerPanel = () => {
             fetchChartData()
         }
 
+        if (!reservations?.length && !flag) {
+            fetchReservations(currentPage);
+        }
+
         if (!rooms.length) fetchRooms();
         document.getElementById('floor_btn_1')?.click()
 
-    }, [chartData, checkInDate, checkOutDate, fetchChartData, fetchPrices, fetchRooms, hotel, hotelId, hotels, roomPricesFlag, roomStandard, rooms.length]);
+    }, [chartData, checkInDate, checkOutDate, currentPage, fetchChartData, fetchPrices, fetchReservations, fetchRooms, flag, hotel, hotelId, hotels, reservations?.length, roomPricesFlag, roomStandard, rooms.length]);
 
 
     const handleSave = async () => {
@@ -133,7 +182,7 @@ const OwnerPanel = () => {
                 .find(row => row.startsWith('csrftoken'))
                 ?.split('=')[1];
 
-            await client.put(`http://127.0.0.1:8000/api/prices/${hotelId}/`,
+            await client.put(`${API_BASE_URL}/prices/${hotelId}/`,
                 {
                     prices: roomPrices
                 },
@@ -166,7 +215,16 @@ const OwnerPanel = () => {
         setHotel(hotels.find(h => h.hotel_id === parseInt(selectedHotelId)));
 
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/rooms/${selectedHotelId}`,
+            const response = await client.get(`${API_BASE_URL}/recepcionistReservations/${selectedHotelId}/`);
+            setReservations(response.data.slice(0,10));
+            setAllReservations(response.data);
+            setTotalPages(Math.ceil(response.data.slice(0,10).length / 5));
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        }
+
+        try {
+            const response = await axios.get(`${API_BASE_URL}/rooms/${selectedHotelId}`,
                 {
                     params: {
                         check_in: checkInDate,
@@ -180,16 +238,17 @@ const OwnerPanel = () => {
         }
         document.getElementById('floor_btn_1').click()
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/prices/${selectedHotelId}`);
+            const response = await axios.get(`${API_BASE_URL}/prices/${selectedHotelId}`);
             console.log(response)
             setRoomPrices(response.data);
         } catch (error) {
             console.error("Error fetching hotels:", error);
         }
                 try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/chart_data/${selectedHotelId}`);
-            const monthlyPrices = response.data.monthly_prices;
-
+            const response = await axios.get(`${API_BASE_URL}/chart_data/${selectedHotelId}`);
+            const monthlyPrices = response.data.monthly_earnings;
+            const monthlyCosts = response.data.monthly_costs;
+            console.log(response.data)
             // Convert data into labels and dataset for the chart
             const labels = Object.keys(monthlyPrices).map(date => {
                 const [year, month] = date.split('-');
@@ -197,7 +256,7 @@ const OwnerPanel = () => {
             });
 
             const data = Object.values(monthlyPrices);
-
+            const dataCosts = Object.values(monthlyCosts);
             // Set data for the chart
             setChartData({
                 labels,
@@ -211,7 +270,7 @@ const OwnerPanel = () => {
                     },
                     {
                         label: 'Koszty',
-                        data: [1000, 1500, 2000, 6000],
+                        data: dataCosts,
                         borderColor: 'red',
                         borderWidth: 2,
                         fill: false,
@@ -286,12 +345,131 @@ const OwnerPanel = () => {
 
             </section>
 
+            <section>
+                <h2>Ostatnie rezerwacje</h2>
+                <div>
+                    <div>
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : ( reservations.length?
+                            (<div>
+                                <ul className="reservations-list">
+                                    {reservations?.slice((currentPage - 1) * 5, currentPage * 5).map((reservation) => (
+                                        <li className={"amo"} style={{cursor: "pointer"}} onClick={function () {
+                                            navigate(`/receptionist/manage/reservation/${reservation.reservation_id}/`)
+                                        }} key={reservation.reservation_id}>
+                                            <span>ID: {reservation.reservation_id}</span>
+                                            <span>Pokój: {reservation.room_number}</span>
+                                            <div>
+                                                <span>Od: <b>{reservation.check_in}</b></span>
+                                                <span>Do: <b>{reservation.check_out}</b></span>
+                                            </div>
+
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginBottom: '20px'
+                                    }}>
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => 1)}
+                                        disabled={currentPage === 1}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === 1 ? "#fff" : "#333",
+                                            color: currentPage === 1 ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        {`<<`}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === 1 ? "#fff" : "#333",
+                                            color: currentPage === 1 ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        {'<'}
+                                    </button>
+                                    {generatePageNumbers().map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            style={{
+                                                padding: '5px 10px',
+                                                margin: '0 5px',
+                                                cursor: 'pointer',
+                                                backgroundColor: page === currentPage ? 'gray' : 'white',
+                                                color: page === currentPage ? 'black' : 'black',
+                                            }}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === totalPages ? "#fff" : "#333",
+                                            color: currentPage === totalPages ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        >
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => totalPages)}
+                                        disabled={currentPage === totalPages}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === totalPages ? "#fff" : "#333",
+                                            color: currentPage === totalPages ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        >>
+                                    </button>
+                                </div>
+                            </div>)
+
+                        : <p>Brak wyników.</p>)}
+                    </div>
+                </div>
+
+                <div style={{textAlign: "right"}}>
+                    <a href={`/receptionistReservations/${hotelId}/`}>Zobacz więcej...</a>
+                </div>
+            </section>
+
             {/* Sekcja śledzenia statusów pokojów */}
             <section className="room-status-section">
                 <h2>Statusy pokojów</h2>
                 {hotel && hotelId ?
                     <RoomsVisual rms={rooms} hotel={hotel} checkIn={checkInDate} checkOut={checkOutDate}
-                                 roomStandard={roomStandard} changed={changed}/>
+                                 roomStandard={roomStandard} changed={changed} reservations={allReservations}/>
                     : null}
                 <div style={{textAlign: "right"}}>
                     <a href={`/room/statuses/${hotelId}`}>Zobacz więcej...</a>

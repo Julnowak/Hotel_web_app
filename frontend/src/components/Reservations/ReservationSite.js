@@ -3,6 +3,7 @@ import {Container, Form, Button, Alert} from 'react-bootstrap';
 import RoomReservation from "./RoomReservation";
 import axios from "axios";
 import {useLocation, useParams} from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 const ReservationSite = () => {
     const [roomStandard, setRoomStandard] = useState('standard');
@@ -25,7 +26,7 @@ const ReservationSite = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/hotels/");
+                const response = await axios.get(`${API_BASE_URL}/hotels/`);
                 setHotels(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);

@@ -4,6 +4,7 @@ import './HotelPage.css';
 import StarRating from "../StarRating/StarRating";
 import client from "../client";
 import Cookies from "js-cookie";
+import {API_BASE_URL} from "../../config";
 
 
 const HotelPage = () => {
@@ -39,7 +40,7 @@ const HotelPage = () => {
                 return;
             }
 
-            client.post('http://127.0.0.1:8000/api/reviews/', {
+            client.post(`${API_BASE_URL}/reviews/`, {
                 rating: newRating,
                 description: newReview,
                 hotel: hotel,
@@ -77,7 +78,7 @@ const HotelPage = () => {
             return;
         }
 
-        client.post(`http://127.0.0.1:8000/api/like/${hotel.hotel_id}/`, {}, {
+        client.post(`${API_BASE_URL}/like/${hotel.hotel_id}/`, {}, {
             headers: {
                 "X-CSRFToken": csrfToken,
             },
@@ -87,7 +88,7 @@ const HotelPage = () => {
             })
             .catch(error => console.error('Error:', error));
 
-        client.get(`http://127.0.0.1:8000/api/like/${id}/`)
+        client.get(`${API_BASE_URL}/like/${id}/`)
             .then(response => {
                 setLiked(response.data.ans)
             })
@@ -119,9 +120,9 @@ const HotelPage = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/hotel/${id}/`);
+                const response = await client.get(`${API_BASE_URL}/hotel/${id}/`);
                 setHotel(response.data)
-                client.get(`http://127.0.0.1:8000/api/like/${id}/`)
+                client.get(`${API_BASE_URL}/like/${id}/`)
                     .then(response => {
                         setLiked(response.data.ans)
                         console.log(response.data.ans)
@@ -138,7 +139,7 @@ const HotelPage = () => {
 
         const fetchReviews = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/reviews/`,
+                const response = await client.get(`${API_BASE_URL}/reviews/`,
                     {
                         params: {
                             hotel_id: id

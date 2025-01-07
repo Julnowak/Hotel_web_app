@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Pagination, Container, Row, Col, Badge } from "react-bootstrap";
 import axios from "axios";
 import './UserReservationPage.css';
+import {API_BASE_URL} from "../../config";
 
 const UserReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
@@ -16,7 +17,7 @@ const UserReservationsPage = () => {
   const fetchReservations = async (page) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/userReservations/?page=${page}&per_page=${reservationsPerPage}`
+        `${API_BASE_URL}/userReservations/?page=${page}&per_page=${reservationsPerPage}`
       );
 
       setReservations(response.data.results); // Zakładamy, że wyniki są w `results`

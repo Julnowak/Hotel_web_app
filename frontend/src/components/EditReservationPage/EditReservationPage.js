@@ -3,6 +3,7 @@ import { Form, Button, Container, Alert, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import RoomReservation from "../Reservations/RoomReservation";
+import {API_BASE_URL} from "../../config";
 
 const EditReservationPage = () => {
   const params= useParams();
@@ -17,7 +18,7 @@ const EditReservationPage = () => {
 
   const fetchReservationData = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/reservation/${params.id}/`);
+      const response = await axios.get(`${API_BASE_URL}/reservation/${params.id}/`);
       setReservation(response.data);
       setSelectedRoom(response.data.room);
     } catch (error) {
@@ -27,7 +28,7 @@ const EditReservationPage = () => {
 
   const fetchAvailableRooms = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/rooms/available/");
+      const response = await axios.get(`${API_BASE_URL}/rooms/available/`);
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching available rooms:", error);
@@ -42,7 +43,7 @@ const EditReservationPage = () => {
   const handleUpdateReservation = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/reservation/${params.id}/`, {
+      const response = await axios.put(`${API_BASE_URL}/reservation/${params.id}/`, {
         ...reservation,
         room: selectedRoom,
       });
@@ -56,7 +57,7 @@ const EditReservationPage = () => {
   const handleDeleteReservation = async () => {
     if (window.confirm("Czy na pewno chcesz usunąć tę rezerwację?")) {
       try {
-        await axios.delete(`http://127.0.0.1:8000/api/reservation/${params.id}/`);
+        await axios.delete(`${API_BASE_URL}/reservation/${params.id}/`);
         navigate("/user-reservations"); // Powrót do listy rezerwacji
       } catch (error) {
         console.error("Error deleting reservation:", error);

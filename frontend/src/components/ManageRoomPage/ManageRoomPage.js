@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Alert, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 const ManageRoomPage = () => {
   const params = useParams(); // Get room ID from URL
@@ -14,7 +15,7 @@ const ManageRoomPage = () => {
       const fetchRoomDetails = async () => {
         try {
           console.log(params)
-          const response = await axios.get(`http://127.0.0.1:8000/api/manage/room/${params.id}/`);
+          const response = await axios.get(`${API_BASE_URL}/manage/room/${params.id}/`);
           setRoomData(response.data);
         } catch (error) {
           setErrorMessage("Błąd podczas ładowania danych pokoju.");
@@ -38,7 +39,7 @@ const ManageRoomPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://127.0.0.1:8000/api/rooms/${params.id}/`, roomData);
+      await axios.put(`${API_BASE_URL}/rooms/${params.id}/`, roomData);
       setStatusMessage("Dane pokoju zostały zaktualizowane.");
     } catch (error) {
       setErrorMessage("Błąd podczas aktualizacji danych pokoju.");

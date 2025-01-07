@@ -3,6 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 
 import Cookies from "js-cookie";
 import client from "../client";
+import {API_BASE_URL} from "../../config";
 
 const PaymentSim = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -25,7 +26,7 @@ const PaymentSim = () => {
     useEffect(() => {
         const fetchReservation = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/reservation/${params.id}`,);
+                const response = await client.get(`${API_BASE_URL}/reservation/${params.id}`,);
                 setReservation(response.data);
                 console.log(response.data)
             } catch (error) {
@@ -71,7 +72,7 @@ const PaymentSim = () => {
                     console.error("CSRF token not found!");
                     return;
                 }
-                      const response = client.post(`http://127.0.0.1:8000/api/reservation/${params.id}/`,{
+                      const response = client.post(`${API_BASE_URL}/reservation/${params.id}/`,{
                           operation_type: "zapłata"
                           }, // Your data payload goes here if needed
                 {

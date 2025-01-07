@@ -10,6 +10,7 @@ import L from 'leaflet';
 import StarRating from "../StarRating/StarRating";
 import client from "../client";
 import {Link} from "react-router-dom";
+import {API_BASE_URL, WEBSITE_BASE_URL} from "../../config";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -34,7 +35,7 @@ const Homepage = () => {
     useEffect(() => {
         const fetchHotels = async () => {
             try {
-                const response = await client.get("http://127.0.0.1:8000/api/hotels/");
+                const response = await client.get(`${API_BASE_URL}/hotels/`);
                 setHotels(response.data);
             } catch (error) {
                 console.error("Error fetching hotels:", error);
@@ -132,7 +133,7 @@ const Homepage = () => {
                     <Carousel>
                         <Carousel.Item >
                             <div className="d-block w-100" style={{position: 'relative'}}>
-                                <a href={"http://127.0.0.1:3000/hotel/1"}>
+                                <a href={`${WEBSITE_BASE_URL}/hotel/1`}>
                                     <img
                                         className="d-block w-100"
                                         src="/images/hotel_loc_images/krakow.jpg"
@@ -161,7 +162,7 @@ const Homepage = () => {
 
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
-                                <a href={"http://127.0.0.1:3000/hotel/2"}>
+                                <a href={`${WEBSITE_BASE_URL}/hotel/2`}>
                                     <img
                                         className="d-block w-100"
                                         src="/images/hotel_loc_images/warszawa.jpg"
@@ -189,7 +190,7 @@ const Homepage = () => {
 
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
-                                <a href={"http://127.0.0.1:3000/hotel/3"}>
+                                <a href={`${WEBSITE_BASE_URL}/hotel/3`}>
                                 <img
                                     className="d-block w-100"
                                     src="images/hotel_loc_images/zakopane.jpg"

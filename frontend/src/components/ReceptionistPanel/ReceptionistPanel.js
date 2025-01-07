@@ -4,6 +4,7 @@ import RoomsVisual from "../RoomsVisual/RoomsVisual";
 import client from "../client";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 
 const ReceptionistPanel = () => {
@@ -25,7 +26,7 @@ const ReceptionistPanel = () => {
 
     const fetchHotels = async () => {
         try {
-            const response = await client.get("http://127.0.0.1:8000/api/hotels/");
+            const response = await client.get(`${API_BASE_URL}/hotels/`);
             setHotels(response.data);
         } catch (error) {
             console.error("Error fetching hotels:", error);
@@ -39,7 +40,7 @@ const ReceptionistPanel = () => {
 
     const fetchRooms = async () => {
         try {
-            const response = await client.get(`http://127.0.0.1:8000/api/rooms/${hotelId}`,
+            const response = await client.get(`${API_BASE_URL}/rooms/${hotelId}`,
                 {
                     params: {
                         check_in: checkInDate,
@@ -56,7 +57,7 @@ const ReceptionistPanel = () => {
     const fetchReservations = async (page) => {
         setLoading(true);
         try {
-            const response = await client.get(`http://127.0.0.1:8000/api/recepcionistReservations/${hotelId}/`, {
+            const response = await client.get(`${API_BASE_URL}/recepcionistReservations/${hotelId}/`, {
                 params: {page},
             });
             setReservations(response.data.slice(0,10));

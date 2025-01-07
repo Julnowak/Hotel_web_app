@@ -3,6 +3,7 @@ import axios from 'axios';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import "./ReservationDetails.css"
 import client from "../client";
+import {API_BASE_URL} from "../../config";
 
 
 const ReservationDetails = () => {
@@ -18,7 +19,7 @@ const ReservationDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        client.get(`http://127.0.0.1:8000/api/newReservation/${params.id}/`, {
+        client.get(`${API_BASE_URL}/newReservation/${params.id}/`, {
             params: {
                 checkIn: checkIn,
                 checkOut: checkOut
@@ -36,7 +37,7 @@ const ReservationDetails = () => {
     }, [checkIn, checkOut, params.id]);
 
     const handlePayment = () => {
-        axios.post(`http://127.0.0.1:8000/api/newReservation/${params.id}/`,
+        axios.post(`${API_BASE_URL}/newReservation/${params.id}/`,
             {
             checkIn: checkIn,
             checkOut: checkOut,

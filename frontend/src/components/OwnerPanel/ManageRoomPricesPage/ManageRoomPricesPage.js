@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {Button, Container, Alert, Row, Col} from "react-bootstrap";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
+import {API_BASE_URL} from "../../../config";
 
 const ManageRoomPricesPage = () => {
     const [roomPrices, setRoomPrices] = useState({});
@@ -14,7 +15,7 @@ const ManageRoomPricesPage = () => {
 
     const fetchRoomPrices = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:8000/api/rooms/prices/", {
+            const response = await axios.get(`${API_BASE_URL}/rooms/prices/`, {
                 params: {
                     hotelId: hotelId,
                 }

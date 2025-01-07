@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import "./ReservationsList.css";
 import client from "../client";
 import {useNavigate, useParams} from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 const ReservationsList = () => {
     const [reservations, setReservations] = useState([]);
@@ -16,7 +17,7 @@ const ReservationsList = () => {
     useEffect(() => {
         const fetchReservations = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/recepcionistReservations/${params.id}/`);
+                const response = await client.get(`${API_BASE_URL}/recepcionistReservations/${params.id}/`);
                 setFilteredReservations(response.data);
                 setReservations(response.data);
             } catch (error) {

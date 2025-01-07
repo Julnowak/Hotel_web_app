@@ -5,6 +5,7 @@ import "./RoomStatuses.css"
 import axios from "axios";
 import {useParams} from "react-router-dom";
 import client from "../client";
+import {API_BASE_URL} from "../../config";
 
 const RoomStatuses = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -15,7 +16,7 @@ const RoomStatuses = () => {
   useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/rooms/${params.id}`,{
+                const response = await client.get(`${API_BASE_URL}/rooms/${params.id}`,{
                     params: {
                         check_in: new Date(),
                         check_out: new Date(),
@@ -29,7 +30,7 @@ const RoomStatuses = () => {
         };
         
         if (floors.length === 0) {  // Ensuring `floors` is an array before fetching
-        client.get(`http://127.0.0.1:8000/api/floors/${params.id}`)
+        client.get(`${API_BASE_URL}/floors/${params.id}`)
             .then(response => {
                 setFloors(response.data);
             })
@@ -50,7 +51,7 @@ const RoomStatuses = () => {
     );
     setSelectedRoom(null);
     try {
-        client.post(`http://127.0.0.1:8000/api/roomStatusChange/${roomId}`,{
+        client.post(`${API_BASE_URL}/roomStatusChange/${roomId}`,{
         newStatus: newStatus,
         });
     } catch (error) {

@@ -3,6 +3,7 @@ import './RoomReservation.css';
 import { Room } from "../../interfaces/Room.ts";
 import { Floor } from "../../interfaces/Floor.ts";
 import axios from "axios";
+import {API_BASE_URL} from "../../config";
 
 const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -18,7 +19,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
     const handleFloorChange = (newFloor) => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.post("http://127.0.0.1:8000/api/rooms/", {
+                const response = await axios.post(`${API_BASE_URL}/rooms/`, {
                 type: roomStandard,
                 check_in: checkIn,
                 check_out: checkOut,
@@ -39,7 +40,7 @@ const RoomReservation = ({ rooms, hotel, checkIn, checkOut, roomStandard }) => {
     useEffect(() => {
         setNewRooms(rooms);
         if (floors.length === 0) {  // Ensuring `floors` is an array before fetching
-            axios.get(`http://127.0.0.1:8000/api/floors/${hotel.hotel_id}`)
+            axios.get(`${API_BASE_URL}/floors/${hotel.hotel_id}`)
                 .then(response => {
                     setFloors(response.data);
                 })

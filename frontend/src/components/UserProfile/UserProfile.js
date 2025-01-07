@@ -4,6 +4,7 @@ import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {Button, Card} from "react-bootstrap";
 import StarRating from "../StarRating/StarRating";
+import {API_BASE_URL, WEBSITE_BASE_URL} from "../../config";
 
 // AXIOS CONNECTION FOR LOGIN //
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -11,7 +12,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 
 const client = axios.create({
-    baseURL: "http://127.0.0.1:3000"
+    baseURL: `${WEBSITE_BASE_URL}`
 })
 
 // AXIOS CONNECTION FOR LOGIN //
@@ -48,7 +49,7 @@ const UserProfile = () => {
 
 
     useEffect(() => {
-        client.get(`http://127.0.0.1:8000/api/user/`)
+        client.get(`${API_BASE_URL}/user/`)
             .then(response => {
                 console.log(response.data)
                 setEmail(response.data['user'].email)
@@ -67,7 +68,7 @@ const UserProfile = () => {
 
                 const fetchHotels = async () => {
                     try {
-                        const rep = await client.get(`http://127.0.0.1:8000/api/hotel/${response.data['user'].recepcionist_hotel}/`);
+                        const rep = await client.get(`${API_BASE_URL}/hotel/${response.data['user'].recepcionist_hotel}/`);
                         setHotel("Weles " + rep.data.localization)
                         console.log(rep.data)
                     } catch (error) {
@@ -128,7 +129,7 @@ const UserProfile = () => {
             .find(row => row.startsWith('csrftoken'))
             ?.split('=')[1];
 
-        client.put('http://127.0.0.1:8000/api/user/', {
+        client.put(`${API_BASE_URL}/user/`, {
             email: email,
             username: username,
             surname: surname,
@@ -160,7 +161,7 @@ const UserProfile = () => {
 
     const handleDeleteAccount = () => {
         if (window.confirm("Are you sure you want to delete your account?")) {
-            client.delete('http://127.0.0.1:8000/api/user/', {
+            client.delete(`${API_BASE_URL}/user/`, {
                 headers: {
                     'X-CSRFToken': document.cookie
                         .split('; ')
@@ -206,7 +207,7 @@ const UserProfile = () => {
             const formData = new FormData();
             formData.append('profile_picture', file);
 
-            client.post('http://127.0.0.1:8000/api/user/upload-avatar/', formData, {
+            client.post(`${API_BASE_URL}/user/upload-avatar/`, formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                     'Content-Type': 'multipart/form-data',  // Required for file upload

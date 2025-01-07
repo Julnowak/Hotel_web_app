@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {useParams} from "react-router-dom";
 import "./ReceptionistManageReservation.css"
 import client from "../client";
+import {API_BASE_URL} from "../../config";
 
 const ReceptionistManageReservation = () => {
     const [reservation, setReservation] = useState(null);
@@ -15,7 +16,7 @@ const ReceptionistManageReservation = () => {
     useEffect(() => {
         const fetchReservation = async () => {
             try {
-                const response = await client.get(`http://127.0.0.1:8000/api/receptionist/reservation/${params.id}`);
+                const response = await client.get(`${API_BASE_URL}/receptionist/reservation/${params.id}`);
                 setReservation(response.data.reservation_data);
                 console.log(response.data.reservation_data)
                 setUpdatedReservation(response.data.reservation_data);
@@ -40,7 +41,7 @@ const ReceptionistManageReservation = () => {
             .find(row => row.startsWith('csrftoken'))
             ?.split('=')[1];
 
-            await client.put(`http://127.0.0.1:8000/api/receptionist/reservation/${params.id}/`, updatedReservation,{
+            await client.put(`${API_BASE_URL}/receptionist/reservation/${params.id}/`, updatedReservation,{
             headers: {
                 'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
@@ -128,6 +129,7 @@ const ReceptionistManageReservation = () => {
                     >
                         <option value="Oczekująca">Oczekująca</option>
                         <option value="Opłacona">Opłacona</option>
+
                         <option value="Częściowo opłacona">Częściowo opłacona</option>
                         <option value="Anulowana">Anulowana</option>
                         <option value="Edytowana">Edytowana</option>

@@ -5,6 +5,7 @@ import {Badge} from "react-bootstrap";
 import RoomModal from "../RoomStatuses/RoomModel";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {API_BASE_URL} from "../../config";
 
 
 const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed, reservations = []}) => {
@@ -29,7 +30,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed, rese
         );
         setSelectedRoom(null);
         try {
-            axios.post(`http://127.0.0.1:8000/api/roomStatusChange/${roomId}`, {
+            axios.post(`${API_BASE_URL}/roomStatusChange/${roomId}`, {
                 newStatus: newStatus,
             });
         } catch (error) {
@@ -40,7 +41,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed, rese
     const handleFloorChange = (newFloor) => {
         const fetchRooms = async () => {
             try {
-                const response = await client.put("http://127.0.0.1:8000/api/rooms/", {
+                const response = await client.put(`${API_BASE_URL}/rooms/`, {
                     type: roomStandard,
                     check_in: checkIn,
                     check_out: checkOut,
@@ -59,7 +60,7 @@ const RoomsVisual = ({rms, hotel, checkIn, checkOut, roomStandard, changed, rese
 
     useEffect(() => {
         if (floors.length === 0 || changed) {  // Ensuring `floors` is an array before fetching
-            client.get(`http://127.0.0.1:8000/api/floors/${hotel.hotel_id}`)
+            client.get(`${API_BASE_URL}/floors/${hotel.hotel_id}`)
                 .then(response => {
                     setFloors(response.data);
                     setNewRooms(rms)
