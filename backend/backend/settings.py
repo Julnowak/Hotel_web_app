@@ -165,6 +165,10 @@ import os
 MEDIA_URL = '../frontend/public/images/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../frontend/public/images/media/')
 
-CSRF_COOKIE_SECURE = False  # Set to True only for HTTPS
-CSRF_COOKIE_HTTPONLY = False  # Allows JavaScript to read the CSRF cookie
 
+CSRF_COOKIE_HTTPONLY = False  # Allows JavaScript to read the CSRF cookie
+SESSION_COOKIE_HTTPONLY = False  # Allows JavaScript to read the CSRF cookie
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'

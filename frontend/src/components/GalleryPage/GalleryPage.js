@@ -61,7 +61,7 @@ const Gallery = () => {
 
             {/* Display gallery sections */}
             {galleryData.map((section, index) => (
-                <div key={index}>
+                <div key={index} style={{margin:20}}>
                     <h2>{section.category}</h2>
                     <div className="gallery-row">
                         {section.images.map((image, imageIndex) => (

@@ -81,7 +81,13 @@ class UserLogin(APIView):
 
                 response = Response(user_data, status=status.HTTP_200_OK)
                 print(csrf_token)
-                response.set_cookie('csrftoken', csrf_token)
+                response.set_cookie(
+                    key='csrftoken',
+                    value=csrf_token,
+                    samesite='None',  # Allow cross-origin requests
+                    secure=False,  # Disable Secure for local testing
+                    path='/'  # Path where the cookie is valid
+                )
                 print(response.data)
                 return response
             except:
@@ -444,6 +450,8 @@ class RoomPricesView(APIView):
                 "room_number": room.room_number,
                 "hotel_name": room.hotel.localization,
                 "price": room.price,
+                "room_type": room.type,
+                "floor": room.floor.floor_number,
             }
             for room in rooms
         }
@@ -517,6 +525,7 @@ class ProfitLossChart(APIView):
                 .order_by("year", "month")
         )
 
+        h = Hotel.objects.get(hotel_id=hotel_id)
         # Fill missing months with 0 for continuity
         all_data = defaultdict(lambda: 0)
         for item in monthly_prices:
@@ -524,17 +533,49 @@ class ProfitLossChart(APIView):
 
         all_data = dict(all_data)
         for k, v in all_data.items():
-            all_data[k] = float(v)
+            h.earnings[k] = float(v)
 
-        h = Hotel.objects.get(hotel_id=hotel_id)
-        h.earnings = all_data
         h.save()
 
         for k in all_data.keys():
             if k not in h.costs.keys():
                 h.costs[k] = 0
         h.save()
-        return Response({"reservations_data": serializer.data, "monthly_earnings": all_data, "monthly_costs": h.costs})
+        return Response({"reservations_data": serializer.data, "monthly_earnings": h.earnings, "monthly_costs": h.costs})
+
+    def post(self, request, hotel_id):
+
+        h = Hotel.objects.get(hotel_id=hotel_id)
+        if request.data['data_type'] == 'earnings':
+            h.earnings[request.data['month'][0]] = 0
+            sorted_list = sorted(h.earnings.items())
+
+            sorted_dict = {}
+            for key, value in sorted_list:
+                sorted_dict[key] = value
+            h.earnings = sorted_dict
+        else:
+            h.costs[request.data['month'][0]] = 0
+            sorted_list = sorted(h.costs.items())
+
+            sorted_dict = {}
+            for key, value in sorted_list:
+                sorted_dict[key] = value
+            h.costs = sorted_dict
+        h.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+    def put(self, request, hotel_id):
+        print(request.data)
+        h = Hotel.objects.get(hotel_id=hotel_id)
+        if request.data['data_type'] == 'earnings':
+            h.earnings[request.data['month']] = request.data['new_value']
+        else:
+            h.costs[request.data['month']] = request.data['new_value']
+        h.save()
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class Prices(APIView):

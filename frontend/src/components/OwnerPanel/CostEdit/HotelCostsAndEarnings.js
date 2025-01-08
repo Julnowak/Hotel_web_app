@@ -36,8 +36,8 @@ const HotelCostsAndEarnings = (props) => {
 
     return (
         <div>
-            <HotelCosts title={"Przychody"} data={earnings}/>
-            <HotelCosts title={"Koszty"} data={costs}/>
+            <HotelCosts title={"Przychody"} data={earnings} hotelId={params.id} data_type={"earnings"}/>
+            <HotelCosts title={"Koszty"} data={costs} hotelId={params.id} data_type={"costs"}/>
         </div>
     );
 }

@@ -1,27 +1,31 @@
-import React, {useState, useEffect} from "react";
-import {Button, Container, Alert, Row, Col} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Button, Container, Alert, Row, Col, Form } from "react-bootstrap";
 import axios from "axios";
-import {useLocation, useNavigate} from "react-router-dom";
-import {API_BASE_URL} from "../../../config";
+import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../../config";
 
 const ManageRoomPricesPage = () => {
-    const [roomPrices, setRoomPrices] = useState({});
+    const [roomPrices, setRoomPrices] = useState([]);
+    const [filteredRooms, setFilteredRooms] = useState([]);
+    const [roomNumberFilter, setRoomNumberFilter] = useState("");
+    const [roomTypeFilter, setRoomTypeFilter] = useState("");
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [roomsPerPage] = useState(20);
 
     const [statusMessage, setStatusMessage] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const hotelId = queryParams.get('hotelId');
+    const hotelId = queryParams.get("hotelId");
 
     const fetchRoomPrices = async () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/rooms/prices/`, {
-                params: {
-                    hotelId: hotelId,
-                }
+                params: { hotelId },
             });
             setRoomPrices(response.data);
-            console.log(response.data)
+            setFilteredRooms(response.data);
         } catch (error) {
             console.error("Error fetching room prices:", error);
         }
@@ -29,31 +33,125 @@ const ManageRoomPricesPage = () => {
 
     useEffect(() => {
         fetchRoomPrices();
-    }, [fetchRoomPrices]);
-
+    }, []);
 
     const handleManageRoom = (roomId) => {
         navigate(`/manage_room/${roomId}`);
     };
 
+    const handleFilter = () => {
+        const filtered = Object.keys(roomPrices)
+            .filter((roomId) => {
+                const room = roomPrices[roomId];
+                const matchesNumber =
+                    roomNumberFilter === "" ||
+                    room.room_number.toString().includes(roomNumberFilter);
+                const matchesType =
+                    roomTypeFilter === "" || room.room_type === roomTypeFilter;
+                return matchesNumber && matchesType;
+            })
+            .reduce((acc, roomId) => {
+                acc[roomId] = roomPrices[roomId];
+                return acc;
+            }, {});
+        setFilteredRooms(filtered);
+        setCurrentPage(1);
+    };
+
+    const totalPages = Math.ceil(
+        Object.keys(filteredRooms).length / roomsPerPage
+    );
+
+    const generatePageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+        const halfRange = Math.floor(maxPagesToShow / 2);
+
+        let startPage = Math.max(1, currentPage - halfRange);
+        let endPage = Math.min(totalPages, currentPage + halfRange);
+
+        if (currentPage <= halfRange) {
+            endPage = Math.min(maxPagesToShow, totalPages);
+        } else if (currentPage + halfRange >= totalPages) {
+            startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        return pageNumbers;
+    };
+
+    const displayedRooms = Object.keys(filteredRooms)
+        .slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage)
+        .reduce((acc, roomId) => {
+            acc[roomId] = filteredRooms[roomId];
+            return acc;
+        }, {});
+
     return (
         <Container className="py-5">
             <h1 className="text-center mb-4">Zarządzaj pokojami</h1>
             {statusMessage && <Alert variant="info">{statusMessage}</Alert>}
+
+            <Form className="mb-4">
+                <Row>
+                    <Col md={4}>
+                        <Form.Group>
+                            <Form.Label>Filtruj po numerze pokoju:</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={roomNumberFilter}
+                                placeholder={"Wpisz numer..."}
+                                onChange={(e) => setRoomNumberFilter(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                        <Form.Group>
+                            <Form.Label>Filtruj po typie pokoju:</Form.Label>
+                            <Form.Select
+                                value={roomTypeFilter}
+                                onChange={(e) => setRoomTypeFilter(e.target.value)}
+                            >
+                                <option value="">Wszystkie</option>
+                                <option value="standard">Standard</option>
+                                <option value="deluxe">Deluxe</option>
+                                <option value="suite">Apartament</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col md={4} className="d-flex align-items-end">
+                        <Button variant="primary" onClick={handleFilter} className="w-100">
+                            Filtruj
+                        </Button>
+                    </Col>
+                </Row>
+            </Form>
+
             <section className="room-prices-section">
                 <h2 className="mb-4 text-center">Lista Pokoi</h2>
                 <Row className="g-4">
-                    {Object.keys(roomPrices).map((roomId) => (
+                    {Object.keys(displayedRooms).map((roomId) => (
                         <Col md={6} lg={4} key={roomId}>
                             <div className="room-price-card p-3 border rounded shadow-sm bg-light">
-                                <h5 className="mb-3 text-primary">Pokój {roomPrices[roomId].room_number}</h5>
+                                <h5 className="mb-3 text-primary">
+                                    Pokój {displayedRooms[roomId].room_number}
+                                </h5>
                                 <p className="mb-1">
-                                    <strong>Hotel:</strong> {roomPrices[roomId].hotel_name}
+                                    <strong>Piętro:</strong>{" "}
+                                    {displayedRooms[roomId].floor}
+                                </p>
+                                <p className="mb-1">
+                                    <strong>Typ:</strong>{" "}
+                                    {displayedRooms[roomId].room_type}
                                 </p>
                                 <p className="mb-3">
-                                    <strong>Cena:</strong> {roomPrices[roomId].price} PLN
+                                    <strong>Cena:</strong>{" "}
+                                    {displayedRooms[roomId].price.toFixed(2)} zł
                                 </p>
-                                <div style={{textAlign: "right"}}>
+                                <div style={{ textAlign: "right" }}>
                                     <Button
                                         variant="primary"
                                         onClick={() => handleManageRoom(roomId)}
@@ -62,32 +160,63 @@ const ManageRoomPricesPage = () => {
                                         Edytuj
                                     </Button>
                                 </div>
-
                             </div>
                         </Col>
                     ))}
-                    <Col md={6} lg={4} key={144}>
-                        <div className="room-price-card p-3 border rounded shadow-sm bg-dark">
-                            <h5 className="mb-3 text-primary">Pokój {}</h5>
-                            <p className="mb-1">
-                                <strong>Hotel:</strong> {}
-                            </p>
-                            <p className="mb-3">
-                                <strong>Cena:</strong> {} PLN
-                            </p>
-                            <div style={{textAlign: "right"}}>
-                                <Button
-                                    variant="primary"
-                                    onClick={() => handleManageRoom(1)}
-                                    className="w-50"
-                                >
-                                    Edytuj
-                                </Button>
-                            </div>
-
-                        </div>
-                    </Col>
                 </Row>
+
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "20px",
+                    }}
+                >
+                    <button
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                    >
+                        {"<<"}
+                    </button>
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                    >
+                        {"<"}
+                    </button>
+                    {generatePageNumbers().map((page) => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            style={{
+                                margin: "0 5px",
+                                padding: "8px 12px",
+                                backgroundColor: page === currentPage ? "gray" : "white",
+                            }}
+                        >
+                            {page}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() =>
+                            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                        }
+                        disabled={currentPage === totalPages}
+                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                    >
+                        {">"}
+                    </button>
+                    <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                    >
+                        {">>"}
+                    </button>
+                </div>
             </section>
         </Container>
     );

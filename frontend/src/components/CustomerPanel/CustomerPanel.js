@@ -30,7 +30,7 @@ const CustomerPanel = () => {
 
     // Fetch current reservation and all reservations (simulated fetch)
     useEffect(() => {
-
+        console.log(Cookies.get("csrftoken"))
         const fetchReservations = async () => {
             try {
                 const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies

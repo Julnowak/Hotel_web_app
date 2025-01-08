@@ -178,17 +178,21 @@ function Root() {
 
             setCurrentUser(true);
             setUserType(ut);
-
+            // console.log(response.data.csrftoken)
             // Navigate based on user type
-            if (response.data.user_type === 'właściciel') {
-                navigate('/owner/panel/');
-            } else if (response.data.user_type === 'klient') {
-                navigate('/customer/panel/');
-            } else if (response.data.user_type === 'recepcjonista') {
-                navigate('/receptionist/panel/');
-            }
+            console.log(Cookies.get("csrftoken"))
+            setTimeout(() => {
+                if (response.data.user_type === 'właściciel') {
+                    navigate('/owner/panel/');
+                } else if (response.data.user_type === 'klient') {
+                    navigate('/customer/panel/');
+                } else if (response.data.user_type === 'recepcjonista') {
+                    navigate('/receptionist/panel/');
+                }
+            }, 100); // Small delay to ensure the browser processes the cookie
+
         } catch (error) {
-            setErrmess(error.response.data.error);
+            setErrmess(error);
             console.error('Login failed:', error);
         }
     }
@@ -197,6 +201,7 @@ function Root() {
     function submitLogout({e}: { e: any }) {
         e.preventDefault();
         const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+        console.log(Cookies.get("csrftoken"))
         if (!csrfToken) {
             console.error("CSRF token not found!");
             return;

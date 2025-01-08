@@ -8,11 +8,12 @@ import client from "../client";
 import {API_BASE_URL} from "../../config";
 
 
-const ReservationDetails = () => {
+const ReservationManagement = () => {
     
     const params = useParams()
-    const [reservation, setReservation] = useState(null);
+    const [reservation, setReservation] = useState({});
     const [localStat, setLocalStat] = useState(null);
+    const [flag, setFlag] = useState(true);
     const navigate = useNavigate()
 
     // Fetch list of hotels
@@ -20,14 +21,18 @@ const ReservationDetails = () => {
         const fetchReservation = async () => {
             try {
                 const response = await axios.get(`${API_BASE_URL}/reservation/${params.id}`);
-                console.log(response.data)
+                // console.log(response.data)
+                setReservation(response.data)
+                setFlag(false)
             } catch (error) {
                 console.error("Error fetching reservation:", error);
             }
         };
-
-        if (!reservation) fetchReservation();
-    }, [params, reservation]);
+        console.log(reservation.length > 0)
+        if (flag) {
+            fetchReservation();
+        }
+    }, [flag, params, reservation]);
 
 
     // Function to handle cancellation
@@ -140,10 +145,10 @@ const ReservationDetails = () => {
                     </Row>
                 </Card.Body>
             </Card>
-                :null}
+                :<div>d</div>}
 
         </Container>
     );
 };
 
-export default ReservationDetails;
+export default ReservationManagement;

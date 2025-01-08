@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import axios from "axios";
+import {API_BASE_URL} from "../../../config";
+import Cookies from "js-cookie";
 
-const HotelCosts = ({title, data}) => {
+const HotelCosts = ({title, data, hotelId, data_type}) => {
     const [costs, setCosts] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const costsPerPage = 5;
@@ -22,7 +25,7 @@ const HotelCosts = ({title, data}) => {
         return `${previousYear}-${String(previousMonth).padStart(2, '0')}`;
     };
 
-    const handleAddNextMonth = () => {
+    const handleAddNextMonth = async () => {
         const months = Object.keys(costs).sort();
         const lastMonth = months[months.length - 1];
         const nextMonth = calculateNextMonth(lastMonth);
@@ -30,9 +33,27 @@ const HotelCosts = ({title, data}) => {
             ...costs,
             [nextMonth]: 0,
         });
+
+        try {
+            const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+                if (!csrfToken) {
+                    console.error("CSRF token not found!");
+                    return;
+                }
+            await axios.post(`${API_BASE_URL}/chart_data/${hotelId}`,{
+                data_type: data_type,
+                month: [nextMonth]
+            }, {
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                        },
+                    });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
 
-    const handleAddPreviousMonth = () => {
+    const handleAddPreviousMonth = async () => {
         const months = Object.keys(costs).sort();
         const firstMonth = months[0];
         const nextMonth = calculatePreviousMonth(firstMonth);
@@ -40,6 +61,24 @@ const HotelCosts = ({title, data}) => {
             [nextMonth]: 0,
             ...costs,
         });
+
+        try {
+            const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+            if (!csrfToken) {
+                console.error("CSRF token not found!");
+                return;
+            }
+            await axios.post(`${API_BASE_URL}/chart_data/${hotelId}`, {
+                data_type: data_type,
+                month: [nextMonth]
+            }, {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
 
     const handleUpdateCost = (month, newCost) => {
@@ -54,10 +93,27 @@ const HotelCosts = ({title, data}) => {
         setError('');
     };
 
-    const handleEdit = (month) => {
-        const updatedCosts = { ...costs };
-        delete updatedCosts[month];
-        setCosts(updatedCosts);
+    const handleEdit = async (month,cost) => {
+
+
+        try {
+            const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
+            if (!csrfToken) {
+                console.error("CSRF token not found!");
+                return;
+            }
+            await axios.put(`${API_BASE_URL}/chart_data/${hotelId}`, {
+                data_type: data_type,
+                month: month,
+                new_value: cost,
+            }, {
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
 
     const applyFilters = () => {
@@ -147,7 +203,7 @@ const HotelCosts = ({title, data}) => {
                                 />
                             </td>
                             <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
-                                <button onClick={() => handleEdit(month)} style={{ backgroundColor: 'darkorange', color: 'black', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Edytuj</button>
+                                <button onClick={() => handleEdit(month,cost)} style={{ backgroundColor: 'darkorange', color: 'black', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Edytuj</button>
                             </td>
                         </tr>
                     ))}
