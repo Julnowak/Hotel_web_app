@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Alert, Row, Col, Form } from "react-bootstrap";
+import { Button, Container, Alert, Row, Col, Form, Card } from "react-bootstrap";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../config";
@@ -9,58 +9,54 @@ const ManageRoomPricesPage = () => {
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [roomNumberFilter, setRoomNumberFilter] = useState("");
     const [roomTypeFilter, setRoomTypeFilter] = useState("");
-
     const [currentPage, setCurrentPage] = useState(1);
     const [roomsPerPage] = useState(20);
-
     const [statusMessage, setStatusMessage] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const hotelId = queryParams.get("hotelId");
-
-    const fetchRoomPrices = async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/rooms/prices/`, {
-                params: { hotelId },
-            });
-            setRoomPrices(response.data);
-            setFilteredRooms(response.data);
-        } catch (error) {
-            console.error("Error fetching room prices:", error);
-        }
-    };
+    const [flag, setFlag] = useState(false);
 
     useEffect(() => {
-        fetchRoomPrices();
-    }, []);
+        const fetchRoomPrices = async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/rooms/prices/`, {
+                    params: { hotelId },
+                });
+                if (Array.isArray(response.data)) {
+                    setRoomPrices(response.data);
+                    setFilteredRooms(response.data);
+                } else {
+                    console.error("Unexpected API response format:", response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching room prices:", error);
+            }
+        };
 
-    const handleManageRoom = (roomId) => {
-        navigate(`/manage_room/${roomId}`);
-    };
+        if (!flag) {
+            fetchRoomPrices();
+            setFlag(true);
+        }
+    }, [flag, hotelId]);
+
+
 
     const handleFilter = () => {
-        const filtered = Object.keys(roomPrices)
-            .filter((roomId) => {
-                const room = roomPrices[roomId];
-                const matchesNumber =
-                    roomNumberFilter === "" ||
-                    room.room_number.toString().includes(roomNumberFilter);
-                const matchesType =
-                    roomTypeFilter === "" || room.room_type === roomTypeFilter;
-                return matchesNumber && matchesType;
-            })
-            .reduce((acc, roomId) => {
-                acc[roomId] = roomPrices[roomId];
-                return acc;
-            }, {});
+        const filtered = roomPrices.filter((room) => {
+            const matchesNumber =
+                roomNumberFilter === "" ||
+                room.room_number.toString().includes(roomNumberFilter);
+            const matchesType =
+                roomTypeFilter === "" || room.room_type === roomTypeFilter;
+            return matchesNumber && matchesType;
+        });
         setFilteredRooms(filtered);
         setCurrentPage(1);
     };
 
-    const totalPages = Math.ceil(
-        Object.keys(filteredRooms).length / roomsPerPage
-    );
+    const totalPages = Math.ceil(filteredRooms.length / roomsPerPage);
 
     const generatePageNumbers = () => {
         const pageNumbers = [];
@@ -83,13 +79,6 @@ const ManageRoomPricesPage = () => {
         return pageNumbers;
     };
 
-    const displayedRooms = Object.keys(filteredRooms)
-        .slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage)
-        .reduce((acc, roomId) => {
-            acc[roomId] = filteredRooms[roomId];
-            return acc;
-        }, {});
-
     return (
         <Container className="py-5">
             <h1 className="text-center mb-4">Zarządzaj pokojami</h1>
@@ -103,7 +92,7 @@ const ManageRoomPricesPage = () => {
                             <Form.Control
                                 type="text"
                                 value={roomNumberFilter}
-                                placeholder={"Wpisz numer..."}
+                                placeholder="Wpisz numer..."
                                 onChange={(e) => setRoomNumberFilter(e.target.value)}
                             />
                         </Form.Group>
@@ -133,36 +122,32 @@ const ManageRoomPricesPage = () => {
             <section className="room-prices-section">
                 <h2 className="mb-4 text-center">Lista Pokoi</h2>
                 <Row className="g-4">
-                    {Object.keys(displayedRooms).map((roomId) => (
-                        <Col md={6} lg={4} key={roomId}>
-                            <div className="room-price-card p-3 border rounded shadow-sm bg-light">
-                                <h5 className="mb-3 text-primary">
-                                    Pokój {displayedRooms[roomId].room_number}
-                                </h5>
-                                <p className="mb-1">
-                                    <strong>Piętro:</strong>{" "}
-                                    {displayedRooms[roomId].floor}
-                                </p>
-                                <p className="mb-1">
-                                    <strong>Typ:</strong>{" "}
-                                    {displayedRooms[roomId].room_type}
-                                </p>
-                                <p className="mb-3">
-                                    <strong>Cena:</strong>{" "}
-                                    {displayedRooms[roomId].price.toFixed(2)} zł
-                                </p>
-                                <div style={{ textAlign: "right" }}>
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => handleManageRoom(roomId)}
-                                        className="w-50"
-                                    >
-                                        Edytuj
-                                    </Button>
-                                </div>
-                            </div>
-                        </Col>
-                    ))}
+                    {filteredRooms
+                        .filter(
+                            (_, index) =>
+                                index >= (currentPage - 1) * roomsPerPage &&
+                                index < currentPage * roomsPerPage
+                        )
+                        .map((room) => (
+                            <Col md={6} lg={4} key={room.room_id}>
+                                <Card>
+                                    <Card.Body>
+                                        <Card.Title>Pokój {room.room_number}</Card.Title>
+                                        <Card.Text>
+                                            Typ: {room.room_type}
+                                            <br />
+                                            Cena: {room.price} PLN
+                                        </Card.Text>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => navigate(`/manage_room/${room.room_number}?hotelId=${hotelId}`)}
+                                        >
+                                            Zarządzaj
+                                        </Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
                 </Row>
 
                 <div

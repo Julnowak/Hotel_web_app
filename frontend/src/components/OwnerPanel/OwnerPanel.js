@@ -16,6 +16,7 @@ const OwnerPanel = () => {
     const [checkOutDate, setCheckOutDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 10));
     const [hotel, setHotel] = useState(null);
     const [rooms, setRooms] = useState([]);
+
     const [hotels, setHotels] = useState([])
     const [hotelId, setHotelId] = useState(1);
     const [chartData, setChartData] = useState(null);
@@ -33,6 +34,7 @@ const OwnerPanel = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
     const [flag, setFlag] = useState(false);
+    const [flag2, setFlag2] = useState(false);
     const navigate = useNavigate();
 
     const fetchHotels = async () => {
@@ -169,8 +171,11 @@ const OwnerPanel = () => {
             fetchReservations(currentPage);
         }
 
-        if (!rooms.length) fetchRooms();
-        document.getElementById('floor_btn_1')?.click()
+        if (!rooms.length) {
+            fetchRooms();
+            document.getElementById('floor_btn_1')?.click()
+        }
+
 
     }, [chartData, checkInDate, checkOutDate, currentPage, fetchChartData, fetchPrices, fetchReservations, fetchRooms, flag, hotel, hotelId, hotels, reservations?.length, roomPricesFlag, roomStandard, rooms.length]);
 

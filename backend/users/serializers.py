@@ -42,9 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
+    hotel = serializers.CharField(source='hotel.__str__', read_only=True)  # Ensure this points to the hotel field
+    floor = serializers.IntegerField(source='floor.floor_number', read_only=True)  # Ensure this points to the hotel field
+
     class Meta:
         model = Room
-        fields = '__all__'
+        fields = [field.name for field in Room._meta.fields]
 
 
 class HotelSerializer(serializers.ModelSerializer):
