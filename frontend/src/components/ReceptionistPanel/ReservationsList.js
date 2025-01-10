@@ -25,7 +25,7 @@ const ReservationsList = () => {
             }
         };
         fetchReservations();
-    }, []);
+    }, [params.id]);
 
     // Handle search/filter by reservation number
     const handleSearch = (e) => {

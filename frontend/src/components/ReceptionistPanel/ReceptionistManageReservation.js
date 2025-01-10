@@ -3,15 +3,18 @@ import {useParams} from "react-router-dom";
 import "./ReceptionistManageReservation.css"
 import client from "../client";
 import {API_BASE_URL} from "../../config";
+import BookingCalendar from "../BookingCalendar/BookingCalendar";
+
 
 const ReceptionistManageReservation = () => {
     const [reservation, setReservation] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [flag, setFlag] = useState(false);
     const [updatedReservation, setUpdatedReservation] = useState({});
     const [error, setError] = useState('');
+    const [periods, setPeriods] = useState({});
     const [guest, setGuest] = useState('');
     const params = useParams()
-
 
     useEffect(() => {
         const fetchReservation = async () => {
@@ -21,13 +24,32 @@ const ReceptionistManageReservation = () => {
                 console.log(response.data.reservation_data)
                 setUpdatedReservation(response.data.reservation_data);
                 setGuest(response.data.user_data)
+
+                if (response.data.reservation_data){
+                    fetchAvailability(response.data.reservation_data);
+
+                }
             } catch (error) {
                 setError('Błąd pobierania rezerwacji');
             }
         };
 
-        fetchReservation();
-    }, [params.id]);
+        const fetchAvailability = async (res) => {
+            try {
+                const response = await client.get(`${API_BASE_URL}/roomAvailability/${res.room_id}`);
+                setPeriods(response.data.periods);
+                setFlag(true)
+
+            } catch (error) {
+                setError('Błąd pobierania rezerwacji');
+            }
+        };
+
+        if (!flag){
+            fetchReservation();
+        }
+
+    }, [flag, params.id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,7 +85,7 @@ const ReceptionistManageReservation = () => {
     }
 
     return (
-        <div className="reservation-details-receptionist">
+        <div className="reservation-details-receptionist" style={{marginTop: 40, marginBottom: 40}}>
             <h1>Szczegóły Rezerwacji</h1>
             {error && <p className="error">{error}</p>}
             <div className="reservation-form">
@@ -86,6 +108,7 @@ const ReceptionistManageReservation = () => {
                         disabled={!isEditing}
                     />
                 </div>
+
                 <div className="form-group">
                     <label>Data zameldowania:</label>
                     <input
@@ -107,6 +130,11 @@ const ReceptionistManageReservation = () => {
                         disabled={!isEditing}
                     />
                 </div>
+                { periods.length > 0?
+                 <div style={{ marginTop: 20, marginBottom: 20}}>
+                    <BookingCalendar bookedPeriods={periods} />
+                 </div>: null}
+
 
                 <div className="form-group">
                     <label>Liczba gości:</label>
@@ -128,11 +156,11 @@ const ReceptionistManageReservation = () => {
                         disabled={!isEditing}
                     >
                         <option value="Oczekująca">Oczekująca</option>
-                        <option value="Opłacona">Opłacona</option>
-
+                        <option value="W trakcie">W trakcie</option>
                         <option value="Częściowo opłacona">Częściowo opłacona</option>
+                        <option value="Opłacona">Opłacona</option>
                         <option value="Anulowana">Anulowana</option>
-                        <option value="Edytowana">Edytowana</option>
+
                         <option value="Zakończona">Zakończona</option>
 
                     </select>

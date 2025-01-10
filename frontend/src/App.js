@@ -30,7 +30,6 @@ import HotelPage from "./components/HotelPage/HotelPage";
 import GalleryPage from "./components/GalleryPage/GalleryPage";
 import ReceptionistPanel from "./components/ReceptionistPanel/ReceptionistPanel";
 import UserReservationsPage from "./components/ReservationHistoryPage/UserReservationPage";
-import EditReservationPage from "./components/EditReservationPage/EditReservationPage";
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 import client from "./components/client";
 import {API_BASE_URL, WEBSITE_BASE_URL} from "./config";
@@ -41,7 +40,6 @@ import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
 import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
 import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
 import ManageRoomPage from "./components/ManageRoomPage/ManageRoomPage";
-import HotelCosts from "./components/OwnerPanel/CostEdit/HotelCosts";
 import HotelCostsAndEarnings from "./components/OwnerPanel/CostEdit/HotelCostsAndEarnings";
 
 function Root() {
@@ -255,7 +253,6 @@ function Root() {
                                 <Route path='/userReservations/' element={<UserReservationsPage/>}/>
                                 <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                                 <Route path='/manage_room/:id/' element={<ManageRoomPage/>}/>
-                                <Route path='/edit_reservation/:id/' element={<EditReservationPage/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                                 <Route path='/receptionist/manage/reservation/:id/' element={<ReceptionistManageReservation/>}/>
                             </Routes>

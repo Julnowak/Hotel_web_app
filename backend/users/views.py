@@ -174,7 +174,7 @@ class RoomApi(APIView):
         rooms = Room.objects.filter(
             hotel__hotel_id=hotel_id,
             floor__floor_number=floor_id
-        )
+        ).order_by("room_number")
 
         # Prepare a list to store room data with availability status
         room_data = []
@@ -188,7 +188,7 @@ class RoomApi(APIView):
             ).exists()
 
             # Set availability status based on conflicts
-            room_status = "Wolny" if (room.status == "Wolny" and not has_conflict) else "Zajęty"
+            room_status = "Wolny" if ((room.status == "Wolny" or "Zajęty") and not has_conflict) else "Zajęty"
 
             # Append room data with the status to room_data
             room_data.append({
@@ -199,7 +199,7 @@ class RoomApi(APIView):
                 "price": room.price,
                 'capacity': room.people_capacity,
             })
-
+        print(room_data)
         # Return the room data with availability status
         return Response(room_data, status=status.HTTP_200_OK)
 
@@ -608,7 +608,6 @@ class RoomDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 class LikeApi(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
@@ -632,3 +631,21 @@ class LikeApi(APIView):
         else:
             ans = False
         return Response({"ans": ans}, status=status.HTTP_200_OK)
+
+
+class RoomAvailability(APIView):
+    def get(self, request, room_id):
+        room = Room.objects.filter(room_id=room_id)
+        print(room_id)
+        reservations = Reservation.objects.filter(room_id=room_id)
+        print(reservations.values_list("check_in", "check_out"))
+
+        formatted_data = [
+            {"start": start.strftime("%Y-%m-%d"), "end": end.strftime("%Y-%m-%d")}
+            for start, end in reservations.values_list("check_in", "check_out")
+        ]
+
+        print(formatted_data)
+
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response({"periods": formatted_data, "reservations": serializer.data}, status=status.HTTP_200_OK)

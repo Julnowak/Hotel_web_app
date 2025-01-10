@@ -6,6 +6,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import Cookies from "js-cookie";
 import client from "../client";
 import {API_BASE_URL} from "../../config";
+import BookingCalendar from "../BookingCalendar/BookingCalendar";
 
 
 const ReservationManagement = () => {
@@ -15,6 +16,12 @@ const ReservationManagement = () => {
     const [localStat, setLocalStat] = useState(null);
     const [flag, setFlag] = useState(true);
     const navigate = useNavigate()
+
+    const bookedPeriods = [
+    { start: '2025-01-10', end: '2025-01-15' },
+    { start: '2025-01-20', end: '2025-01-22' },
+  ];
+
 
     // Fetch list of hotels
     useEffect(() => {
@@ -64,7 +71,6 @@ const ReservationManagement = () => {
     return (
         <Container className="mt-5">
             <h2 className="text-center mb-4 fw-bold">Szczegóły Rezerwacji</h2>
-
             {/* Reservation Details Card */}
             {reservation?
                 <Card className="shadow-lg border-0 rounded-3">
@@ -117,17 +123,6 @@ const ReservationManagement = () => {
                             </Button>
                                 :null}
 
-                            {reservation.status === "Anulowana"?
-                                null
-                                :
-                            <Button
-                                variant="outline-primary"
-                                className="me-2 rounded-pill px-3 py-2"
-                                onClick={function (){ navigate(`/edit_reservation/${params.id}/`)}}
-                            >
-                                Zmień
-                            </Button>
-                            }
                             {reservation.status === "Anulowana"?
                                 null
                                 :
