@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import "./ReceptionistManageReservation.css"
 import client from "../client";
@@ -11,6 +11,7 @@ const ReceptionistManageReservation = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [flag, setFlag] = useState(false);
     const [updatedReservation, setUpdatedReservation] = useState({});
+    const [room, setRoom] = useState({});
     const [error, setError] = useState('');
     const [periods, setPeriods] = useState({});
     const [guest, setGuest] = useState('');
@@ -23,9 +24,10 @@ const ReceptionistManageReservation = () => {
                 setReservation(response.data.reservation_data);
                 console.log(response.data.reservation_data)
                 setUpdatedReservation(response.data.reservation_data);
+                setRoom(response.data.room_data);
                 setGuest(response.data.user_data)
 
-                if (response.data.reservation_data){
+                if (response.data.reservation_data) {
                     fetchAvailability(response.data.reservation_data);
 
                 }
@@ -45,29 +47,34 @@ const ReceptionistManageReservation = () => {
             }
         };
 
-        if (!flag){
+        if (!flag) {
             fetchReservation();
         }
 
     }, [flag, params.id]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUpdatedReservation({ ...updatedReservation, [name]: value });
+        const {name, value, type, checked} = e.target;
+        // For checkboxes, we need to use 'checked' instead of 'value'
+        setUpdatedReservation({
+            ...updatedReservation,
+            [name]: type === "checkbox" ? checked : value,
+        });
     };
 
     const handleSave = async () => {
         try {
             const csrfToken = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken'))
-            ?.split('=')[1];
+                .split('; ')
+                .find(row => row.startsWith('csrftoken'))
+                ?.split('=')[1];
 
-            await client.put(`${API_BASE_URL}/receptionist/reservation/${params.id}/`, updatedReservation,{
-            headers: {
-                'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json',
-            }});
+            await client.put(`${API_BASE_URL}/receptionist/reservation/${params.id}/`, updatedReservation, {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                }
+            });
             setIsEditing(false);
         } catch (error) {
             setError('Błąd podczas zapisywania rezerwacji');
@@ -90,20 +97,33 @@ const ReceptionistManageReservation = () => {
             {error && <p className="error">{error}</p>}
             <div className="reservation-form">
                 <div className="form-group">
-                    <label>Numer rezerwacji:</label>
-                    <input
-                        type="text"
-                        name="reservation_number"
-                        value={params.id}
-                        disabled={true}
-                    />
+                    <p><b>Numer rezerwacji: </b>{params.id}</p>
+                    <p><b>Data utworzenia: </b>{updatedReservation.creation_date?.toString()}</p>
                 </div>
                 <div className="form-group">
-                    <label>Imię gościa:</label>
+                    <label>Nazwa użytkownika:</label>
                     <input
                         type="text"
                         name="guest_name"
                         value={guest.username}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Imię i nazwisko:</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={guest.name}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                    />
+                    <input
+                        type="text"
+                        name="surname"
+                        value={guest.surname}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -130,10 +150,10 @@ const ReceptionistManageReservation = () => {
                         disabled={!isEditing}
                     />
                 </div>
-                { periods.length > 0?
-                 <div style={{ marginTop: 20, marginBottom: 20}}>
-                    <BookingCalendar bookedPeriods={periods} />
-                 </div>: null}
+                {periods.length > 0 ?
+                    <div style={{marginTop: 20, marginBottom: 20}}>
+                        <BookingCalendar bookedPeriods={periods}/>
+                    </div> : null}
 
 
                 <div className="form-group">
@@ -142,9 +162,47 @@ const ReceptionistManageReservation = () => {
                         type="number"
                         name="people_number"
                         value={updatedReservation.people_number}
+                        max={room.people_capacity}
+                        min={0}
                         onChange={handleChange}
                         disabled={!isEditing}
+                        className="form-control"
                     />
+
+                    <div style={{marginTop: 20, marginBottom: 20}}>
+                        <label style={{marginTop: 20, marginBottom: 20,}}>Zapełnienie:</label>
+                        <div
+                            className="progress" // Outer div to hold the border
+                            style={{
+                                height: '30px', // Set the height of the progress bar
+                                borderRadius: '5px',
+                                border: '2px solid black', // Border around the entire progress bar
+
+                            }}
+                        >
+                            <div
+                                className="progress-bar progress-bar"
+                                role="progressbar"
+                                style={{
+                                    width: `${((updatedReservation.people_number / room.people_capacity) * 100).toFixed(2)}%`,
+                                    color: "black",
+                                    background: "limegreen"
+                                }}
+                                aria-valuenow={((updatedReservation.people_number / room.people_capacity) * 100).toFixed(2)}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            >
+                                {((updatedReservation.people_number / room.people_capacity) * 100).toFixed(0)}%
+                            </div>
+                        </div>
+                        <div style={{
+                            textAlign: "center",
+                            marginTop: 20
+                        }}>Zajęto <b>{updatedReservation.people_number}</b> z <b>{room.people_capacity}</b> dostępnych
+                            miejsc.
+                        </div>
+                    </div>
+
                 </div>
 
                 <div className="form-group">
@@ -165,6 +223,94 @@ const ReceptionistManageReservation = () => {
 
                     </select>
                 </div>
+
+                <div className="form-group">
+                    <label>Cena rezerwacji:</label>
+                    <input
+                        type="number"
+                        name="price"
+                        value={updatedReservation.price}
+                        min={0}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                        className="form-control"
+                    />
+                </div>
+
+                <div className="form-group">
+
+                    <label>Wpłacona kwota:</label>
+                    <input
+                        type="number"
+                        name="paid_amount"
+                        value={updatedReservation.paid_amount}
+                        min={0}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                        className="form-control"
+                    />
+                </div>
+
+                <div className="form-group d-flex align-items-center">
+
+                    <label style={{display: "inline", marginRight: 20, flex: "10"}}>Czy wpłacono zadatek?</label>
+                    <input
+                        style={{
+                            display: "inline",
+                            width: 20,
+                            height: 20,
+                            margin: "auto",
+                            accentColor: "black",
+                            flex: "1",
+                        }}
+                        type="checkbox"
+                        name="is_paid"
+                        checked={updatedReservation.is_paid ? true : false}
+                        value={updatedReservation.is_paid}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                    />
+
+                </div>
+
+                <div className="form-group">
+                    <div style={{marginTop: 20, marginBottom: 20}}>
+                        <label style={{marginTop: 20, marginBottom: 20,}}>Zapełnienie:</label>
+                        <div
+                            className="progress" // Outer div to hold the border
+                            style={{
+                                height: '30px', // Set the height of the progress bar
+                                borderRadius: '5px',
+                                border: '2px solid black', // Border around the entire progress bar
+
+                            }}
+                        >
+
+
+                            <div
+                                className="progress-bar progress-bar"
+                                role="progressbar"
+                                style={{
+                                    width: `${((updatedReservation.paid_amount / updatedReservation.price) * 100).toFixed(2)}%`,
+                                    color: "black",
+                                    background: "limegreen"
+                                }}
+                                aria-valuenow={((updatedReservation.paid_amount / updatedReservation.price) * 100).toFixed(2)}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            >
+                                {((updatedReservation.paid_amount / updatedReservation.price) * 100).toFixed(0)}%
+                            </div>
+                        </div>
+                        <div style={{
+                            textAlign: "center",
+                            marginTop: 20
+                        }}>Zapłacono <b>{updatedReservation.paid_amount}</b> zł
+                            z <b>{updatedReservation.price}</b> zł.
+                        </div>
+                    </div>
+                </div>
+
                 <div className="form-actions">
                     {isEditing ? (
                         <>

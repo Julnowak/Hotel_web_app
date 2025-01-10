@@ -488,11 +488,26 @@ class ReceptionistReservation(APIView):
 
     def put(self, request, reservation_id):
         data = request.data
+
         res = Reservation.objects.get(reservation_id=reservation_id)
         res.status = data['status']
         res.people_number = data['people_number']
+        res.check_in = datetime.datetime.strptime(data['check_in'], '%Y-%m-%d').date()
+        res.check_out = datetime.datetime.strptime(data['check_out'], '%Y-%m-%d').date()
+        try:
+            res.user = AppUser.objects.get(username=data['guest'])
+        except:
+            pass
+        res.price = data['price']
+        res.is_paid = bool(data['is_paid'])
+        res.paid_amount = data['paid_amount']
         res.save()
-        return Response({"reservation_data": "a"}, status=status.HTTP_200_OK)
+
+        print(data)
+
+        serializer = ReservationSerializer(res)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProfitLossChart(APIView):
@@ -636,16 +651,13 @@ class LikeApi(APIView):
 class RoomAvailability(APIView):
     def get(self, request, room_id):
         room = Room.objects.filter(room_id=room_id)
-        print(room_id)
         reservations = Reservation.objects.filter(room_id=room_id)
-        print(reservations.values_list("check_in", "check_out"))
 
         formatted_data = [
             {"start": start.strftime("%Y-%m-%d"), "end": end.strftime("%Y-%m-%d")}
             for start, end in reservations.values_list("check_in", "check_out")
         ]
 
-        print(formatted_data)
 
         serializer = ReservationSerializer(reservations, many=True)
         return Response({"periods": formatted_data, "reservations": serializer.data}, status=status.HTTP_200_OK)

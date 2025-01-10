@@ -76,6 +76,8 @@ class ReservationSerializer(serializers.ModelSerializer):
             'room_type',  # Dodane pole dla typu pokoju
             'room_id',
             'room_number',
+            'creation_date',
+            'paid_amount',
             'guest'
         ]
 
