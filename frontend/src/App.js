@@ -188,11 +188,11 @@ function Root() {
                 } else if (response.data.user_type === 'recepcjonista') {
                     navigate('/receptionist/panel/');
                 }
-            }, 100); // Small delay to ensure the browser processes the cookie
+            }, 100); // Small delay to ensure the browser processes the cookis
 
-        } catch (error) {
-            setErrmess(error);
-            console.error('Login failed:', error);
+        } catch (err) {
+            setErrmess("Podaj poprawny login lub hasło.");
+            console.error('Login failed:', err.message);
         }
     }
 
