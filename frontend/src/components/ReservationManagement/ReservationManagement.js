@@ -123,7 +123,7 @@ const ReservationManagement = () => {
                             </Button>
                                 :null}
 
-                            {reservation.status === "Anulowana"?
+                            {reservation.status === "Anulowana" || reservation.status === "Zakończona" ?
                                 null
                                 :
                             <Button
@@ -134,7 +134,15 @@ const ReservationManagement = () => {
                                 Anuluj
                             </Button>
                             }
-
+                            {reservation.status === "Zakończona" ?
+                                <Button
+                                variant="outline-success"
+                                className="rounded-pill px-3 py-2"
+                                href={"https://qualtricsxmkbklbynbg.qualtrics.com/jfe/form/SV_bggYg15rEEDFJ4y"}
+                            >
+                                Wypełnij ankietę
+                            </Button>
+                                : null}
 
                         </Col>
                     </Row>

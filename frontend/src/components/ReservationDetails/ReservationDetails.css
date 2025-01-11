@@ -41,6 +41,11 @@
     margin-top: 10px;
 }
 
+/* Styl w przypadku błędu */
+.error-border {
+    outline: 1px solid red;
+
+}
 
 
 .update-button {

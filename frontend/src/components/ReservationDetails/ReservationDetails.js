@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import axios from 'axios';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import "./ReservationDetails.css";
 import client from "../client";
@@ -15,6 +14,10 @@ const ReservationDetails = () => {
     const [hotelPeopleCapacity, setHotelPeopleCapacity] = useState(null);
     const [deposit, setDeposit] = useState(0);
     const [error, setError] = useState(null);
+    const [errorFields, setErrorFields] = useState({
+        consent: false,
+        termsAccepted: false,
+    });
     const [paymentOption, setPaymentOption] = useState('deposit');
     const params = useParams();
     const location = useLocation();
@@ -73,20 +76,34 @@ const ReservationDetails = () => {
     }, [checkIn, checkOut, params.id]);
 
     const handleConfirm = () => {
+        const errors = {
+            consent: !formData.consent,
+            termsAccepted: !formData.termsAccepted,
+        };
+
+        if (errors.consent || errors.termsAccepted) {
+            setError('Musisz zaakceptować regulamin i wyrazić zgodę na przetwarzanie danych osobowych.');
+            setErrorFields(errors);
+            return;
+        }
+
+        // Resetowanie błędów po udanej walidacji
+        setError('');
+        setErrorFields({consent: false, termsAccepted: false});
+
         client.post(`${API_BASE_URL}/newReservation/${params.id}/`, {
             checkIn,
             checkOut,
             peopleNumber: reservation.people_number,
             additions: additions,
             paymentOption: paymentOption,
-
         }, {
             headers: {
                 'X-CSRFToken': document.cookie
                     .split('; ')
                     .find(row => row.startsWith('csrftoken'))
                     ?.split('=')[1],
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             }
         })
             .then(response => {
@@ -98,7 +115,6 @@ const ReservationDetails = () => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
 
     return (
         <div className="reservation-details">
@@ -308,37 +324,15 @@ const ReservationDetails = () => {
                                 </div>
                             </div>
                             :
-                            <div className="reservation-columns">
-                                {reservation.user_name ?
-                                    <p>
-                                        <strong>Imię: </strong>
-                                        {reservation.user_name}
-
-                                        <p className="people-edit">
-                                            <div className="reservation-columns">
-                                                <strong style={{paddingTop: 5}}>Liczba osób
-                                                    (max. {hotelPeopleCapacity}):</strong>
-                                                <p>
-                                                    <input
-                                                        type="text"
-                                                        value={reservation.people_number}
-                                                        onChange={(e) => setReservation(prev => ({
-                                                            ...prev,
-                                                            people_number: e.target.value
-                                                        }))}
-                                                        style={{borderColor: "lightgrey"}}
-                                                        className="form-control"
-                                                    /></p>
-                                                <div>
-
-                                                </div>
-                                            </div>
-                                        </p>
-
-                                    </p> : null
-
-                                }
-                                {reservation.surname && <p><strong>Nazwisko:</strong> {reservation.surname}</p>}
+                            <div>
+                                <p>
+                                    <strong>Imię: </strong>
+                                    {reservation.user_name}
+                                </p>
+                                <p>
+                                    <strong>Nazwisko: </strong>
+                                    {reservation.surname}
+                                </p>
                             </div>}
 
 
@@ -348,10 +342,16 @@ const ReservationDetails = () => {
 
                         <div className="price-info">
                             <p><strong>Cena całkowita: </strong>
-                                {(reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())).toFixed(2)} zł
+                                {((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
+                                    (additions.breakfast? 40 * reservation.people_number : 0) +
+                                    (additions.parking? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()): 0)
+                                ).toFixed(2)} zł
                             </p>
                             <p>
-                                <strong>Zadatek:</strong> {(reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) * deposit).toFixed(2)} zł
+                                <strong>Zadatek:</strong> {(((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
+                                    (additions.breakfast? 40 * reservation.people_number : 0) +
+                                    (additions.parking? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()): 0)) * deposit
+                                ).toFixed(2)} zł
                             </p>
                         </div>
 
@@ -433,7 +433,7 @@ const ReservationDetails = () => {
                             {paymentOption && (
                                 <div style={{marginTop: "20px", fontSize: "18px"}}>
                                     <b>Wybrano
-                                    opcję:</b> {paymentOption === "later" ? "Zapłać później" : paymentOption === "deposit" ? "Tylko zadatek" : "Pełna kwota"}
+                                        opcję:</b> {paymentOption === "later" ? "Zapłać później" : paymentOption === "deposit" ? "Tylko zadatek" : "Pełna kwota"}
                                 </div>
                             )}
                         </div>
@@ -456,7 +456,8 @@ const ReservationDetails = () => {
                                         name="consent"
                                         checked={formData.consent}
                                         onChange={handleChange}
-                                        className="consent-checkbox"
+                                        className={`consent-checkbox ${errorFields.consent ? 'error-border' : ''}`}
+                                        required
                                     />
                                     <span className="consent-text">
                                         Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z polityką prywatności.
@@ -469,13 +470,18 @@ const ReservationDetails = () => {
                                         name="termsAccepted"
                                         checked={formData.termsAccepted}
                                         onChange={handleChange}
-                                        className="consent-checkbox"
+                                        className={`consent-checkbox ${errorFields.termsAccepted ? 'error-border' : ''}`}
+                                        required
                                     />
                                     <span className="consent-text">
                                         Akceptuję regulamin.
                                     </span>
                                 </label>
+
+                                {error && <p className="error-message">{error}</p>}
                             </div>
+
+
                         </div>
 
                         <div style={{margin: "auto", width: 300}}>
