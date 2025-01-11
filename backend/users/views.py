@@ -119,8 +119,13 @@ class UserView(APIView):
             mean_rating = sum(review.rating for review in reviews)/ reviews.count()
         else:
             mean_rating = 0
+
+        new_list = dict()
+        for i in list(serializer.data['liked_hotels']):
+            new_list[i] = f'Hotel Weles {Hotel.objects.get(hotel_id = i).localization}'
+
         return Response({'user': serializer.data, "reservations_number": num, "total_days": total_days,
-                         "mean_rating": mean_rating}, status=status.HTTP_200_OK)
+                         "mean_rating": mean_rating, "liked_hotels": new_list}, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = UserSerializer(request.user)
@@ -235,19 +240,23 @@ class NewReservationApi(APIView):
                 username = request.user.username
                 name = request.user.name
                 surname = request.user.surname
+                email = request.user.email
             else:
                 username = '---'
                 name = ''
                 surname = ''
+                email = ''
 
             return Response({
                 "price": r.price,
                 "check_out": check_out,
                 "check_in": check_in,
                 "user": username,
+                "email": email,
                 "user_name": name,
                 "surname": surname,
                 "room_floor": r.floor.floor_number,
+                "room_number": r.room_number,
                 "room_type": r.type,
                 "people_number": 1,
                 "people_capacity": r.people_capacity,
@@ -272,16 +281,16 @@ class NewReservationApi(APIView):
 
         if request.user.is_authenticated:
 
-            new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
+            new_res = Reservation.objects.create(price=float(request.data['price']), check_out=check_out, check_in=check_in,
                                                  user=request.user, room=r, room_floor=r.floor, people_number=people_number,
-                                                 additions=request.data['additions'])
+                                                 additions=request.data['additions'], deposit=float(request.data['deposit']))
         else:
-            new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
+            new_res = Reservation.objects.create(price=float(request.data['price']), check_out=check_out, check_in=check_in,
                                                  room=r, room_floor=r.floor,
-                                                 people_number=people_number,
+                                                 people_number=people_number, deposit=float(request.data['deposit']),
                                                  optional_guest_data={'name': request.data['name'], 'surname': request.data['surname'], 'email': request.data['email']},
                                                  additions=request.data['additions'])
-            # new_trans = Payment.objects.create(reservation=new_res)
+            Payment.objects.create(reservation=new_res)
             r.status = "Zajęty"
             r.save()
 
@@ -390,7 +399,7 @@ class AvailableRoomsView(APIView):
 
 
 class ReservationDetailsAPI(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
 
     # dla zmiany statusu zamówienia

@@ -14,6 +14,8 @@ const ReservationDetails = () => {
     const [hotelPeopleCapacity, setHotelPeopleCapacity] = useState(null);
     const [deposit, setDeposit] = useState(0);
     const [error, setError] = useState(null);
+    const [error2, setError2] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const [errorFields, setErrorFields] = useState({
         consent: false,
         termsAccepted: false,
@@ -76,6 +78,18 @@ const ReservationDetails = () => {
     }, [checkIn, checkOut, params.id]);
 
     const handleConfirm = () => {
+        if (reservation?.user === "---" &&(!reservation.name || !reservation.surname || !reservation.email)) {
+            setError2('Nie wprowadzono imienia, nazwiska lub emaila!');
+            return;
+        }
+        else if (reservation?.user !== "---"){
+            reservation.name = ' '
+            reservation.surname = ' '
+            reservation.email = ' '
+        }
+
+
+
         const errors = {
             consent: !formData.consent,
             termsAccepted: !formData.termsAccepted,
@@ -89,6 +103,7 @@ const ReservationDetails = () => {
 
         // Resetowanie błędów po udanej walidacji
         setError('');
+        setError2('');
         setErrorFields({consent: false, termsAccepted: false});
 
         client.post(`${API_BASE_URL}/newReservation/${params.id}/`, {
@@ -96,7 +111,19 @@ const ReservationDetails = () => {
             checkOut,
             peopleNumber: reservation.people_number,
             additions: additions,
+            name: reservation.name,
+            surname: reservation.surname,
+            email: reservation.email,
             paymentOption: paymentOption,
+            price: ((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
+                (additions.breakfast ? 40 * reservation.people_number : 0) +
+                (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)
+            ).toFixed(2),
+
+            deposit: (((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
+                    (additions.breakfast ? 40 * reservation.people_number : 0) +
+                    (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)) * deposit
+            ).toFixed(2)
         }, {
             headers: {
                 'X-CSRFToken': document.cookie
@@ -107,11 +134,21 @@ const ReservationDetails = () => {
             }
         })
             .then(response => {
-                navigate(`/payment/${response.data.reservation_id}`);
+                if (paymentOption === "later") {
+                    setShowModal(true); // Pokazuje modal
+                    // navigate(`/customer/panel/`);
+                } else {
+                    navigate(`/payment/${response.data.reservation_id}/?type=${paymentOption}`);
+                }
             })
             .catch(() => {
                 setError('Save failed');
             });
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        navigate(`/customer/panel/`);
     };
 
     if (loading) return <div>Loading...</div>;
@@ -273,7 +310,7 @@ const ReservationDetails = () => {
                                     <p>
                                         <input
                                             type="text"
-                                            value={reservation.user_name}
+                                            value={reservation.name}
                                             onChange={(e) => setReservation(prev => ({
                                                 ...prev,
                                                 name: e.target.value
@@ -333,25 +370,30 @@ const ReservationDetails = () => {
                                     <strong>Nazwisko: </strong>
                                     {reservation.surname}
                                 </p>
+                                <p>
+                                    <strong>Email: </strong>
+                                    {reservation.email}
+                                </p>
                             </div>}
 
-
+                        {error2 && <p className="error-message">{error2}</p>}
                         <p><strong>Typ pokoju:</strong> {reservation.room_type}</p>
+                        <p><strong>Numer pokoju:</strong> {reservation.room_number}</p>
                         <p><strong>Data zameldowania:</strong> {checkIn}, 14:00</p>
                         <p><strong>Data wymeldowania:</strong> {checkOut}, 12:00</p>
 
                         <div className="price-info">
                             <p><strong>Cena całkowita: </strong>
                                 {((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
-                                    (additions.breakfast? 40 * reservation.people_number : 0) +
-                                    (additions.parking? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()): 0)
+                                    (additions.breakfast ? 40 * reservation.people_number : 0) +
+                                    (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)
                                 ).toFixed(2)} zł
                             </p>
                             <p>
                                 <strong>Zadatek:</strong> {(((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
-                                    (additions.breakfast? 40 * reservation.people_number : 0) +
-                                    (additions.parking? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()): 0)) * deposit
-                                ).toFixed(2)} zł
+                                    (additions.breakfast ? 40 * reservation.people_number : 0) +
+                                    (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)) * deposit
+                            ).toFixed(2)} zł
                             </p>
                         </div>
 
@@ -364,10 +406,22 @@ const ReservationDetails = () => {
                                         min="1"
                                         max={hotelPeopleCapacity}
                                         value={reservation.people_number}
-                                        onChange={(e) => setReservation(prev => ({
-                                            ...prev,
-                                            people_number: e.target.value
-                                        }))}
+                                        onChange={(e) => {
+                                            var ans = e.target.value;
+                                            if (e.target.value > hotelPeopleCapacity) {
+                                                ans = hotelPeopleCapacity;
+                                            }
+
+                                            if (e.target.value < 1) {
+                                                ans = 1;
+                                            }
+
+
+                                            setReservation(prev => ({
+                                                ...prev,
+                                                people_number: ans
+                                            }))
+                                        }}
                                         className="people-input"
                                         style={{maxWidth: 100}}
                                     /></p>
@@ -378,9 +432,17 @@ const ReservationDetails = () => {
                         </p>
 
                         <div style={{marginTop: 20, marginBottom: 20}}>
-                            <h2>Wybierz opcję płatności:</h2>
-                            <div style={{display: "grid", gridTemplateColumns: "auto auto auto"}}>
+                            <h2>Wybierz metodę płatności</h2>
+                            <div style={reservation?.user !== "---"? {
+                                gridTemplateColumns: "auto auto auto",
+                                display: "grid"
+                            }: {
+                                gridTemplateColumns: "auto auto",
+                                display: "grid"
+                            }}>
                                 {/* Przycisk Zapłać później */}
+
+                                {reservation?.user !== "---"?
                                 <button
                                     onClick={() => handleOptionSelection2("later")}
                                     style={{
@@ -394,7 +456,7 @@ const ReservationDetails = () => {
                                     }}
                                 >
                                     <b>Zapłać później</b>
-                                </button>
+                                </button>: null}
 
                                 {/* Przycisk Tylko zadatek */}
                                 <button
@@ -428,14 +490,6 @@ const ReservationDetails = () => {
                                 </button>
 
                             </div>
-
-                            {/* Wyświetlanie wybranej opcji */}
-                            {paymentOption && (
-                                <div style={{marginTop: "20px", fontSize: "18px"}}>
-                                    <b>Wybrano
-                                        opcję:</b> {paymentOption === "later" ? "Zapłać później" : paymentOption === "deposit" ? "Tylko zadatek" : "Pełna kwota"}
-                                </div>
-                            )}
                         </div>
 
                         <div style={{marginTop: 20, marginBottom: 20}}>
@@ -443,9 +497,9 @@ const ReservationDetails = () => {
                             <div className="form-container">
                                 <div className="cancellation-policy">
                                     <h3>Warunki anulowania</h3>
-                                    <p>
-                                        Możesz anulować rezerwację bez opłat do 24 godzin przed datą
-                                        zameldowania. Po tym czasie zadatek nie podlega zwrotowi.
+                                    <p style={{textAlign: "justify"}}>
+                                        Możesz anulować rezerwację do 24 godzin przed datą
+                                        zameldowania. Zadatek nie podlega zwrotowi. Użytkownicy zalogowani mogą dokonać opłaty zadatku w późniejszym terminie.
                                     </p>
                                 </div>
 
@@ -484,14 +538,60 @@ const ReservationDetails = () => {
 
                         </div>
 
-                        <div style={{margin: "auto", width: 300}}>
+                        <div style={{margin: "auto", width: 300,}}>
                             {!reservation.is_paid && (
                                 <button onClick={handleConfirm} className="pay-button">Zatwierdź i zapłać</button>
                             )}
                             <button onClick={() => navigate(-1)} className="return-button">Wróć</button>
                         </div>
 
-
+                        {showModal && (
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    zIndex: 1000,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        backgroundColor: "white",
+                                        borderRadius: "10px",
+                                        padding: "20px",
+                                        maxWidth: "500px",
+                                        width: "90%",
+                                        textAlign: "center",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                    }}
+                                >
+                                    <h2 style={{color: "#ff7329"}}>Rezerwacja utworzona!</h2>
+                                    <p>Po zamknięciu okna nastąpi przekierowanie do
+                                        {reservation?.user !== "---"? (" panelu użytkownika, gdzie będzie możliwe opłacenie rezerwacji. ") : (" strony głównej. ")}
+                                        <br></br>Dziękujemy za skorzystanie z naszych usług!</p>
+                                    <button
+                                        onClick={closeModal}
+                                        style={{
+                                            marginTop: "20px",
+                                            padding: "10px 20px",
+                                            backgroundColor: "#ff7329",
+                                            color: "black",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
 

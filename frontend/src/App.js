@@ -33,7 +33,7 @@ import UserReservationsPage from "./components/ReservationHistoryPage/UserReserv
 import ManageRoomPricesPage from "./components/OwnerPanel/ManageRoomPricesPage/ManageRoomPricesPage";
 import client from "./components/client";
 import {API_BASE_URL, WEBSITE_BASE_URL} from "./config";
-import PaymentSim from "./components/PaymentSim/PaymementSim";
+import PaymentSim from "./components/PaymentSim/PaymentSim";
 import HotelGallery from "./components/HotelGallery/HotelGallery";
 import Cookies from "js-cookie";
 import RoomStatuses from "./components/RoomStatuses/RoomStatuses";
@@ -268,7 +268,7 @@ function Root() {
         );
     } else {
         if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/search"
-            || loc === "/reservation" || loc.includes('/reservation/room/') || loc.includes('/hotel/')) {
+            || loc === "/reservation" || loc.includes('/reservation/room/') || loc.includes('/payment/') || loc.includes('/hotel/')) {
             return (
                 <div>
                     {isLoading ? (
@@ -332,6 +332,7 @@ function Root() {
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
                                 <Route path='/hotels/' element={<Hotels/>}/>
                                 <Route path='/hotel/:id' element={<HotelPage/>}/>
+                                <Route path='/payment/:id' element={<PaymentSim/>}/>
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                                 <Route path='/search/' element={<ReservationSearch/>}/>
@@ -422,6 +423,7 @@ function Root() {
                         <Route path='/gallery/' element={<GalleryPage/>}/>
                         <Route path='/hotels/' element={<Hotels/>}/>
                         <Route path='/hotel/:id' element={<HotelPage/>}/>
+                        <Route path='/payment/:id' element={<PaymentSim/>}/>
                         <Route path='/reservation/' element={<ReservationSite/>}/>
                         <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                         <Route path='/search/' element={<ReservationSearch/>}/>

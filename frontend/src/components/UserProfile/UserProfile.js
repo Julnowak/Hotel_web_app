@@ -31,9 +31,33 @@ const UserProfile = () => {
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [userType, setUserType] = useState('');
-    const [likedHotels, setLikedHotels] = useState([]);
+    const [likedHotels, setLikedHotels] = useState({});
     const [hotel, setHotel] = useState(null);
     const navigate = useNavigate();
+    const styles = {
+
+        hotelList: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+        },
+
+        hotelItem: {
+            backgroundColor: '#dedede',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            width: '80%',
+            maxWidth: '500px',
+        },
+        hotelName: {
+            fontSize: '18px',
+            color: '#34495e',
+            margin: '0',
+        },
+    };
+
 
     const [user, setUser] = useState({
         name: 'Abhishek Bachchan',
@@ -63,7 +87,8 @@ const UserProfile = () => {
                 setTotalDays(response.data['total_days'])
                 setMeanRating(response.data['mean_rating'])
                 setResNum(response.data['reservations_number'])
-                setLikedHotels(response.data['user'].liked_hotels)
+                console.log(response.data['liked_hotels'])
+                setLikedHotels(response.data['liked_hotels'])
                 // console.log(response.data)
 
                 const fetchHotels = async () => {
@@ -255,7 +280,7 @@ const UserProfile = () => {
                 </div>
                 <div className="profile-info">
                     {userType === "recepcjonista" ?
-                    <p><strong>Hotel: </strong>{hotel}</p>: null}
+                        <p><strong>Hotel: </strong>{hotel}</p> : null}
                     {isEditing ? (
                         <>
                             <p><strong>Nazwa użytkownika:</strong></p>
@@ -338,20 +363,23 @@ const UserProfile = () => {
                 </div>
             </div>
 
-            {userType === "klient" ?
-            <div>
-            <h2>Ulubione hotele</h2>
-            {likedHotels?.map((hotel: Hotel) => (
-                <div key={hotel.hotel_id}>
-                    <h4 style={{margin:5}}>{hotel.localization}</h4>
-                    <p>{hotel.address}</p>
-                  </div>
-            ))}
-            </div>: null}
+            {userType === "klient" && Object.keys(likedHotels).length > 0 ? (
+                <div style={{marginTop: 20, marginBottom: 40}}>
+                    <h2 style={styles.title}>Ulubione hotele</h2>
+                    <div style={styles.hotelList}>
+                        {Object.entries(likedHotels)?.map(([id, name]) => (
+                            <a href={`/hotel/${id}`} key={id} style={styles.hotelItem}>
+                                <h4 style={styles.hotelName}>{name}</h4>
+                            </a>
+
+                        ))}
+                    </div>
+                </div>
+            ) : null}
 
 
             {userType === "klient" ?
-            <h2>Statystyki</h2>: null}
+                <h2>Statystyki</h2> : null}
 
             {userType === "klient" ?
                 <div className="profile-stats">
@@ -359,7 +387,7 @@ const UserProfile = () => {
                     <p>Liczba rezerwacji: {resNum}</p>
                     <p>Średnia ocen: {meanRating.toFixed(2)}</p>
                     <p>Dni spędzone w naszych hotelach: {totalDays}</p>
-                </div> :  null}
+                </div> : null}
 
             <div className="down-buttons">
                 {userType === "klient" ?

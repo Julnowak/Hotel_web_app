@@ -71,7 +71,6 @@ const ReservationSite = () => {
                 hotel_id: hotelId
             });
             setRooms(response.data);
-            console.log(response.data)
             setAvailableRooms(response.data);
             setMessage('W wybranym terminie są dostępne pokoje!');
         } catch (error) {

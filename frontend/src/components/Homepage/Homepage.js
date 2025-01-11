@@ -80,41 +80,78 @@ const Homepage = () => {
                 </div>
 
 
-                <div className="container_main" style={{maxWidth: 1000, margin: "auto", color: "black"}}>
-                    <div className="left-column" style={{padding: 20}}>
-                        <h2 style={{color: "white"}}>Lokalizacja</h2>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-                            It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages, and more recently with desktop publishing software like Aldus PageMaker including
-                            versions of Lorem Ipsum.</p>
-                    </div>
-                    <div className="right-column">
-                        <MapContainer center={[51.9194, 19.1451]} zoom={6} style={{height: "500px", width: "100%"}}>
+                <div
+                    style={{
+                        maxWidth: "1000px",
+                        margin: "auto",
+                        padding: "20px",
+                        borderRadius: "10px",
+
+                        color: "white",
+                    }}
+                >
+                    <div style={{padding: "20px"}}>
+
+                        <MapContainer
+                            center={[51.9194, 19.1451]}
+                            zoom={6}
+                            style={{
+                                height: "500px",
+                                width: "100%",
+                                borderRadius: "10px",
+                                overflow: "hidden",
+                                marginTop: "20px",
+                            }}
+                        >
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
-                           
                             {hotels.map((hotel) => (
-                                <Marker key={hotel.hotel_id} position={[hotel.latitude, hotel.longitude]}>
+                                <Marker
+                                    key={hotel.hotel_id}
+                                    position={[hotel.latitude, hotel.longitude]}
+                                >
                                     <Popup>
-                                        <h4 style={{borderBottom: "2px solid #000"}}>Hotel
-                                            Weles {hotel.localization}</h4>
+                                        <h4
+                                            style={{
+                                                borderBottom: "2px solid black",
+                                                paddingBottom: "5px",
+                                                marginBottom: "5px",
+                                                color: "#ff7329",
+                                            }}
+                                        >
+                                            Hotel Weles {hotel.localization}
+                                        </h4>
                                         <StarRating rating={hotel.rating}/>
-                                        <p>{hotel.address}, {hotel.localization}</p>
-
-
+                                        <p style={{fontSize: "14px", color: "black"}}>
+                                            {hotel.address}, {hotel.localization}
+                                        </p>
                                     </Popup>
                                 </Marker>
                             ))}
                         </MapContainer>
+
+                        <div style={{marginTop: 20}}>
+                            <h2 className="about-us-title">
+                                Lokalizacja
+                            </h2>
+                            <p style={{lineHeight: "1.8", textAlign: "justify", fontSize: "16px"}}>
+                                Nasza sieć hotelowa oferuje komfortowe noclegi w renomowanych placówkach
+                                zlokalizowanych w sercu najpiękniejszych miast w Polsce, w tym w
+                                Niewiesz-Kolonia, Warszawie oraz Krakowie. Każdy nasz hotel zapewnia
+                                wyjątkową atmosferę, doskonałą obsługę i wygodne warunki, które spełnią
+                                oczekiwania nawet najbardziej wymagających gości. Zapraszamy do
+                                skorzystania z naszych usług i doświadczenia niezapomnianych chwil w
+                                naszych obiektach.
+                            </p>{/**/}
+                        </div>
+
                     </div>
                 </div>
 
-                <section className="about-us"  style={{maxWidth: 1000, marginLeft: "auto", marginRight: "auto", }}>
+
+                <section className="about-us" style={{maxWidth: 1000, marginLeft: "auto", marginRight: "auto",}}>
                     <div className="about-us-container">
                         <h2 className="about-us-title">Nasza misja</h2>
                         <p className="about-us-description">
@@ -129,9 +166,9 @@ const Homepage = () => {
 
                 <section id="gallery" className="mb-5"
                          style={{maxWidth: 1000, margin: "auto", backgroundColor: "#1c1c1c"}}>
-                    <h2>Nasze hotele</h2>
+                    <h2 className="about-us-title">Nasze hotele</h2>
                     <Carousel>
-                        <Carousel.Item >
+                        <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
                                 <a href={`${WEBSITE_BASE_URL}/hotel/1`}>
                                     <img
@@ -191,12 +228,12 @@ const Homepage = () => {
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
                                 <a href={`${WEBSITE_BASE_URL}/hotel/3`}>
-                                <img
-                                    className="d-block w-100"
-                                    src="images/hotel_loc_images/zakopane.jpg"
-                                    alt="Pokój 3"
-                                    height={500}
-                                />
+                                    <img
+                                        className="d-block w-100"
+                                        src="images/hotel_loc_images/zakopane.jpg"
+                                        alt="Pokój 3"
+                                        height={500}
+                                    />
                                 </a>
                                 <div
                                     style={{
@@ -228,7 +265,7 @@ const Homepage = () => {
 
                 <section id="gallery" className="mb-5"
                          style={{maxWidth: 1600, margin: "auto", backgroundColor: "#1c1c1c"}}>
-                    <h2>Galeria</h2>
+                    <h2 className="about-us-title">Galeria</h2>
                     <PhotoCarousel photos={photos}/>
                     <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
                         <a href={"/gallery"}>Zobacz więcej...</a>
@@ -237,7 +274,7 @@ const Homepage = () => {
 
 
                 {/* Contact Section */}
-                <section id="contact" className="mb-5">
+                <section id="contact" className="mb-5" style={{maxWidth: 800, margin: "auto"}}>
                     <div className="contact-card">
                         <div className="contact-image"/>
                         <div className="contact-form-container">

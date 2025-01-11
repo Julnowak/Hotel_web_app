@@ -100,6 +100,7 @@ class Room(models.Model):
 class Reservation(models.Model):
     reservation_id = models.AutoField(primary_key=True)
     price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
+    deposit = models.DecimalField(default=0.00, decimal_places=2, max_digits=100, blank=True, null=True)
     paid_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
     status = models.CharField(default="Oczekująca", max_length=200)
     check_in = models.DateField()
