@@ -35,12 +35,14 @@ class Hotel(models.Model):
     localization = models.CharField(default="Kraków", null=True, blank=True, max_length=200)
     latitude = models.DecimalField(decimal_places=4, null=True, blank=True, max_digits=10)
     longitude = models.DecimalField(decimal_places=4, null=True, blank=True, max_digits=10)
-    phone = models.IntegerField(null=True, blank=True)
+    phone = models.CharField(max_length=15, default='+48 123 456 789')
+    email = models.CharField(max_length=1000, default='weles@gmail.com')
     rating = models.DecimalField(default=0.00, decimal_places=2, max_digits=3)
     address = models.CharField(null=True, blank=True, max_length=2000)
     defaultPrices = models.JSONField(null=True, blank=True)
     costs = models.JSONField(null=True, blank=True)
     earnings = models.JSONField(null=True, blank=True)
+    deposit_percentage = models.DecimalField(decimal_places=4, default=0.2, max_digits=10)
     description = models.TextField(default="Opis nie został jeszcze wprowadzony.")
 
     def __str__(self):
@@ -105,12 +107,14 @@ class Reservation(models.Model):
     is_paid = models.BooleanField(default=False)
     room_floor = models.ForeignKey(Floor, on_delete=models.CASCADE, blank=True, null=True, related_name="room_floor")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True, null=True)
+    optional_guest_data = models.JSONField(blank=True, null=True, default=dict())
+    additions = models.JSONField(blank=True, null=True, default=dict({'breakfast': False, 'parking': False, 'wifi': True }))
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE, blank=True, null=True)
     people_number = models.IntegerField(default=1)
     creation_date = models.DateField(auto_now_add=True, blank=True)
 
     def __str__(self):
-        return "Rezerwacja" + str(self.reservation_id)
+        return "Rezerwacja " + str(self.reservation_id)
 
 
 class Review(models.Model):

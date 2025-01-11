@@ -4,6 +4,8 @@ from collections import defaultdict
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
@@ -178,7 +180,7 @@ class RoomApi(APIView):
 
         # Prepare a list to store room data with availability status
         room_data = []
-
+        print(rooms.values())
         for room in rooms:
             # Check if room has any conflicting reservations
             has_conflict = Reservation.objects.filter(
@@ -188,8 +190,7 @@ class RoomApi(APIView):
             ).exists()
 
             # Set availability status based on conflicts
-            room_status = "Wolny" if ((room.status == "Wolny" or "Zajęty") and not has_conflict) else "Zajęty"
-
+            room_status = "Wolny" if (not has_conflict and not(room.status == "Do sprzątania" or room.status == "Do naprawy" )) else "Zajęty"
             # Append room data with the status to room_data
             room_data.append({
                 "room_id": room.room_id,
@@ -199,7 +200,6 @@ class RoomApi(APIView):
                 "price": room.price,
                 'capacity': room.people_capacity,
             })
-        print(room_data)
         # Return the room data with availability status
         return Response(room_data, status=status.HTTP_200_OK)
 
@@ -220,34 +220,71 @@ class RoomApi(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class NewReservationApi(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.AllowAny,)
 
     def get(self, request, pk):
-        r = Room.objects.get(room_id=pk)
-        check_in = datetime.datetime.strptime(request.GET.get('checkIn'), '%Y-%m-%d').date()
-        check_out = datetime.datetime.strptime(request.GET.get('checkOut'), '%Y-%m-%d').date()
-        return Response({"price": r.price, "check_out": check_out, "check_in":check_in,
-                         "user": request.user.username, "user_name": request.user.name,
-                         "surname": request.user.surname,
-                         "room_floor": r.floor.floor_number,
-                         "room_type": r.type, "people_number": 1}, status=status.HTTP_200_OK)
+        try:
+            r = Room.objects.get(room_id=pk)
+            check_in = datetime.datetime.strptime(request.GET.get('checkIn'), '%Y-%m-%d').date()
+            check_out = datetime.datetime.strptime(request.GET.get('checkOut'), '%Y-%m-%d').date()
+            h = Hotel.objects.get(hotel_id=r.hotel.hotel_id)
+
+            if request.user.is_authenticated:
+                username = request.user.username
+                name = request.user.name
+                surname = request.user.surname
+            else:
+                username = '---'
+                name = ''
+                surname = ''
+
+            return Response({
+                "price": r.price,
+                "check_out": check_out,
+                "check_in": check_in,
+                "user": username,
+                "user_name": name,
+                "surname": surname,
+                "room_floor": r.floor.floor_number,
+                "room_type": r.type,
+                "people_number": 1,
+                "people_capacity": r.people_capacity,
+                "hotel": f"Hotel Weles {h.localization}",
+                "deposit": h.deposit_percentage,
+                "adres": f'{h.address} {h.localization}',
+                "hotel_telephone": h.phone,
+                "hotel_email": h.email
+            }, status=status.HTTP_200_OK)
+        except Room.DoesNotExist:
+            return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Hotel.DoesNotExist:
+            return Response({"error": "Hotel not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, pk):
         r = Room.objects.get(room_id=pk)
 
+        print(request.data)
         check_in = datetime.datetime.strptime(request.data.get('checkIn'), '%Y-%m-%d').date()
         check_out = datetime.datetime.strptime(request.data.get('checkOut'), '%Y-%m-%d').date()
         people_number = request.data.get('peopleNumber')
 
-        new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
-                                             user=request.user, room=r, room_floor=r.floor, people_number=people_number,
-                                             )
+        if request.user.is_authenticated:
 
-        new_trans = Payment.objects.create(reservation=new_res)
-        r.status = "Zajęty"
-        r.save()
+            new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
+                                                 user=request.user, room=r, room_floor=r.floor, people_number=people_number,
+                                                 additions=request.data['additions'])
+        else:
+            new_res = Reservation.objects.create(price=r.price, check_out=check_out, check_in=check_in,
+                                                 room=r, room_floor=r.floor,
+                                                 people_number=people_number,
+                                                 optional_guest_data={'name': request.data['name'], 'surname': request.data['surname'], 'email': request.data['email']},
+                                                 additions=request.data['additions'])
+            # new_trans = Payment.objects.create(reservation=new_res)
+            r.status = "Zajęty"
+            r.save()
+
         serializer = ReservationSerializer(new_res)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -661,3 +698,22 @@ class RoomAvailability(APIView):
 
         serializer = ReservationSerializer(reservations, many=True)
         return Response({"periods": formatted_data, "reservations": serializer.data}, status=status.HTTP_200_OK)
+
+
+class Search(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            res = Reservation.objects.get(reservation_id=int(request.data['reservation_id']))
+            if res.user:
+                if res.user.name == request.data['first_name'] and res.user.surname == request.data['last_name'] and res.user.email == request.data['email']:
+                    serializer = ReservationSerializer(res)
+                    return Response({"ans": serializer.data, "error": ""})
+            else:
+                if res.optional_guest_data['name'] == request.data['first_name'] and res.optional_guest_data['last_name'] == request.data['surname'] and res.optional_guest_data['email'] == request.data['email']:
+                    serializer = ReservationSerializer(res)
+                    return Response({"ans": serializer.data, "error": ""})
+        except Reservation.DoesNotExist:
+            return Response({"ans": None, "error": "Reservation not found"}, status=404)
+        return Response({"ans": None, "error": ""})

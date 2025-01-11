@@ -1,86 +1,160 @@
 .reservation-details {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 500px;
-  margin: auto;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 
-.reservation-title {
-  font-size: 1.5em;
-  margin-bottom: 15px;
-  color: #333;
-  text-align: center;
+.reservation-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap; /* Pozwala kolumnom przechodzić jedna pod drugą */
 }
 
-.room-image-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 15px;
+.reservation-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 300px; /* Minimalna szerokość kolumny */
 }
 
 .room-image {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 8px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.reservation-info p {
-  font-size: 1em;
-  color: #555;
-  margin: 8px 0;
+.hotel-info, .reservation-info, .cancellation-policy {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.price-info p {
-  font-weight: bold;
-  color: #444;
+.price-info, .people-edit {
+    margin-top: 10px;
 }
 
-.people-count {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 10px;
+
+
+.update-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.user-icon {
-  color: gr;
+.update-button:hover {
+    background-color: #45a049;
+}
+
+.pay-button, .return-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .pay-button {
-  background-color: #4a90e2;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
-  margin-top: 15px;
-  display: block;
-  width: 100%;
+    background-color: #007BFF;
+    color: white;
 }
 
 .return-button {
-  background-color: #7f8083;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
-  margin-top: 15px;
-  display: block;
-  width: 100%;
-}
-
-.pay-button:hover {
-  background-color: #357ABD;
+    background-color: #6c757d;
+    color: white;
 }
 
 .success-message {
-  color: #27ae60;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 15px;
+    color: green;
+    margin-top: 10px;
+}
+
+/* Responsywność */
+@media screen and (max-width: 768px) {
+    .reservation-columns {
+        flex-direction: column; /* Zmiana na układ w jednej kolumnie */
+        gap: 10px; /* Zmniejszenie odstępu między elementami */
+    }
+
+    .reservation-column {
+        width: 100%; /* Kolumny zajmują całą szerokość ekranu */
+    }
+}
+
+/* Style for the entire form container */
+.form-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for each cancellation policy */
+.cancellation-policy {
+  margin-bottom: 20px;
+}
+
+.cancellation-policy h3 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.cancellation-policy p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Label for each checkbox and its text */
+.consent-label {
+  display: grid;
+  grid-template-columns: 40px auto;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Common styling for checkboxes */
+.consent-checkbox {
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: black; /* Color when checkbox is checked */
+  width: 20px; /* Ensures same width for both checkboxes */
+  height: 20px; /* Ensures same height for both checkboxes */
+  border: 2px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  background-color: white;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Checked state for the checkbox */
+.consent-checkbox:checked {
+  background-color: #4CAF50; /* Color when checked */
+  border-color: #4CAF50;
+}
+
+/* Text next to the checkbox */
+.consent-text {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* Hover effect on the text */
+.consent-text:hover {
+  text-decoration: underline;
 }

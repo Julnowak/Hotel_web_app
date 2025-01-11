@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from . import views
 from django.urls import path
 
@@ -10,6 +12,7 @@ urlpatterns = [
     path('rooms/', views.RoomApi.as_view(), name='rooms'),
     path('roomAvailability/<int:room_id>', views.RoomAvailability.as_view(), name='roomAvailability'),
     path('hotels/', views.HotelApi.as_view(), name='hotels'),
+    path('search/', csrf_exempt(views.Search.as_view()), name='search'),
     path('rooms/available/', views.AvailableRoomsView.as_view(), name='available_rooms'),
     path('roomStatusChange/<int:room_id>', views.RoomStatusChange.as_view(), name='room_status_change'),
     path('rooms/prices/', views.RoomPricesView.as_view(), name='prices_rooms'),
@@ -17,7 +20,7 @@ urlpatterns = [
     path('rooms/<int:hotel_id>/', views.RoomStatuses.as_view(), name='rooms_by_hotel'),
     path('hotel/<int:hotel_id>/', views.OneHotelApi.as_view(), name='hotel'),
     path('floors/<int:hotel_id>', views.FloorApi.as_view(), name='floors'),
-    path('newReservation/<int:pk>/', views.NewReservationApi.as_view(), name='new_reservation'),
+    path('newReservation/<int:pk>/', csrf_exempt(views.NewReservationApi.as_view()), name='new_reservation'),
     path('reservations/', views.ReservationsAPI.as_view(), name='reservations'),
     path('personelReservations/', views.ReservationViewSet.as_view(), name='personelReservations'),
     path('recepcionistReservations/<int:hotel_id>/', views.RecepcionistReservations.as_view(), name='recepcionistReservations'),

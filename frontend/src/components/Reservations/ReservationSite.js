@@ -88,7 +88,7 @@ const ReservationSite = () => {
     const handleHotelChange = (e) => {
         const selectedHotelId = e.target.value;
         setHotelId(selectedHotelId);
-        setHotel(hotels.find(h => h.hotel_id === parseInt(selectedHotelId)));
+        setHotel(hotels.find(h => h?.hotel_id === parseInt(selectedHotelId)));
         setAvailableRooms([]);
     };
 

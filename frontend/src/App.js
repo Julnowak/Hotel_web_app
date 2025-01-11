@@ -41,6 +41,7 @@ import ReservationsList from "./components/ReceptionistPanel/ReservationsList";
 import ReceptionistManageReservation from "./components/ReceptionistPanel/ReceptionistManageReservation";
 import ManageRoomPage from "./components/ManageRoomPage/ManageRoomPage";
 import HotelCostsAndEarnings from "./components/OwnerPanel/CostEdit/HotelCostsAndEarnings";
+import ReservationSearch from "./components/ReservationSearch";
 
 function Root() {
 
@@ -56,7 +57,7 @@ function Root() {
     const navigate = useNavigate()
     const loc = window.location.pathname;
     const [clicked, setClicked] = useState(false);
-    const match = useMatch("/hotel/:id");
+    const match = useMatch("/reservation/room/");
 
     const handleClick = () => {
         setClicked(true); // Set clicked state to true on click
@@ -246,6 +247,7 @@ function Root() {
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/profile/' element={<UserProfile/>}/>
                                 <Route path='/gallery/' element={<GalleryPage/>}/>
+                                <Route path='/search/' element={<ReservationSearch/>}/>
                                 <Route path='/gallery/:id' element={<HotelGallery/>}/>
                                 <Route path='/rooms/prices/' element={<ManageRoomPricesPage/>}/>
                                 <Route path='/payment/:id' element={<PaymentSim/>}/>
@@ -265,7 +267,8 @@ function Root() {
             </div>
         );
     } else {
-        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/reservation" || match) {
+        if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/search"
+            || loc === "/reservation" || loc.includes('/reservation/room/') || loc.includes('/hotel/')) {
             return (
                 <div>
                     {isLoading ? (
@@ -292,6 +295,10 @@ function Root() {
                                                 <Nav.Link href={`${WEBSITE_BASE_URL}/reservation`}
                                                           className="mx-2 text-uppercase fw-light">
                                                     Rezerwuj
+                                                </Nav.Link>
+                                                <Nav.Link href={`${WEBSITE_BASE_URL}/search`}
+                                                          className="mx-2 text-uppercase fw-light">
+                                                    Wyszukaj
                                                 </Nav.Link>
                                         </Nav>
                                         <Navbar.Text className={'d-flex justify-content-center'}>
@@ -326,6 +333,8 @@ function Root() {
                                 <Route path='/hotels/' element={<Hotels/>}/>
                                 <Route path='/hotel/:id' element={<HotelPage/>}/>
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
+                                <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
+                                <Route path='/search/' element={<ReservationSearch/>}/>
                             </Routes>
                         </div>
 
@@ -414,6 +423,8 @@ function Root() {
                         <Route path='/hotels/' element={<Hotels/>}/>
                         <Route path='/hotel/:id' element={<HotelPage/>}/>
                         <Route path='/reservation/' element={<ReservationSite/>}/>
+                        <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
+                        <Route path='/search/' element={<ReservationSearch/>}/>
                     </Routes>
                     <Footer/>
                 </div>
