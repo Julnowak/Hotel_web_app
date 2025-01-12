@@ -16,7 +16,7 @@
 
 .payment-sim__form-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -24,16 +24,32 @@
 }
 
 .payment-sim__info-text {
-    font-size: 16px;
-    margin-bottom: 20px;
+    font-size: 16px;  /* Rozmiar czcionki */
+    line-height: 1.5; /* Wysokość linii */
+    color: #333;      /* Kolor tekstu */
+    background-color: #f9f9f9; /* Tło tekstu */
+    padding: 20px;    /* Wewnętrzne marginesy */
+    border-radius: 8px; /* Zaokrąglone rogi */
+    border: 1px solid #ddd; /* Obramowanie */
+    max-width: 600px;  /* Maksymalna szerokość */
+    margin: 20px auto; /* Centrowanie elementu */
+}
+
+.payment-sim__info-text a {
+    color: #007bff;    /* Kolor linku */
+    text-decoration: none; /* Usunięcie podkreślenia */
+}
+
+.payment-sim__info-text a:hover {
+    text-decoration: underline; /* Podkreślenie linku po najechaniu */
 }
 
 .payment-sim__button {
     width: 100%;
     padding: 10px 20px;
     font-size: 16px;
-    color: #fff;
-    background-color: #28a745;
+    color: #000000;
+    background-color: #ff7329;
     border: none;
     border-radius: 5px;
     cursor: pointer;

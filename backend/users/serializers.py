@@ -75,6 +75,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             'check_out',
             'is_paid',
             'people_number',
+            'optional_guest_data',
             'hotel',  # Dodane pole dla hotelu
             'room_type',  # Dodane pole dla typu pokoju
             'room_id',

@@ -297,6 +297,14 @@ class NewReservationApi(APIView):
         serializer = ReservationSerializer(new_res)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def put(self, request, pk):
+        reservation = Reservation.objects.get(reservation_id=pk)
+        reservation.status = "Anulowana"
+        reservation.save()
+        print(reservation)
+        serializer = ReservationSerializer(reservation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class RoomStatusChange(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -408,8 +416,14 @@ class ReservationDetailsAPI(APIView):
         reservation = get_object_or_404(Reservation, reservation_id=int(reservation_id))
         if operation_type == "zapłata":
             reservation.status = "Opłacona"
+            reservation.is_paid = True
+            reservation.paid_amount = reservation.price
         elif operation_type == "anulowanie":
             reservation.status = "Anulowana"
+        elif operation_type == "zapłata częściowa":
+            reservation.status = "Opłacona częściowo"
+            reservation.paid_amount = reservation.deposit
+            reservation.is_paid = True
         reservation.save()
         serializer = ReservationSerializer(reservation)
         return Response(serializer.data)

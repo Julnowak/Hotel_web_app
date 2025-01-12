@@ -268,7 +268,8 @@ function Root() {
         );
     } else {
         if (loc === "/" || loc === "/gallery" || loc === "/hotels" || loc === "/search"
-            || loc === "/reservation" || loc.includes('/reservation/room/') || loc.includes('/payment/') || loc.includes('/hotel/')) {
+            || loc === "/reservation" || loc.includes('/reservation/room/') || loc.includes('/manage_reservation/')
+            || loc.includes('/payment/') || loc.includes('/hotel/')) {
             return (
                 <div>
                     {isLoading ? (
@@ -336,6 +337,7 @@ function Root() {
                                 <Route path='/reservation/' element={<ReservationSite/>}/>
                                 <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                                 <Route path='/search/' element={<ReservationSearch/>}/>
+                                <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                             </Routes>
                         </div>
 
@@ -369,6 +371,14 @@ function Root() {
                                             </Nav.Link>
                                             <Nav.Link href="/gallery" className="mx-2 text-uppercase fw-light">
                                                 Galeria
+                                            </Nav.Link>
+                                            <Nav.Link href={`${WEBSITE_BASE_URL}/reservation`}
+                                                      className="mx-2 text-uppercase fw-light">
+                                                Rezerwuj
+                                            </Nav.Link>
+                                            <Nav.Link href={`${WEBSITE_BASE_URL}/search`}
+                                                      className="mx-2 text-uppercase fw-light">
+                                                Wyszukaj
                                             </Nav.Link>
 
                                         </Nav>
@@ -427,6 +437,7 @@ function Root() {
                         <Route path='/reservation/' element={<ReservationSite/>}/>
                         <Route path='/reservation/room/:id/' element={<ReservationDetails/>}/>
                         <Route path='/search/' element={<ReservationSearch/>}/>
+                        <Route path='/manage_reservation/:id/' element={<ReservationManagement/>}/>
                     </Routes>
                     <Footer/>
                 </div>

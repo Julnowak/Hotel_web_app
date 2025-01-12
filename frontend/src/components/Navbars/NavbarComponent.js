@@ -47,8 +47,12 @@ const NavbarComponent = ({clicked, handleClick, submitLogout, profile_pic}) => {
                             ) :
                             null
                         }
-
+                        <Nav.Link href={`${WEBSITE_BASE_URL}/search`}
+                              className="mx-2 text-uppercase fw-light">
+                        Wyszukaj
+                    </Nav.Link>
                     </Nav>
+
                                         {/* Profile Link with Circular Image */}
                     <Nav.Link href={`${WEBSITE_BASE_URL}/profile/`}
                               className="mx-2 text-uppercase fw-light d-flex justify-content-center" style={{margin: 20}}>

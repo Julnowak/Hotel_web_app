@@ -22,7 +22,7 @@ const ReceptionistManageReservation = () => {
             try {
                 const response = await client.get(`${API_BASE_URL}/receptionist/reservation/${params.id}`);
                 setReservation(response.data.reservation_data);
-                console.log(response.data.reservation_data)
+                console.log(response.data.reservation_data.optional_guest_data)
                 setUpdatedReservation(response.data.reservation_data);
                 setRoom(response.data.room_data);
                 setGuest(response.data.user_data)
@@ -61,6 +61,7 @@ const ReceptionistManageReservation = () => {
             [name]: type === "checkbox" ? checked : value,
         });
     };
+
 
     const handleSave = async () => {
         try {
@@ -104,8 +105,8 @@ const ReceptionistManageReservation = () => {
                     <label>Nazwa użytkownika:</label>
                     <input
                         type="text"
-                        name="guest_name"
-                        value={guest.username}
+                        name="user_name"
+                        value={reservation.user? guest.username: "---"}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -116,14 +117,25 @@ const ReceptionistManageReservation = () => {
                     <input
                         type="text"
                         name="name"
-                        value={guest.name}
+                        value={(updatedReservation.user && guest) ? guest.name: updatedReservation.optional_guest_data.name}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
                     <input
                         type="text"
                         name="surname"
-                        value={guest.surname}
+                        value={updatedReservation.user? guest.surname: updatedReservation.optional_guest_data.surname}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Email:</label>
+                    <input
+                        type="text"
+                        name="email"
+                        value={updatedReservation.user? guest.email: updatedReservation.optional_guest_data['email']}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -215,7 +227,7 @@ const ReceptionistManageReservation = () => {
                     >
                         <option value="Oczekująca">Oczekująca</option>
                         <option value="W trakcie">W trakcie</option>
-                        <option value="Częściowo opłacona">Częściowo opłacona</option>
+                        <option value="Opłacona częściowo">Częściowo opłacona</option>
                         <option value="Opłacona">Opłacona</option>
                         <option value="Anulowana">Anulowana</option>
 

@@ -25,8 +25,26 @@ const CustomerPanel = () => {
     // Calculate total pages
     const totalPages = Math.ceil((currentReservation?.length || 0) / reservationsPerPage);
 
-    // Handle page change
-    const handlePageChange = (page: number) => setCurrentPage(page);
+    const generatePageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+        const halfRange = Math.floor(maxPagesToShow / 2);
+
+        let startPage = Math.max(1, currentPage - halfRange);
+        let endPage = Math.min(totalPages, currentPage + halfRange);
+
+        if (currentPage <= halfRange) {
+            endPage = Math.min(maxPagesToShow, totalPages);
+        } else if (currentPage + halfRange >= totalPages) {
+            startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        return pageNumbers;
+    };
 
     // Fetch current reservation and all reservations (simulated fetch)
     useEffect(() => {
@@ -105,31 +123,90 @@ const CustomerPanel = () => {
                                     ))}
 
                                     {/* Pagination */}
-                                    <Pagination className="mt-4">
-                                        <Pagination.First onClick={() => handlePageChange(1)}
-                                                          disabled={currentPage === 1}/>
-                                        <Pagination.Prev
-                                            onClick={() => handlePageChange(currentPage - 1)}
-                                            disabled={currentPage === 1}
-                                        />
-                                        {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
-                                            <Pagination.Item
-                                                key={page}
-                                                active={page === currentPage}
-                                                onClick={() => handlePageChange(page)}
-                                            >
-                                                {page}
-                                            </Pagination.Item>
-                                        ))}
-                                        <Pagination.Next
-                                            onClick={() => handlePageChange(currentPage + 1)}
-                                            disabled={currentPage === totalPages}
-                                        />
-                                        <Pagination.Last
-                                            onClick={() => handlePageChange(totalPages)}
-                                            disabled={currentPage === totalPages}
-                                        />
-                                    </Pagination>
+                                    <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginBottom: '20px'
+                                    }}>
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => 1)}
+                                        disabled={currentPage === 1}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === 1 ? "#fff" : "#333",
+                                            color: currentPage === 1 ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        {`<<`}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === 1 ? "#fff" : "#333",
+                                            color: currentPage === 1 ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        {'<'}
+                                    </button>
+                                    {generatePageNumbers().map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            style={{
+                                                padding: '5px 10px',
+                                                margin: '0 5px',
+                                                cursor: 'pointer',
+                                                backgroundColor: page === currentPage ? 'gray' : 'white',
+                                                color: page === currentPage ? 'black' : 'black',
+                                            }}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === totalPages ? "#fff" : "#333",
+                                            color: currentPage === totalPages ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        >
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage((prev) => totalPages)}
+                                        disabled={currentPage === totalPages}
+                                        style={{
+                                            padding: "8px 12px",
+                                            margin: "0 5px",
+                                            background: currentPage === totalPages ? "#fff" : "#333",
+                                            color: currentPage === totalPages ? "#333" : "#fff",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        >>
+                                    </button>
+                                </div>
                                 </div>
 
 

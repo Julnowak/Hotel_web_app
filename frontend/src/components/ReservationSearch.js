@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { API_BASE_URL } from "../config";
 import client from "./client";
+import {useNavigate} from "react-router-dom";
 
 const ReservationSearch = () => {
   const [reservationId, setReservationId] = useState('');
@@ -9,6 +10,7 @@ const ReservationSearch = () => {
   const [lastName, setLastName] = useState('');
   const [reservationData, setReservationData] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Funkcja wyszukiwania rezerwacji
   const handleSearch = async () => {
@@ -35,11 +37,12 @@ const ReservationSearch = () => {
         first_name: firstName,
         last_name: lastName
       });
-      console.log(response.data.ans )
+
       // Sprawdzenie odpowiedzi
       if (response.data.ans !== null) {
         setReservationData(response.data.ans);
         setError(null); // Resetowanie błędu, jeśli zapytanie jest udane
+          navigate(`/manage_reservation/${reservationId}/`);
       } else {
         setError("Nie znaleziono rezerwacji spełniającej podane kryteria.");
         setReservationData(null);
