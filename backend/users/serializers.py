@@ -58,9 +58,15 @@ class HotelSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     hotel = serializers.CharField(source='room.hotel.__str__', read_only=True)  # Pobiera nazwę hotelu
+    longitude = serializers.CharField(source='room.hotel.longitude', read_only=True)
+    latitude = serializers.CharField(source='room.hotel.latitude', read_only=True)
+    rating = serializers.CharField(source='room.hotel.rating', read_only=True)
     room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+    floor_number = serializers.CharField(source='room.floor.floor_number', read_only=True)  # Pobiera typ pokoju
     room_number = serializers.CharField(source='room.room_number', read_only=True)  # Pobiera typ pokoju
-    guest = serializers.CharField(source='user.username', read_only=True)
+    guest = serializers.JSONField(source='user.username', read_only=True)
+    name = serializers.JSONField(source='user.name', read_only=True)
+    surname = serializers.JSONField(source='user.surname', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
 
     class Meta:
@@ -69,6 +75,12 @@ class ReservationSerializer(serializers.ModelSerializer):
             'reservation_id',
             'price',
             'email',
+            'rating',
+            'floor_number',
+            'name',
+            'surname',
+            'longitude',
+            'latitude',
             'deposit',
             'status',
             'check_in',
