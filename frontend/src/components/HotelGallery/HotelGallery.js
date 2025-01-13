@@ -33,7 +33,7 @@ const HotelGallery = () => {
 
     return (
         <div className="hotel-gallery">
-            <h1 className="gallery-title">Galeria Hotelu</h1>
+            <h2 style={{margin: 20}} className="gallery-title">Galeria hotelu</h2>
             <div className="gallery-grid">
                 {hotelImages.map((image, index) => (
                     <div
@@ -46,18 +46,14 @@ const HotelGallery = () => {
                             alt={image.title}
                             className="gallery-image"
                         />
-                        <div className="image-caption">
-                            <h3>{image.title}</h3>
-                            <p>{image.description}</p>
-                        </div>
                     </div>
                 ))}
             </div>
 
-            {isLightboxOpen && (
+{isLightboxOpen && (
                 <div className="lightbox" onClick={closeLightbox}>
                     <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-                        <span className="close" onClick={closeLightbox}>&times;</span>
+                        <span style={{padding: 20}} className="close" onClick={closeLightbox}>&nbsp;&times;&nbsp;</span>
                         <img
                             src={hotelImages[currentImageIndex].src}
                             alt={hotelImages[currentImageIndex].title}
@@ -69,7 +65,7 @@ const HotelGallery = () => {
                         </div>
                         <div className="lightbox-navigation">
                             <span className="prev" onClick={() => changeImage(-1)}>&#10094;</span>
-                            <span className="next" onClick={() => changeImage(1)}>&#10095;</span>
+                            <span className="next" onClick={() => changeImage(1)}>&#10095; &nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </div>
                     </div>
                 </div>

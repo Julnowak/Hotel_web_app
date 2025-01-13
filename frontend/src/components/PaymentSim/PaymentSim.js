@@ -100,7 +100,7 @@ const PaymentSim = () => {
 
             await client.post(
                 `${API_BASE_URL}/reservation/${params.id}/`,
-                { operation_type: paymentOption?.toString() === "deposit" ? "zapłata częściowa": "zapłata"},
+                { operation_type: paymentOption?.toString() === "deposit" ? "zapłata częściowa": paymentOption?.toString() === "additional"? "dopłata":"zapłata"},
                 { headers: { "X-CSRFToken": csrfToken } }
             );
 
@@ -119,7 +119,7 @@ const PaymentSim = () => {
         <div className="payment-sim__container">
 
 
-            {reservation?.status !== "Opłacona" || reservation?.status !== "Częściowo opłacona"?
+            {reservation?.status !== "Opłacona"?
                 (!isPaid  ? (
                 <div className="payment-sim__form-container">
                     <h2 style={{textAlign: "center"}}>Podsumowanie płatności</h2>
@@ -128,7 +128,12 @@ const PaymentSim = () => {
                             <div style={{textAlign: "center"}}>
                                 Do zapłaty: <strong>{reservation?.deposit} zł</strong>
                             </div>
-                        ) : (
+                        ) : (paymentOption?.toString() === "additional")?
+                            <div style={{textAlign: "center"}}>
+                                Do zapłaty: <strong>{reservation?.price - reservation?.paid_amount} zł</strong>
+                            </div>
+                            :
+                            (
                             <div style={{textAlign: "center"}}>
                                 Do zapłaty: <strong>{reservation?.price} zł</strong>
                             </div>

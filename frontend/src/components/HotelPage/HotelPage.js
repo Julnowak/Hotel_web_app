@@ -328,7 +328,7 @@ const HotelPage = () => {
                         : null}
 
                     <div
-                        style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px'}}>
+                        style={{display: 'flex', marginTop: 20, justifyContent: 'center', alignItems: 'center', marginBottom: '20px'}}>
                         <button
                             onClick={() => setCurrentPage((prev) => 1)}
                             disabled={currentPage === 1}

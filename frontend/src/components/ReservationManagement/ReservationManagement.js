@@ -47,7 +47,7 @@ const ReservationManagement = () => {
                 }
             );
             setReservation(response.data);
-            alert(`Reservation with ID ${reservation.id} has been cancelled.`);
+            alert(`Rezerwacja z ID ${reservation.reservation_id} została anulowana.`);
         } catch (error) {
             console.error('Error canceling reservation:', error);
         }
@@ -58,57 +58,65 @@ const ReservationManagement = () => {
             {reservation ? (
                 <Card className="shadow-lg border-0 rounded-3">
                     <Card.Body className="p-4">
-                        <Card.Title className="mb-3 fs-4 fw-bold">
-                            <h2> Rezerwacja nr {reservation.reservation_id}</h2>
+                        <Card.Title className="mb-3 fs-4 fw-bold text-center text-primary">
+                            <h2>Rezerwacja nr {reservation.reservation_id}</h2>
                         </Card.Title>
                         <Row className="align-items-center">
                             <Col md={8}>
-                                <p className="mb-1">
-                                    <strong>Gość:</strong> {reservation.guest} ({reservation.email})
+                                {reservation.guest ? (
+                                    <p className="mb-2 text-muted">
+                                        <strong>Gość:</strong> {reservation.guest} ({reservation.email})
+                                    </p>
+                                ) : null}
+
+                                <p className="mb-2">
+                                    <strong>{reservation?.hotel?.slice(0, 18)}</strong>
                                 </p>
-                                <p className="mb-1">
-                                    <strong>Lokalizacja:</strong> {reservation.hotel}
+                                <p className="mb-2">
+                                    <strong>Lokalizacja:</strong> {reservation?.hotel?.slice(18)} {reservation?.hotel?.slice(12, 18)}
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Numer pokoju:</strong> {reservation.room_number}
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Typ pokoju:</strong> {reservation.room_type}
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Data zameldowania:</strong> {reservation.check_in}, 14:00
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Data wymeldowania:</strong> {reservation.check_out}, 12:00
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Data utworzenia rezerwacji:</strong> {reservation.creation_date}
                                 </p>
-                                <p className="mb-1">
+                                <p className="mb-2">
                                     <strong>Cena całkowita:</strong> {reservation.price} PLN
                                 </p>
-                                <p className="mb-1">
+
+                                <p className="mb-2">
+                                    <strong>Zadatek:</strong> {reservation.deposit} PLN
+                                </p>
+                                <p className="mb-2">
                                     <strong>Kwota zapłacona:</strong> {reservation.paid_amount} PLN
                                 </p>
-                                <p className="mb-1">
-                                    <strong>Depozyt:</strong> {reservation.deposit} PLN
-                                </p>
-                                <p className="mb-1">
+
+                                <p className="mb-2">
                                     <strong>Liczba osób:</strong> {reservation.people_number}
                                 </p>
-                                <p className="mb-1">
-                                    <strong>Status:</strong>{' '}
+                                <p className="mb-2">
+                                    <strong>Status:</strong>
                                     <Badge
                                         bg={
                                             reservation.status === 'Opłacona'
                                                 ? 'success'
                                                 : reservation.status === 'Anulowana'
-                                                ? 'danger'
-                                                : reservation.status === 'W trakcie'
-                                                ? 'success'
-                                                : reservation.status === 'Zakończona'
-                                                ? 'success'
-                                                : 'secondary'
+                                                    ? 'danger'
+                                                    : reservation.status === 'W trakcie'
+                                                        ? 'warning'
+                                                        : reservation.status === 'Zakończona'
+                                                            ? 'primary'
+                                                            : 'secondary'
                                         }
                                         className="fs-6"
                                     >
@@ -116,36 +124,63 @@ const ReservationManagement = () => {
                                     </Badge>
                                 </p>
                             </Col>
-                            <Col md={4} className="text-end">
-                                {reservation.status === 'Oczekująca' ? (
-                                    <Button
-                                        variant="outline-success"
-                                        className="me-2 rounded-pill px-3 py-2"
-                                        onClick={() => navigate(`/payment/${params.id}`)}
-                                    >
-                                        Opłać
-                                    </Button>
-                                ) : null}
+                            <Col md={4}>
+                                <div className="d-flex flex-wrap justify-content-between">
+                                    {reservation.status === 'Oczekująca' && (
+                                        <>
+                                            <Button
+                                                variant="outline-success"
+                                                className="rounded-pill px-3 py-2 mb-2"
+                                                onClick={() =>
+                                                    navigate(`/payment/${params.id}/?type=${reservation.status === 'Oczekująca' ? 'full' : null}`)
+                                                }
+                                            >
+                                                Opłać
+                                            </Button>
+                                            <Button
+                                                variant="outline-success"
+                                                className="rounded-pill px-3 py-2 mb-2"
+                                                onClick={() =>
+                                                    navigate(`/payment/${params.id}/?type=${reservation.status === 'Oczekująca' ? 'deposit' : null}`)
+                                                }
+                                            >
+                                                Opłać zadatek
+                                            </Button>
+                                        </>
+                                    )}
 
-                                {reservation.status === 'Anulowana' || reservation.status === 'Zakończona' ? null : (
-                                    <Button
-                                        variant="outline-danger"
-                                        className="rounded-pill px-3 py-2"
-                                        onClick={handleCancelReservation}
-                                    >
-                                        Anuluj
-                                    </Button>
-                                )}
+                                    {reservation.status === 'Opłacona częściowo' && (
+                                        <Button
+                                            variant="outline-success"
+                                            className="rounded-pill px-3 py-2 mb-2"
+                                            onClick={() =>
+                                                navigate(`/payment/${params.id}/?type=${reservation.status === 'Opłacona częściowo' ? 'additional' : null}`)
+                                            }
+                                        >
+                                            Dopłać
+                                        </Button>
+                                    )}
 
-                                {reservation.status === 'Zakończona' ? (
-                                    <Button
-                                        variant="outline-success"
-                                        className="rounded-pill px-3 py-2"
-                                        href="https://qualtricsxmkbklbynbg.qualtrics.com/jfe/form/SV_bggYg15rEEDFJ4y"
-                                    >
-                                        Wypełnij ankietę
-                                    </Button>
-                                ) : null}
+                                    {reservation.status !== 'Anulowana' && reservation.status !== 'Zakończona' && (
+                                        <Button
+                                            variant="outline-danger"
+                                            className="rounded-pill px-3 py-2 mb-2"
+                                            onClick={handleCancelReservation}
+                                        >
+                                            Anuluj
+                                        </Button>
+                                    )}
+
+                                    {reservation.status === 'Zakończona' && (
+                                        <Button
+                                            variant="outline-success"
+                                            className="rounded-pill px-3 py-2 mb-2"
+                                            href="https://qualtricsxmkbklbynbg.qualtrics.com/jfe/form/SV_bggYg15rEEDFJ4y"
+                                        >
+                                            Wypełnij ankietę
+                                        </Button>
+                                    )}
+                                </div>
                             </Col>
                         </Row>
                     </Card.Body>

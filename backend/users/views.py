@@ -413,6 +413,7 @@ class ReservationDetailsAPI(APIView):
     # dla zmiany statusu zamówienia
     def post(self, request, reservation_id):
         operation_type = request.data["operation_type"]
+        print(operation_type)
         reservation = get_object_or_404(Reservation, reservation_id=int(reservation_id))
         if operation_type == "zapłata":
             reservation.status = "Opłacona"
@@ -423,6 +424,10 @@ class ReservationDetailsAPI(APIView):
         elif operation_type == "zapłata częściowa":
             reservation.status = "Opłacona częściowo"
             reservation.paid_amount = reservation.deposit
+            reservation.is_paid = True
+        elif operation_type == "dopłata":
+            reservation.status = "Opłacona"
+            reservation.paid_amount = reservation.price
             reservation.is_paid = True
         reservation.save()
         serializer = ReservationSerializer(reservation)
@@ -475,18 +480,14 @@ class ReviewsApi(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserReservationsPagination(PageNumberPagination):
-    page_size = 5  # Liczba elementów na stronie
-    page_size_query_param = 'per_page'
-
-
 class UserReservationsView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
     def get(self, request):
-        paginator = UserReservationsPagination()
-        reservations = Reservation.objects.filter(user=request.user).select_related('room__hotel').order_by("-check_in")
-        paginated_reservations = paginator.paginate_queryset(reservations, request)
-        serializer = ReservationSerializer(paginated_reservations, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        reservations = Reservation.objects.filter(user=request.user).order_by("-check_in")
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RoomPricesView(APIView):
@@ -723,6 +724,7 @@ class RoomAvailability(APIView):
         return Response({"periods": formatted_data, "reservations": serializer.data}, status=status.HTTP_200_OK)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class Search(APIView):
     permission_classes = (permissions.AllowAny,)
 

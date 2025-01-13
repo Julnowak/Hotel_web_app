@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { API_BASE_URL } from "../config";
 import client from "./client";
 import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const ReservationSearch = () => {
   const [reservationId, setReservationId] = useState('');
@@ -30,13 +31,22 @@ const ReservationSearch = () => {
     }
 
     try {
+        const csrfToken = Cookies.get('csrftoken'); // Extract CSRF token from cookies
+            if (!csrfToken) {
+                console.error('CSRF token not found!');
+                return;
+            }
+
       // Wysłanie zapytania do serwera
       const response = await client.post(`${API_BASE_URL}/search/`, {
         reservation_id: reservationId,
         email: email,
         first_name: firstName,
         last_name: lastName
-      });
+      }, {
+        headers: {
+            'X-CSRFToken': csrfToken,
+        }},);
 
       // Sprawdzenie odpowiedzi
       if (response.data.ans !== null) {

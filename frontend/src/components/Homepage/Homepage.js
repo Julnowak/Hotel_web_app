@@ -69,9 +69,14 @@ const Homepage = () => {
 
                 {/* About Section */}
 
-                <div className="about-us-container" style={{paddingTop: 40}}>
+                <div className="about-us-container" style={{paddingTop: 30, maxWidth: "1000px",
+                        margin: "auto",
+                        padding: "25px",
+                        borderRadius: "10px",
+
+                        color: "white",}}>
                     <h2 className="about-us-title">O nas</h2>
-                    <p className="about-us-description">
+                    <p className="about-us-description" style={{ textAlign: "justify"}}>
                         Witaj w sieci Hoteli Weles, liderze w branży hotelarskiej, który od lat dostarcza swoim
                         Gościom niezapomniane doświadczenia, pełne komfortu, luksusu i wyjątkowej atmosfery. Nasza
                         sieć jest synonimem najwyższej jakości usług, profesjonalnej obsługi oraz pełnej dbałości o
@@ -79,6 +84,18 @@ const Homepage = () => {
                         pamięci na długo.</p>
                 </div>
 
+                <section className="about-us" style={{maxWidth: 1000, marginLeft: "auto", marginRight: "auto",}}>
+
+                        <h2 className="about-us-title" >Nasza misja</h2>
+                        <p className="about-us-description" style={{ textAlign: "justify"}}>
+                            Wierzymy, że kluczem do sukcesu jest nieustanne dążenie do doskonałości i ciągłe
+                            rozwijanie naszych umiejętności. Zawsze stawiamy na wysoką jakość i zadowolenie naszych
+                            klientów.Chcemy być liderem w dostarczaniu innowacyjnych rozwiązań, które zmieniają życie
+                            naszych
+                            klientów. Nasza wizja to przyszłość oparta na zaufaniu, technologii i jakości.
+                        </p>
+
+                </section>
 
                 <div
                     style={{
@@ -90,8 +107,7 @@ const Homepage = () => {
                         color: "white",
                     }}
                 >
-                    <div style={{padding: "20px"}}>
-
+                    <div>
                         <MapContainer
                             center={[51.9194, 19.1451]}
                             zoom={6}
@@ -132,11 +148,11 @@ const Homepage = () => {
                             ))}
                         </MapContainer>
 
-                        <div style={{marginTop: 20}}>
-                            <h2 className="about-us-title">
+                        <div style={{marginTop: 30}}>
+                            <h2 className="about-us-title" >
                                 Lokalizacja
                             </h2>
-                            <p style={{lineHeight: "1.8", textAlign: "justify", fontSize: "16px"}}>
+                            <p className="about-us-description" style={{ textAlign: "justify"}}>
                                 Nasza sieć hotelowa oferuje komfortowe noclegi w renomowanych placówkach
                                 zlokalizowanych w sercu najpiękniejszych miast w Polsce, w tym w
                                 Niewiesz-Kolonia, Warszawie oraz Krakowie. Każdy nasz hotel zapewnia
@@ -150,23 +166,9 @@ const Homepage = () => {
                     </div>
                 </div>
 
-
-                <section className="about-us" style={{maxWidth: 1000, marginLeft: "auto", marginRight: "auto",}}>
-                    <div className="about-us-container">
-                        <h2 className="about-us-title">Nasza misja</h2>
-                        <p className="about-us-description">
-                            Wierzymy, że kluczem do sukcesu jest nieustanne dążenie do doskonałości i ciągłe
-                            rozwijanie naszych umiejętności. Zawsze stawiamy na wysoką jakość i zadowolenie naszych
-                            klientów.Chcemy być liderem w dostarczaniu innowacyjnych rozwiązań, które zmieniają życie
-                            naszych
-                            klientów. Nasza wizja to przyszłość oparta na zaufaniu, technologii i jakości.
-                        </p>
-                    </div>
-                </section>
-
-                <section id="gallery" className="mb-5"
-                         style={{maxWidth: 1000, margin: "auto", backgroundColor: "#1c1c1c"}}>
-                    <h2 className="about-us-title">Nasze hotele</h2>
+                <section id="gallery" className="mb-5 about-us"
+                         style={{maxWidth: 1000, margin: "auto", backgroundColor: "#2a262e"}}>
+                    <h2 className="about-us-title" >Nasze hotele</h2>
                     <Carousel>
                         <Carousel.Item>
                             <div className="d-block w-100" style={{position: 'relative'}}>
@@ -182,13 +184,16 @@ const Homepage = () => {
                                 <div
                                     style={{
                                         position: 'absolute',
-                                        top: '50%',
+                                        bottom: '0',
                                         left: '50%',
-                                        transform: 'translate(-50%, -50%)',
+                                        transform: 'translateX(-50%)',
                                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                        padding: '10px 20px',
+                                        padding: '30px 20px',
                                         color: 'white',
                                         borderRadius: '5px',
+                                        width: '100%', // Dodatkowe rozciągnięcie kontenera tekstu na całą szerokość obrazu
+                                        textAlign: 'center', // Wyśrodkowanie tekstu
+                                        boxSizing: 'border-box', // Uwzględnienie paddingu w szerokości
                                     }}
                                 >
                                     <h3>Hotel Weles Kraków</h3>
@@ -210,13 +215,16 @@ const Homepage = () => {
                                 <div
                                     style={{
                                         position: 'absolute',
-                                        top: '50%',
+                                        bottom: '0',
                                         left: '50%',
-                                        transform: 'translate(-50%, -50%)',
+                                        transform: 'translateX(-50%)',
                                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                        padding: '10px 20px',
+                                        padding: '30px 20px',
                                         color: 'white',
                                         borderRadius: '5px',
+                                        width: '100%', // Dodatkowe rozciągnięcie kontenera tekstu na całą szerokość obrazu
+                                        textAlign: 'center', // Wyśrodkowanie tekstu
+                                        boxSizing: 'border-box', // Uwzględnienie paddingu w szerokości
                                     }}
                                 >
                                     <h3>Hotel Weles Warszawa</h3>
@@ -263,8 +271,8 @@ const Homepage = () => {
                     </div>
                 </section>
 
-                <section id="gallery" className="mb-5"
-                         style={{maxWidth: 1600, margin: "auto", backgroundColor: "#1c1c1c"}}>
+                <section id="gallery" className="mb-5 "
+                         style={{maxWidth: 1000,padding: 20, margin: "auto", backgroundColor: "#17120e"}}>
                     <h2 className="about-us-title">Galeria</h2>
                     <PhotoCarousel photos={photos}/>
                     <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
@@ -274,7 +282,7 @@ const Homepage = () => {
 
 
                 {/* Contact Section */}
-                <section id="contact" className="mb-5" style={{maxWidth: 800, margin: "auto"}}>
+                <section id="contact" className="mb-5" style={{maxWidth: 1000, margin: "auto", backgroundColor: "#17120e"}}>
                     <div className="contact-card">
                         <div className="contact-image"/>
                         <div className="contact-form-container">
@@ -312,9 +320,12 @@ const Homepage = () => {
                                             required
                                         ></textarea>
                                     </div>
-                                    <button type="submit" className="submit-button">
-                                        Wyślij
-                                    </button>
+                                    <div style={{ margin: "auto", textAlign: "center"}}>
+                                        <button type="submit" className="submit-button" style={{ backgroundColor: "#ff7329", color: "black", width: 200}}>
+                                            Wyślij
+                                        </button>
+                                    </div>
+
                                 </form>
                             )}
                         </div>
