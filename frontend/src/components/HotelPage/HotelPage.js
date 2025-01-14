@@ -261,7 +261,9 @@ const HotelPage = () => {
                     display: 'flex',
                     justifyContent: 'space-around',
                     alignItems: 'center',
-                    gap: '20px'
+                    gap: '20px',
+                    maxWidth:1000,
+                    margin: "auto"
                 }}>
                     <div style={{textAlign: 'center'}}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
@@ -296,7 +298,7 @@ const HotelPage = () => {
                 </div>
 
             </div>
-            <section style={{marginTop: 40}}>
+            <section style={{margin: "auto", maxWidth:1000,}}>
                 <h4 style={{textAlign: "center", fontWeight: "bold", marginBottom: "20px"}}>
                     Lokalizacja
                 </h4>
