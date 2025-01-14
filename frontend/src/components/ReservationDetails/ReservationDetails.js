@@ -36,6 +36,16 @@ const ReservationDetails = () => {
         wifi: true,
     });
 
+    function dateDiffInDays(a, b) {
+      const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+      // Discard the time and time-zone information.
+      const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+      const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+
     const handleOptionSelection = (service, value) => {
         setAdditions((prev) => ({...prev, [service]: value}));
     };
@@ -58,6 +68,7 @@ const ReservationDetails = () => {
     };
 
     useEffect(() => {
+
         client.get(`${API_BASE_URL}/newReservation/${params.id}/`, {
             params: {checkIn, checkOut}
         })
@@ -384,15 +395,15 @@ const ReservationDetails = () => {
 
                         <div className="price-info">
                             <p><strong>Cena całkowita: </strong>
-                                {((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
-                                    (additions.breakfast ? 40 * reservation.people_number : 0) +
-                                    (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)
+                                {((reservation.price * dateDiffInDays(new Date(checkIn), new Date(checkOut))) +
+                                    (additions.breakfast ? 40 * reservation.people_number * dateDiffInDays(new Date(checkIn), new Date(checkOut)) : 0) +
+                                    (additions.parking ? 50 * dateDiffInDays(new Date(checkIn), new Date(checkOut)) : 0)
                                 ).toFixed(2)} zł
                             </p>
                             <p>
                                 <strong>Zadatek:</strong> {(((reservation.price * (new Date(checkOut).getDate() - new Date(checkIn).getDate())) +
-                                    (additions.breakfast ? 40 * reservation.people_number : 0) +
-                                    (additions.parking ? 50 * (new Date(checkOut).getDate() - new Date(checkIn).getDate()) : 0)) * deposit
+                                    (additions.breakfast ? 40 * reservation.people_number * dateDiffInDays(new Date(checkIn), new Date(checkOut)) : 0) +
+                                    (additions.parking ? 50 * dateDiffInDays(new Date(checkIn), new Date(checkOut)) : 0)) * deposit
                             ).toFixed(2)} zł
                             </p>
                         </div>

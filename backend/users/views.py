@@ -1,14 +1,12 @@
 import datetime
 from collections import defaultdict
 
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import logout, authenticate
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import ValidationError
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from users.serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer, RoomSerializer, \
@@ -342,7 +340,15 @@ class OneHotelApi(APIView):
 
     def get(self, request, hotel_id):
         h = Hotel.objects.get(hotel_id=hotel_id)
-
+        reviewes = Review.objects.filter(hotel_id=hotel_id)
+        suma = 0
+        if reviewes.exists():
+            for r in reviewes:
+                suma += r.rating
+            h.rating = suma/len(reviewes)
+        else:
+            h.rating = suma
+        h.save()
         serializer = HotelSerializer(h)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -470,12 +476,12 @@ class ReviewsApi(APIView):
             h.rating = 0
         h.save()
 
-        res = Review.objects.filter(hotel__hotel_id=int(data.get("hotel")['hotel_id']))
+        res = Review.objects.filter(hotel__hotel_id=int(data.get("hotel")['hotel_id'])).order_by("-created_at")
         serializer = ReviewSerializer(res, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request):
-        res = Review.objects.filter(hotel__hotel_id=int(request.query_params.get('hotel_id')))
+        res = Review.objects.filter(hotel__hotel_id=int(request.query_params.get('hotel_id'))).order_by("-created_at")
         serializer = ReviewSerializer(res, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -603,6 +609,7 @@ class ProfitLossChart(APIView):
         for k in all_data.keys():
             if k not in h.costs.keys():
                 h.costs[k] = 0
+
         h.save()
         return Response({"reservations_data": serializer.data, "monthly_earnings": h.earnings, "monthly_costs": h.costs})
 

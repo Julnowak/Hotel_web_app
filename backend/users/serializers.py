@@ -61,7 +61,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     longitude = serializers.CharField(source='room.hotel.longitude', read_only=True)
     latitude = serializers.CharField(source='room.hotel.latitude', read_only=True)
     rating = serializers.CharField(source='room.hotel.rating', read_only=True)
-    room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokoju
+    room_type = serializers.CharField(source='room.type', read_only=True)  # Pobiera typ pokojuusers_appuser_liked_hotels
     floor_number = serializers.CharField(source='room.floor.floor_number', read_only=True)  # Pobiera typ pokoju
     room_number = serializers.CharField(source='room.room_number', read_only=True)  # Pobiera typ pokoju
     guest = serializers.JSONField(source='user.username', read_only=True)
@@ -85,6 +85,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             'status',
             'check_in',
             'check_out',
+            'additions',
             'is_paid',
             'people_number',
             'optional_guest_data',

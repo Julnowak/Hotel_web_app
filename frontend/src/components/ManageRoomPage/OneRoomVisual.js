@@ -7,7 +7,7 @@ import {API_BASE_URL} from "../../config";
 import "./OneRoomVisual.css"
 
 
-const OneRoomVisual = ({hotelId}) => {
+const OneRoomVisual = ({hotelId, floorId}) => {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [floor, setFloor] = useState(1);
     const [floors, setFloors] = useState([]);
@@ -25,7 +25,7 @@ const OneRoomVisual = ({hotelId}) => {
                 {
                     params: {
                         hotel_id: hotelId,
-                        floor: 1
+                        floor: floorId
                     }
                 })
             setRooms(response.data);

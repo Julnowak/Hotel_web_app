@@ -210,6 +210,9 @@ const OwnerPanel = () => {
 
     // Funkcja do zmiany cen pokojów
     const handlePriceChange = (standard, newPrice) => {
+        if (newPrice <= 0 || newPrice >= 1000001){
+            return;
+        }
         setRoomPrices((prevPrices) => ({...prevPrices, [standard]: newPrice}));
     };
 
@@ -317,7 +320,7 @@ const OwnerPanel = () => {
                 <h2>Zarządzaj cenami pokojów</h2>
                 <h5 style={{marginBottom: 40}}>W tym miejscu możesz ustawić ogólne ceny pokoju w zależności od
                     standardu. Cena jest
-                    wskazana dla <b>jednej osoby</b> i podana w złotówkach.</h5>
+                    wskazana dla <b>jednego pokoju</b> i podana w złotówkach.</h5>
                 {roomPrices ? Object.keys(roomPrices).map((standard) => (
                     <div key={standard} className="room-price-setting">
                         <h5><b>Pokój typu "{standard.charAt(0) + standard.slice(1)}"</b></h5>
@@ -345,7 +348,7 @@ const OwnerPanel = () => {
                 </div>
 
                 <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
-                    <a href={`/rooms/prices/?hotelId=${hotelId}`}>Zobacz więcej...</a>
+                    <a href={`/rooms/prices/?hotelId=${hotelId}`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
 
             </section>
@@ -465,7 +468,7 @@ const OwnerPanel = () => {
                 </div>
 
                 <div style={{textAlign: "right"}}>
-                    <a href={`/receptionistReservations/${hotelId}/`}>Zobacz więcej...</a>
+                    <a href={`/receptionistReservations/${hotelId}/`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
             </section>
 
@@ -477,7 +480,7 @@ const OwnerPanel = () => {
                                  roomStandard={roomStandard} changed={changed} reservations={allReservations}/>
                     : null}
                 <div style={{textAlign: "right"}}>
-                    <a href={`/room/statuses/${hotelId}`}>Zobacz więcej...</a>
+                    <a href={`/room/statuses/${hotelId}`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
 
             </section>
@@ -503,7 +506,7 @@ const OwnerPanel = () => {
                 )}
 
                 <div style={{textAlign: "right", paddingRight: 20, paddingTop: 20}}>
-                    <a href={`/hotelCosts/${hotelId}`}>Zobacz więcej...</a>
+                    <a href={`/hotelCosts/${hotelId}`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
             </section>
 

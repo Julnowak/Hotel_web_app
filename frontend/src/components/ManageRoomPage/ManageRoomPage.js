@@ -45,6 +45,12 @@ const ManageRoomPage = () => {
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
+        if (name === "price" &&  (0 >= value || value > 100000) ){
+            return;
+        }
+        if (name === "people_capacity" &&  (0 >= value || value > 20)){
+            return;
+        }
         setRoomData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -80,13 +86,15 @@ const ManageRoomPage = () => {
 
             <h2>Lokacja pokoju</h2>
             <div style={{width: 600, margin: "auto"}}>
-                <OneRoomVisual hotelId={hotelId}/>
+                <OneRoomVisual hotelId={hotelId} floorId={roomData?.floor}/>
 
                 <Card className="shadow">
                     <Card.Body>
                         <Row>
                             <Col style={{textAlign: "center"}}>
-                                <strong>{roomData?.hotel}</strong>
+                                <strong>{roomData?.hotel.slice(0, -6)}</strong>
+                                <br></br>
+                                <strong>{roomData?.hotel.slice(-6)}</strong>
                             </Col>
                             <Col style={{textAlign: "center"}}>
                                 <strong>Numer pokoju:</strong><br/>
@@ -100,7 +108,7 @@ const ManageRoomPage = () => {
                 </Card>
             </div>
 
-            <h2 style={{marginTop: 20}}>Dane o pokoju</h2>
+            <h2 style={{marginTop: 40}}>Dane o pokoju</h2>
             {roomData ? (
                 <>
                     <Row className="mb-4 align-items-center">
@@ -155,6 +163,7 @@ const ManageRoomPage = () => {
                                                 type="checkbox"
                                                 name="custom"
                                                 label="Edytowalny"
+                                                style={{ accentColor: "black"}}
                                                 checked={roomData.custom}
                                                 onChange={(e) =>
                                                   setRoomData((prevData) => ({
@@ -198,7 +207,7 @@ const ManageRoomPage = () => {
                                     </Row>
 
                                     <div className="text-center mt-4">
-                                        <Button style={{ margin: 10}} type="submit" variant="primary" className="px-5">
+                                        <Button style={{ margin: 10}} type="submit" variant="dark" className="px-5">
                                             Zapisz Zmiany
                                         </Button>
                                         <Button style={{ margin: 10}}

@@ -230,7 +230,7 @@ const ReceptionistPanel = () => {
                 </div>
 
                 <div style={{textAlign: "right"}}>
-                    <a href={`/receptionistReservations/${hotelId}/`}>Zobacz więcej...</a>
+                    <a href={`/receptionistReservations/${hotelId}/`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
             </section>
 
@@ -241,7 +241,7 @@ const ReceptionistPanel = () => {
                                  roomStandard={roomStandard} reservations={allReservations}/>
                     : null}
                 <div style={{textAlign: "right"}}>
-                    <a href={`/room/statuses/${hotelId}`}>Zobacz więcej...</a>
+                    <a href={`/room/statuses/${hotelId}`} style={{ color: "#ff7329"}}>Zobacz więcej...</a>
                 </div>
             </section>
 

@@ -8,6 +8,7 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const costsPerPage = 5;
     const [error, setError] = useState('');
+    const [flag, setFlag] = useState('');
     const [filterYear, setFilterYear] = useState('');
     const [filterMonth, setFilterMonth] = useState('');
 
@@ -83,7 +84,7 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
 
     const handleUpdateCost = (month, newCost) => {
         if (isNaN(newCost) || Number(newCost) < 0) {
-            setError('Invalid cost. Please enter a positive number.');
+            setError('Nieprawidłowa wartość. Proszę wpisać liczbę nieujemną.');
             return;
         }
         setCosts({
@@ -94,7 +95,8 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
     };
 
     const handleEdit = async (month,cost) => {
-
+        setFlag("Poprawnie edytowano komórkę")
+        setTimeout(function (){setFlag("")}, 2000)
 
         try {
             const csrfToken = Cookies.get("csrftoken"); // Extract CSRF token from cookies
@@ -185,9 +187,9 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
             <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
                 <thead style={{ backgroundColor: '#f5f5f5' }}>
                     <tr>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Month</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Cost</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Actions</th>
+                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Miesiąc</th>
+                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Suma</th>
+                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Akcja</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -240,7 +242,8 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
                     </div>
                 </button>
             </div>
-
+            {error && <div style={{ color: 'red', textAlign: 'center', margin: 20  }}>{error}</div>}
+            {flag && <div style={{ color: 'green', textAlign: 'center', margin: 20 }}>{flag}</div>}
                  <div
                         style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px'}}>
                         <button
@@ -313,7 +316,6 @@ const HotelCosts = ({title, data, hotelId, data_type}) => {
                         </button>
                     </div>
 
-            {error && <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>}
         </div>
     );
 };

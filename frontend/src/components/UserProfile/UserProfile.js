@@ -34,6 +34,10 @@ const UserProfile = () => {
     const [likedHotels, setLikedHotels] = useState({});
     const [hotel, setHotel] = useState(null);
     const navigate = useNavigate();
+
+    let isValid = true; // Flag to track if the input is valid
+    let errorMessage = ''; // Variable to hold the error message
+
     const styles = {
 
         hotelList: {
@@ -122,28 +126,28 @@ const UserProfile = () => {
 
     const handleInputChange = (event) => {
         const {name, value} = event.target; // Get name and value from input element
-        switch (name) {
-            case 'username':
-                setUsername(value);
-                break;
-            case 'email':
-                setEmail(value);
-                break;
-            case 'name':
-                setName(value);
-                break;
-            case 'surname':
-                setSurname(value);
-                break;
-            case 'telephone':
-                setPhone(value);
-                break;
-            case 'address':
-                setAddress(value);
-                break;
-            default:
-                break;
-        }
+            switch (name) {
+        case 'name':
+            setName(value);
+            break;
+        case 'surname':
+            setSurname(value);
+            break;
+        case 'telephone':
+            setPhone(value);
+            // Updated regex for phone number with or without country code
+            const phoneRegex = /^(?:\+?\d{1,4}\s?)?\d{3}\s?\d{3}\s?\d{3}$/;
+            if (!phoneRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Proszę wprowadzić poprawny numer.';
+            }
+            break;
+        case 'address':
+            setAddress(value);
+            break;
+        default:
+            break;
+    }
     };
 
     const handleSave = () => {
@@ -283,24 +287,6 @@ const UserProfile = () => {
                         <p><strong>Hotel: </strong>{hotel}</p> : null}
                     {isEditing ? (
                         <>
-                            <p><strong>Nazwa użytkownika:</strong></p>
-                            <input
-                                type="text"
-                                name="username"
-                                value={username}
-                                onChange={handleInputChange}
-                                className="profile-input"
-                            />
-                            <p><strong>E-mail:</strong>
-                                <input
-                                    type="text"
-                                    name="email"
-                                    value={email}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </p>
-
                             <p><strong>Imię:</strong>
                                 <input
                                     type="text"

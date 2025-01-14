@@ -55,11 +55,35 @@ const ReceptionistManageReservation = () => {
 
     const handleChange = (e) => {
         const {name, value, type, checked} = e.target;
+        console.log(name)
+        console.log(value)
+        if (name === "check_in" && value >= updatedReservation.check_out){
+            return;
+        }
+        else if (name === "check_out" && value <= updatedReservation.check_in){
+            return;
+        }
+        else if (name === "people_number" && (value <= 0 || value > room.people_capacity)){
+            return;
+        }
+
+        else if (name === "paid_amount" && (value <= 0 || value > updatedReservation.price)){
+            console.log("ds")
+            return;
+        }
+
+        else if (name === "price" && value <= 0){
+            return;
+        }
+        else {
+
         // For checkboxes, we need to use 'checked' instead of 'value'
         setUpdatedReservation({
             ...updatedReservation,
             [name]: type === "checkbox" ? checked : value,
         });
+        }
+
     };
 
 
@@ -106,7 +130,7 @@ const ReceptionistManageReservation = () => {
                     <input
                         type="text"
                         name="user_name"
-                        value={reservation.user? guest.username: "---"}
+                        value={reservation.guest? guest.username: "---"}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -117,14 +141,14 @@ const ReceptionistManageReservation = () => {
                     <input
                         type="text"
                         name="name"
-                        value={(updatedReservation.user && guest) ? guest.name: updatedReservation.optional_guest_data.name}
+                        value={(updatedReservation.guest && guest) ? guest.name: updatedReservation.optional_guest_data.name}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
                     <input
                         type="text"
                         name="surname"
-                        value={updatedReservation.user? guest.surname: updatedReservation.optional_guest_data.surname}
+                        value={updatedReservation.guest? guest.surname: updatedReservation.optional_guest_data.surname}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />
@@ -135,7 +159,7 @@ const ReceptionistManageReservation = () => {
                     <input
                         type="text"
                         name="email"
-                        value={updatedReservation.user? guest.email: updatedReservation.optional_guest_data['email']}
+                        value={updatedReservation.guest? guest.email: updatedReservation.optional_guest_data['email']}
                         onChange={handleChange}
                         disabled={!isEditing}
                     />

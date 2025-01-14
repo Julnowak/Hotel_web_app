@@ -318,6 +318,7 @@ const Homepage = () => {
                                             value={message}
                                             onChange={(e) => setMessage(e.target.value)}
                                             required
+                                            style={{maxHeight: 400}}
                                         ></textarea>
                                     </div>
                                     <div style={{ margin: "auto", textAlign: "center"}}>

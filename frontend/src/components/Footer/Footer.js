@@ -18,6 +18,8 @@ function Footer(props) {
 
                     <div className="footer-section contact">
                         <h3>Kontakt</h3>
+                        <p>Godziny otwarcia:
+                        <br></br>Poniedziałek - niedziela<br></br>8:00 - 20:00</p>
                         <p>Email: kontakt@naszafirma.pl</p>
                         <p>Telefon: +48 123 456 789</p>
                     </div>
@@ -34,7 +36,7 @@ function Footer(props) {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>&copy; 2024 Hotel Weles. Wszystkie prawa zastrzeżone.</p>
+                    <p>&copy; 2024 - 2025 Hotel Weles. Wszystkie prawa zastrzeżone.</p>
                 </div>
             </footer>
         </div>

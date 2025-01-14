@@ -112,7 +112,7 @@ const ManageRoomPricesPage = () => {
                         </Form.Group>
                     </Col>
                     <Col md={4} className="d-flex align-items-end">
-                        <Button variant="primary" onClick={handleFilter} className="w-100">
+                        <Button variant="dark" onClick={handleFilter} className="w-100">
                             Filtruj
                         </Button>
                     </Col>
@@ -132,14 +132,16 @@ const ManageRoomPricesPage = () => {
                             <Col md={6} lg={4} key={room.room_id}>
                                 <Card>
                                     <Card.Body>
-                                        <Card.Title>Pokój {room.room_number}</Card.Title>
+                                        <Card.Title style={{color: "#ff7329"}}>Pokój {room.room_number}</Card.Title>
                                         <Card.Text>
-                                            Typ: {room.room_type}
+                                            <b>Typ:</b> {room.type}
                                             <br />
-                                            Cena: {room.price} PLN
+                                            <b>Piętro:</b> {room.floor}
+                                            <br />
+                                            <b>Cena:</b> {room.price.toFixed(2)} zł
                                         </Card.Text>
                                         <Button
-                                            variant="primary"
+                                            variant="dark"
                                             onClick={() => navigate(`/manage_room/${room.room_number}?hotelId=${hotelId}`)}
                                         >
                                             Zarządzaj
@@ -150,56 +152,87 @@ const ManageRoomPricesPage = () => {
                         ))}
                 </Row>
 
-                <div
+<div
                     style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: "20px",
-                    }}
-                >
+                        display: 'flex',
+                        marginTop: 20,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginBottom: '20px'
+                    }}>
                     <button
-                        onClick={() => setCurrentPage(1)}
+                        onClick={() => setCurrentPage((prev) => 1)}
                         disabled={currentPage === 1}
-                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                        style={{
+                            padding: "8px 12px",
+                            margin: "0 5px",
+                            background: currentPage === 1 ? "#fff" : "#333",
+                            color: currentPage === 1 ? "#333" : "#fff",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
                     >
-                        {"<<"}
+                        {`<<`}
                     </button>
+
                     <button
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                        style={{
+                            padding: "8px 12px",
+                            margin: "0 5px",
+                            background: currentPage === 1 ? "#fff" : "#333",
+                            color: currentPage === 1 ? "#333" : "#fff",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
                     >
-                        {"<"}
+                        {'<'}
                     </button>
-                    {generatePageNumbers().map((page) => (
-                        <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            style={{
-                                margin: "0 5px",
-                                padding: "8px 12px",
-                                backgroundColor: page === currentPage ? "gray" : "white",
-                            }}
+                    {generatePageNumbers().map((page) => (<button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        style={{
+                            padding: '5px 10px',
+                            margin: '0 5px',
+                            cursor: 'pointer',
+                            backgroundColor: page === currentPage ? 'gray' : 'white',
+                            color: page === currentPage ? 'black' : 'black',
+                        }}
+                    >
+                        {page}
+                    </button>))}
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        style={{
+                            padding: "8px 12px",
+                            margin: "0 5px",
+                            background: currentPage === totalPages ? "#fff" : "#333",
+                            color: currentPage === totalPages ? "#333" : "#fff",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
+                    >
                         >
-                            {page}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() =>
-                            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                        }
-                        disabled={currentPage === totalPages}
-                        style={{ margin: "0 5px", padding: "8px 12px" }}
-                    >
-                        {">"}
                     </button>
                     <button
-                        onClick={() => setCurrentPage(totalPages)}
+                        onClick={() => setCurrentPage((prev) => totalPages)}
                         disabled={currentPage === totalPages}
-                        style={{ margin: "0 5px", padding: "8px 12px" }}
+                        style={{
+                            padding: "8px 12px",
+                            margin: "0 5px",
+                            background: currentPage === totalPages ? "#fff" : "#333",
+                            color: currentPage === totalPages ? "#333" : "#fff",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
                     >
-                        {">>"}
+                        >>
                     </button>
                 </div>
             </section>

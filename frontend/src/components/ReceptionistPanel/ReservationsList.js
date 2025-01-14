@@ -136,7 +136,7 @@ const ReservationsList = () => {
                                 <td style={{ backgroundColor: getColorForDate(reservation.check_in, reservation.status) }}>
                                 {reservation.check_out}
                                 </td>
-                                <td>{reservation.guest}</td>
+                                <td>{reservation.guest? reservation.guest: "---"}</td>
                                 <td style={{
                                     backgroundColor: reservation.status === 'Opłacona' ? 'lightgreen' :
                                         reservation.status === 'Anulowana' ? 'palevioletred' :
@@ -169,6 +169,7 @@ const ReservationsList = () => {
                     style={{
                         padding: "8px 12px",
                         color: currentPage === 1 ? "#333" : "#fff",
+                        backgroundColor: currentPage === 1 ? "#fff" : "#333",
                         border: "1px solid #ccc",
                         borderRadius: "4px",
                         cursor: "pointer",
